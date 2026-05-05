@@ -1,15 +1,10 @@
 import type React from "react"
 import type { Metadata } from "next"
 import "./globals.css"
-import { BookingsProvider } from "../lib/bookings-context"
-import { FavoritesProvider } from "../lib/favorites-context"
-import { BottomNavigation } from "../components/bottom-navigation"
-import { MobileFrame } from "../components/mobile-frame"
 
 export const metadata: Metadata = {
   title: "HAGU",
-  description: "Find your perfect HAGU companion",
-  generator: "v0.app",
+  description: "Paid companionship platform - calm, safe, premium",
 }
 
 export default function RootLayout({
@@ -19,16 +14,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="antialiased">
-      <body className="font-sans">
-        <FavoritesProvider>
-          <BookingsProvider>
-            <MobileFrame>
-              <div className="pb-20">{children}</div>
-              <BottomNavigation />
-            </MobileFrame>
-          </BookingsProvider>
-        </FavoritesProvider>
-      </body>
+      <body className="font-sans bg-[#FEFFFF] text-[#2D1012]">{children}</body>
     </html>
   )
 }
