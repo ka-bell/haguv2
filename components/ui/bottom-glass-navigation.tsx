@@ -1,11 +1,13 @@
 "use client"
 
+import Link from "next/link"
 import { cn } from "@/lib/utils"
 
 export interface BottomNavItem {
   key: string
   label: string
   icon: React.ReactNode
+  href: string
 }
 
 interface BottomGlassNavigationProps {
@@ -28,10 +30,10 @@ export function BottomGlassNavigation({ items, activeKey, fixed = true, classNam
         {items.map((item) => {
           const active = item.key === activeKey
           return (
-            <button key={item.key} type="button" className="flex min-w-0 flex-col items-center gap-1">
+            <Link key={item.key} href={item.href} className="flex min-w-0 flex-col items-center gap-1">
               <span className={cn("text-[#2D1012]", !active && "opacity-35")}>{item.icon}</span>
               <span className={cn("text-[10px] font-medium", active ? "text-[#2D1012]" : "text-[#8a8a96]")}>{item.label}</span>
-            </button>
+            </Link>
           )
         })}
       </div>

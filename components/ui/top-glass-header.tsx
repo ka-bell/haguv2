@@ -9,7 +9,12 @@ interface TopGlassHeaderProps {
 
 export function TopGlassHeader({ title = "HAGU", leftSlot, rightSlot, className }: TopGlassHeaderProps) {
   return (
-    <header className={cn("flex w-full items-center justify-between py-4", className)}>
+    <header
+      className={cn(
+        "sticky top-0 z-30 flex w-full items-center justify-between py-2",
+        className,
+      )}
+    >
       {leftSlot ? (
         <div className="flex size-11 items-center justify-center rounded-full border border-[#D0F1F0]/60 bg-white/30 backdrop-blur-xl">
           {leftSlot}

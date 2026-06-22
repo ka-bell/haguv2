@@ -7,6 +7,7 @@ import { BottomGlassNavigation } from "@/components/ui/bottom-glass-navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { PageContent, PageShell } from "@/components/ui/page-shell"
 import { SegmentedPillGroup } from "@/components/ui/segmented-pill-group"
 import { Tag } from "@/components/ui/tag"
 import { TopGlassHeader } from "@/components/ui/top-glass-header"
@@ -15,8 +16,8 @@ export default function ComponentsPage() {
   const [segments, setSegments] = useState<string[]>(["hosting"])
 
   return (
-    <main className="min-h-screen bg-[#FEFFFF] px-6 pb-16 pt-8 text-[#2D1012]">
-      <div className="mx-auto flex max-w-xl flex-col gap-8">
+    <PageShell className="max-w-xl px-6 pb-16 pt-8 text-[#2D1012]">
+      <PageContent className="mx-auto flex w-full max-w-xl flex-col gap-8">
         <section>
           <h1 className="text-2xl font-semibold">HAGU Component Library</h1>
           <p className="mt-1 text-sm text-[#8a8a96]">Base UI primitives and visual states for all HAGU flows.</p>
@@ -88,16 +89,15 @@ export default function ComponentsPage() {
               fixed={false}
               activeKey="discover"
               items={[
-                { key: "discover", label: "Discover", icon: <Search className="size-4" /> },
-                { key: "bookings", label: "Bookings", icon: <Calendar className="size-4" /> },
-                { key: "chat", label: "Chat", icon: <MessageCircle className="size-4" /> },
-                { key: "profile", label: "Profile", icon: <User className="size-4" /> },
+                { key: "discover", label: "Discover", href: "/discover", icon: <Search className="size-4" /> },
+                { key: "bookings", label: "Bookings", href: "/bookings", icon: <Calendar className="size-4" /> },
+                { key: "chat", label: "Chat", href: "/chat", icon: <MessageCircle className="size-4" /> },
+                { key: "profile", label: "Profile", href: "/profile", icon: <User className="size-4" /> },
               ]}
             />
           </div>
         </section>
-      </div>
-
-    </main>
+      </PageContent>
+    </PageShell>
   )
 }
