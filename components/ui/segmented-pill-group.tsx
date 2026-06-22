@@ -37,8 +37,8 @@ export function SegmentedPillGroup({ options, value, onChange, multiSelect = tru
             type="button"
             onClick={() => toggle(option.value)}
             className={cn(
-              "h-11 rounded-full px-5 text-sm font-medium transition",
-              isActive ? "bg-[#2D1012] text-[#FEFFFF]" : "border border-black/10 bg-[#FEFFFF] text-[#4a4a52] hover:bg-black/[0.03]",
+              "h-11 rounded-full px-5 text-[13px] font-medium transition",
+              isActive ? "bg-[#1A1A1E] text-white" : "border border-black/[0.08] bg-white text-[#4A4A52] hover:bg-black/[0.03]",
             )}
           >
             {option.label}

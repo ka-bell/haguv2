@@ -87,13 +87,22 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 
-  /* Added HAGU-specific semantic color tokens */
+  /* HAGU design system — sourced from Figma screens 2467:19060, 2468:19975, 2468:20300 */
   --hagu-accent: #d0f1f0;
+  --hagu-accent-strong: #5bbfb5;
+  --hagu-accent-soft: rgba(208, 241, 240, 0.4);
+  --hagu-accent-selected: #eaf7f5;
   --hagu-primary: #034123;
   --hagu-heading: #2d1012;
+  --hagu-ink: #1a1a1e;
+  --hagu-label: #4a4a52;
   --hagu-text: #333333;
-  --hagu-text-secondary: #828282;
-  --hagu-border: #e0e0e0;
+  --hagu-text-secondary: #8a8a96;
+  --hagu-placeholder: #b8b8c2;
+  --hagu-canvas: #fcffff;
+  --hagu-surface-muted: #f7f6f3;
+  --hagu-border: rgba(0, 0, 0, 0.06);
+  --hagu-glass-border: rgba(208, 241, 240, 0.3);
   --hagu-bg-light: #f2f2f2;
   --hagu-white: #ffffff;
   --hagu-success: #10b981;
@@ -176,13 +185,21 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Added HAGU color tokens to Tailwind theme */
   --color-hagu-accent: var(--hagu-accent);
+  --color-hagu-accent-strong: var(--hagu-accent-strong);
+  --color-hagu-accent-soft: var(--hagu-accent-soft);
+  --color-hagu-accent-selected: var(--hagu-accent-selected);
   --color-hagu-primary: var(--hagu-primary);
   --color-hagu-heading: var(--hagu-heading);
+  --color-hagu-ink: var(--hagu-ink);
+  --color-hagu-label: var(--hagu-label);
   --color-hagu-text: var(--hagu-text);
   --color-hagu-text-secondary: var(--hagu-text-secondary);
+  --color-hagu-placeholder: var(--hagu-placeholder);
+  --color-hagu-canvas: var(--hagu-canvas);
+  --color-hagu-surface-muted: var(--hagu-surface-muted);
   --color-hagu-border: var(--hagu-border);
+  --color-hagu-glass-border: var(--hagu-glass-border);
   --color-hagu-bg-light: var(--hagu-bg-light);
   --color-hagu-white: var(--hagu-white);
   --color-hagu-success: var(--hagu-success);

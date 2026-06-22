@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { PageActions, PageContent, PageShell } from "@/components/ui/page-shell"
 import { ROUTES } from "@/lib/routes"
 import { completeOnboarding } from "@/lib/session"
+import { isPrototypeMode } from "@/lib/prototype"
 
 type Step = 1 | 2 | 3 | 4 | 5 | 6
 
@@ -68,7 +69,7 @@ export default function HageeOnboardingPage() {
   })()
 
   const handleContinue = () => {
-    if (!canContinue) return
+    if (!isPrototypeMode() && !canContinue) return
 
     if (step < 6) {
       setStep((prev) => (prev + 1) as Step)
@@ -329,7 +330,7 @@ export default function HageeOnboardingPage() {
       </PageContent>
 
       <PageActions>
-        <Button size="lg" className="w-full" onClick={handleContinue} disabled={!canContinue}>
+        <Button size="lg" className="w-full" onClick={handleContinue} disabled={!isPrototypeMode() && !canContinue}>
           {step < 6 ? "Continue" : "Start exploring"}
         </Button>
         {step === 1 ? (

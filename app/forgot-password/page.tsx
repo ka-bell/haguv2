@@ -1,35 +1,59 @@
+"use client"
+
 import Link from "next/link"
-import { ChevronLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Mail } from "lucide-react"
+import { HaguFlowScreen } from "@/components/hagu/hagu-flow-screen"
 import { Input } from "@/components/ui/input"
-import { PageActions, PageContent, PageShell } from "@/components/ui/page-shell"
-import { TopGlassHeader } from "@/components/ui/top-glass-header"
+import { ROUTES } from "@/lib/routes"
 
 export default function ForgotPasswordPage() {
-  return (
-    <PageShell>
-      <TopGlassHeader
-        leftSlot={
-          <Link href="/login" aria-label="Back to login">
-            <ChevronLeft className="size-4 text-[#2D1012]" />
-          </Link>
-        }
-      />
+  const router = useRouter()
+  const [sent, setSent] = useState(false)
 
-      <PageContent>
-        <h1 className="mt-6 text-3xl font-semibold text-[#2D1012]">Forgot password</h1>
-        <p className="mt-2 text-sm text-[#8a8a96]">Enter your email and we will send a reset link.</p>
-
-        <div className="mt-8">
-          <Input label="Email address" placeholder="Enter your email" />
+  if (sent) {
+    return (
+      <HaguFlowScreen
+        onBack={() => router.push(ROUTES.login)}
+        closeHref={ROUTES.login}
+        ctaLabel="Back to login"
+        onCta={() => router.push(ROUTES.login)}
+      >
+        <div className="flex flex-col items-center space-y-6 pt-8 text-center">
+          <div className="flex size-20 items-center justify-center rounded-[24px] bg-[rgba(208,241,240,0.4)]">
+            <Mail className="size-9 text-[#5BBFB5]" />
+          </div>
+          <div>
+            <h1 className="text-[26px] font-semibold tracking-tight text-[#1A1A1E]">Check your inbox</h1>
+            <p className="mt-2 text-sm font-light text-[#8A8A96]">
+              We sent a password reset link to your email. It may take a minute to arrive.
+            </p>
+          </div>
         </div>
-      </PageContent>
+      </HaguFlowScreen>
+    )
+  }
 
-      <PageActions>
-        <Button size="lg" className="w-full">
-          Send reset link
-        </Button>
-      </PageActions>
-    </PageShell>
+  return (
+    <HaguFlowScreen
+      onBack={() => router.push(ROUTES.login)}
+      closeHref={ROUTES.login}
+      ctaLabel="Send reset link"
+      onCta={() => setSent(true)}
+    >
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-[26px] font-semibold tracking-tight text-[#1A1A1E]">Forgot password</h1>
+          <p className="mt-1 text-sm font-light text-[#8A8A96]">Enter your email and we will send a reset link.</p>
+        </div>
+
+        <Input label="Email address" placeholder="alex@hagu.app" type="email" />
+
+        <Link href={ROUTES.login} className="block text-center text-sm text-[#8A8A96]">
+          Back to login
+        </Link>
+      </div>
+    </HaguFlowScreen>
   )
 }

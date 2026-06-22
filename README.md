@@ -1,30 +1,40 @@
-# Hagu
+# HAGU
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
+UI reference implementation for the HAGU companionship platform.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/kbellpostmans-projects/v0-profile-ui-design)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/mc7KjomaLvL)
+## Source of truth
 
-## Overview
+**Figma is the source of truth** for design, flows, and screen states.
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+| Resource | Location |
+|----------|----------|
+| Figma file | [Hagu Design](https://www.figma.com/design/YCZ3EsQcr4rUfTgPutKj3E/Hagu) |
+| Flow spec (Figma checklist) | [docs/figma-flows.md](docs/figma-flows.md) |
+| Backend handoff | [docs/HANDOFF.md](docs/HANDOFF.md) |
 
-## Deployment
+This repository is a **rough UI reference only** — not a production-ready or fully clickable prototype. Auth, payments, and ID verification are mocked.
 
-Your project is live at:
+## Code freeze
 
-**[https://vercel.com/kbellpostmans-projects/v0-profile-ui-design](https://vercel.com/kbellpostmans-projects/v0-profile-ui-design)**
+Do not spend time fixing click-through flow bugs unless backend explicitly requests it. New UI work should match Figma first; implementation follows the handoff doc.
 
-## Build your app
+## Local development
 
-Continue building your app on:
+```bash
+npm install
+npm run dev
+```
 
-**[https://v0.app/chat/mc7KjomaLvL](https://v0.app/chat/mc7KjomaLvL)**
+Open [http://localhost:3000](http://localhost:3000).
 
-## How It Works
+### Prototype mode (optional click-through)
 
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_PROTOTYPE=true`. Then open [http://localhost:3000/dev/flow](http://localhost:3000/dev/flow) to jump to any screen without auth or form validation blocking navigation.
+
+## Design tokens
+
+Tokens extracted from Figma reference screens live in [`lib/hagu-design.ts`](lib/hagu-design.ts) and [`app/globals.css`](app/globals.css).
+
+## Repository
+
+GitHub: [ka-bell/haguv2](https://github.com/ka-bell/haguv2)
