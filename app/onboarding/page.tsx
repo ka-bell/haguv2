@@ -1,56 +1,63 @@
 "use client"
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
-import { Check, ChevronLeft, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import Image from "next/image"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
+import { Camera, Check, FileText, MessageCircle, Users } from "lucide-react"
+import { AppleSignInButton } from "@/components/hagu/apple-sign-in-button"
+import { GoogleSignInButton } from "@/components/hagu/google-sign-in-button"
+import { HaguFlowScreen } from "@/components/hagu/hagu-flow-screen"
 import { Input } from "@/components/ui/input"
-import { PageActions, PageContent, PageShell } from "@/components/ui/page-shell"
 import { ROUTES } from "@/lib/routes"
 import { completeOnboarding } from "@/lib/session"
 import { isPrototypeMode } from "@/lib/prototype"
+import { cn } from "@/lib/utils"
+import {
+  ACTIVITY_OPTIONS,
+  CHARACTER_OPTIONS,
+  CONTINUE_LABELS,
+  HageeStep,
+  INTRO_HERO_IMAGE,
+  VIBE_OPTIONS,
+  WHATS_NEXT_ITEMS,
+} from "./hagee/data"
 
-type Step = 1 | 2 | 3 | 4 | 5 | 6
-
-const activityOptions = [
-  "Dinner date",
-  "Coffee chat",
-  "City walk",
-  "Event buddy",
-  "Deep talks",
-  "Something spontaneous",
-]
-
-const vibeOptions = ["Playful", "Calm", "Curious", "Flirty", "Thoughtful"]
-
-const characterOptions = [
-  "Night owl",
-  "Overthinker",
-  "Dry humour",
-  "Deep diver",
-  "Spontaneous",
-  "Good listener",
-]
+const WHATS_NEXT_ICONS = {
+  browse: Users,
+  request: FileText,
+  chat: MessageCircle,
+} as const
 
 export default function HageeOnboardingPage() {
   const router = useRouter()
-  const [step, setStep] = useState<Step>(1)
-  const [firstName, setFirstName] = useState("")
+  const searchParams = useSearchParams()
+  const editMode = searchParams.get("edit") === "1"
+  const stepFromQuery = Number(searchParams.get("step"))
+  const [step, setStep] = useState<HageeStep>(() => {
+    if (editMode && stepFromQuery >= 2 && stepFromQuery <= 5) {
+      return stepFromQuery as HageeStep
+    }
+    return 1
+  })
+
+  useEffect(() => {
+    if (editMode && stepFromQuery >= 2 && stepFromQuery <= 5) {
+      setStep(stepFromQuery as HageeStep)
+    }
+  }, [editMode, stepFromQuery])
+
+  const [firstName, setFirstName] = useState("Alex")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [activities, setActivities] = useState<string[]>([])
   const [vibes, setVibes] = useState<string[]>([])
-  const [age, setAge] = useState("")
+  const [age, setAge] = useState("29")
   const [gender, setGender] = useState("")
   const [city, setCity] = useState("")
   const [oneLiner, setOneLiner] = useState("")
   const [characterTraits, setCharacterTraits] = useState<string[]>([])
-
-  const completedStep = Math.min(step, 5)
-  const progressWidth = `${(completedStep / 5) * 100}%`
 
   const toggleValue = (value: string, list: string[], setList: (next: string[]) => void) => {
     if (list.includes(value)) {
@@ -61,284 +68,360 @@ export default function HageeOnboardingPage() {
   }
 
   const canContinue = (() => {
-    if (step === 2) return firstName.trim() !== "" && email.trim() !== "" && password.trim().length >= 6 && acceptedTerms
+    if (step === 2) {
+      return firstName.trim() !== "" && email.trim() !== "" && password.trim().length >= 6 && acceptedTerms
+    }
     if (step === 3) return activities.length > 0 && vibes.length > 0
     if (step === 4) return age.trim() !== "" && gender.trim() !== "" && city.trim() !== ""
     if (step === 5) return characterTraits.length >= 3
     return true
   })()
 
-  const handleContinue = () => {
-    if (!isPrototypeMode() && !canContinue) return
-
-    if (step < 6) {
-      setStep((prev) => (prev + 1) as Step)
+  const handleBack = () => {
+    if (editMode) {
+      router.push(ROUTES.profile)
       return
     }
-    completeOnboarding("HAGEE")
-    router.push(ROUTES.discover)
-  }
-
-  const handleBack = () => {
     if (step === 1) {
       router.push(ROUTES.selectRole)
       return
     }
-    setStep((prev) => (prev - 1) as Step)
+    setStep((prev) => (prev - 1) as HageeStep)
   }
 
-  const headerRight = (
-    <Link href="/" aria-label="Close">
-      <X className="size-4 text-[#2D1012]" />
-    </Link>
+  const handleContinue = () => {
+    if (editMode) {
+      router.push(ROUTES.profile)
+      return
+    }
+
+    if (!isPrototypeMode() && !canContinue) return
+
+    if (step < 6) {
+      setStep((prev) => (prev + 1) as HageeStep)
+      return
+    }
+
+    completeOnboarding("HAGEE")
+    router.push(ROUTES.discover)
+  }
+
+  const handleSkipIntro = () => setStep(2)
+
+  const progress = !editMode && step > 1 && step < 6 ? ((step - 1) / 5) * 100 : editMode && step >= 2 ? ((step - 1) / 5) * 100 : undefined
+  const ctaLabel = editMode ? "Save changes" : CONTINUE_LABELS[step]
+  const displayName = firstName.trim() || "there"
+
+  const renderIntro = () => (
+    <>
+      <button
+        type="button"
+        onClick={handleSkipIntro}
+        className="absolute right-0 top-0 z-10 px-2 py-2 text-[13px] font-medium text-[#8A8A96]"
+      >
+        Skip
+      </button>
+
+      <div className="relative -mx-6 -mt-2 h-[min(42vh,340px)] overflow-hidden px-6">
+        <div className="relative h-full overflow-hidden rounded-[24px]">
+          <Image src={INTRO_HERO_IMAGE} alt="" fill className="object-cover" sizes="400px" priority />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#FCFFFF] via-[rgba(252,255,255,0.6)] via-40% to-transparent" />
+        </div>
+      </div>
+
+      <div className="mt-7 space-y-4">
+        <span className="inline-flex rounded-full border border-[rgba(91,191,181,0.25)] bg-[rgba(91,191,181,0.12)] px-3 py-0.5 text-[11px] font-semibold tracking-wide text-[#3DA89E]">
+          1 of 3
+        </span>
+        <h1 className="text-[28px] font-semibold leading-tight tracking-tight text-[#1A1A1E]">
+          Real people.
+          <br />
+          Real time together.
+        </h1>
+        <p className="text-[15px] font-light leading-relaxed text-[#4A4A52]">
+          Hagu connects you with thoughtful, vetted companions for shared experiences — a meal, a walk, a
+          conversation that actually goes somewhere.
+        </p>
+        <div className="flex gap-1.5 pt-1">
+          <span className="h-[3px] w-5 rounded-full bg-[#5BBFB5]" />
+          <span className="h-[3px] w-1.5 rounded-full bg-black/[0.12]" />
+          <span className="h-[3px] w-1.5 rounded-full bg-black/[0.12]" />
+        </div>
+      </div>
+    </>
+  )
+
+  const renderCreateAccount = () => (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-[26px] font-semibold tracking-tight text-[#1A1A1E]">Create your account</h1>
+        <p className="mt-1 text-sm font-light text-[#8A8A96]">Takes about 2 minutes.</p>
+      </div>
+
+      <div className="space-y-3">
+        <GoogleSignInButton label="Sign in with Google" />
+        <AppleSignInButton />
+      </div>
+
+      <div className="flex items-center gap-3">
+        <div className="h-px flex-1 bg-black/[0.08]" />
+        <span className="text-xs text-[#8A8A96]">or</span>
+        <div className="h-px flex-1 bg-black/[0.08]" />
+      </div>
+
+      <div className="space-y-4">
+        <Input label="First name" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="Alex" />
+        <Input label="Email address" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="alex@hagu.app" />
+        <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 6 characters" />
+      </div>
+
+      <label className="flex items-start gap-2 text-xs text-[#8A8A96]">
+        <input
+          type="checkbox"
+          checked={acceptedTerms}
+          onChange={(e) => setAcceptedTerms(e.target.checked)}
+          className="mt-0.5 size-4 rounded border-black/20"
+        />
+        I agree to the terms and privacy policy.
+      </label>
+    </div>
+  )
+
+  const renderPreferences = () => (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-[26px] font-semibold tracking-tight text-[#1A1A1E]">What are you looking for?</h1>
+        <p className="mt-1 text-sm font-light text-[#8A8A96]">This helps us match you with the right people.</p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        {ACTIVITY_OPTIONS.map((option) => {
+          const selected = activities.includes(option.id)
+          return (
+            <button
+              key={option.id}
+              type="button"
+              onClick={() => toggleValue(option.id, activities, setActivities)}
+              className={cn(
+                "rounded-[20px] border p-4 text-left transition",
+                selected ? "border-[#5BBFB5] bg-[rgba(208,241,240,0.4)]" : "border-black/[0.06] bg-white",
+              )}
+            >
+              <p className="text-sm font-medium text-[#1A1A1E]">
+                {option.emoji} {option.label}
+              </p>
+            </button>
+          )
+        })}
+      </div>
+
+      <div>
+        <p className="text-sm font-medium text-[#1A1A1E]">What kind of energy?</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {VIBE_OPTIONS.map((option) => {
+            const selected = vibes.includes(option)
+            return (
+              <button
+                key={option}
+                type="button"
+                onClick={() => toggleValue(option, vibes, setVibes)}
+                className={cn(
+                  "rounded-full border px-4 py-2 text-sm transition",
+                  selected
+                    ? "border-[#5BBFB5] bg-[rgba(208,241,240,0.4)] text-[#1A1A1E]"
+                    : "border-black/[0.06] bg-white text-[#4A4A52]",
+                )}
+              >
+                {option}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+    </div>
+  )
+
+  const renderProfile = () => (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-[26px] font-semibold tracking-tight text-[#1A1A1E]">A little about you</h1>
+        <p className="mt-1 text-sm font-light text-[#8A8A96]">This appears on your public profile.</p>
+      </div>
+
+      <div className="flex flex-col items-center pt-2">
+        <div className="relative flex size-[120px] items-center justify-center rounded-full border-2 border-dashed border-[#D0F1F0] bg-[rgba(208,241,240,0.4)]">
+          <Camera className="size-8 text-[#8A8A96]" />
+          <button
+            type="button"
+            className="absolute bottom-0 right-0 flex size-9 items-center justify-center rounded-[18px] border-[3px] border-[#FCFFFF] bg-[#2D1012] text-lg text-white"
+          >
+            +
+          </button>
+        </div>
+        <p className="mt-3 text-[13px] font-medium text-[#1A1A1E]">Upload profile photo</p>
+      </div>
+
+      <div className="space-y-4">
+        <Input label="Age" value={age} onChange={(e) => setAge(e.target.value)} placeholder="28" />
+        <Input label="Gender" value={gender} onChange={(e) => setGender(e.target.value)} placeholder="Male" />
+        <Input label="City" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Amsterdam" />
+        <label className="flex w-full flex-col gap-1.5">
+          <span className="text-xs text-[#4A4A52]">One line about you (optional)</span>
+          <textarea
+            value={oneLiner}
+            onChange={(e) => setOneLiner(e.target.value)}
+            placeholder="Tell people a little bit about your vibe."
+            className="min-h-20 w-full rounded-[20px] border border-black/10 bg-white px-4 py-3 text-[15px] text-[#1A1A1E] outline-none transition placeholder:text-[#8A8A96] focus:border-[#D0F1F0] focus:ring-2 focus:ring-[#D0F1F0]/50"
+          />
+        </label>
+      </div>
+    </div>
+  )
+
+  const renderCharacter = () => (
+    <div className="space-y-6">
+      <div>
+        <p className="text-sm text-[#8A8A96]">Your character</p>
+        <h1 className="mt-1 text-[26px] font-semibold tracking-tight text-[#1A1A1E]">What makes you a little different?</h1>
+        <p className="mt-1 text-sm font-light text-[#8A8A96]">Choose at least 3 traits so people get your vibe.</p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        {CHARACTER_OPTIONS.map((option) => {
+          const selected = characterTraits.includes(option.id)
+          return (
+            <button
+              key={option.id}
+              type="button"
+              onClick={() => toggleValue(option.id, characterTraits, setCharacterTraits)}
+              className={cn(
+                "rounded-[20px] border px-4 py-4 text-left transition",
+                selected ? "border-[#5BBFB5] bg-[rgba(208,241,240,0.4)]" : "border-black/[0.06] bg-white",
+              )}
+            >
+              <p className="text-sm font-medium text-[#1A1A1E]">
+                {option.emoji} {option.label}
+              </p>
+            </button>
+          )
+        })}
+      </div>
+      <p className="text-xs text-[#8A8A96]">Selected: {characterTraits.length}/3 minimum</p>
+    </div>
+  )
+
+  const renderSuccess = () => (
+    <div className="relative -mx-6 flex flex-1 flex-col px-6">
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-80"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(91,191,181,0.18) 0%, rgba(91,191,181,0) 70%)",
+        }}
+      />
+
+      <div className="relative flex flex-col items-center pt-10 text-center">
+        <div className="flex size-20 items-center justify-center rounded-[40px] bg-gradient-to-br from-[#5BBFB5] to-[#3DA89E] shadow-[0px_8px_16px_rgba(91,191,181,0.3)]">
+          <Check className="size-9 text-white" strokeWidth={2.5} />
+        </div>
+        <h1 className="mt-6 text-[30px] font-semibold leading-tight tracking-tight text-[#1A1A1E]">
+          You&apos;re all set,
+          <br />
+          {displayName}.
+        </h1>
+        <p className="mt-3 max-w-[280px] text-[15px] font-light leading-relaxed text-[#8A8A96]">
+          Your profile is ready. Start exploring people available near you this week.
+        </p>
+      </div>
+
+      <div className="relative mt-8 space-y-2.5">
+        {WHATS_NEXT_ITEMS.map((item) => {
+          const Icon = WHATS_NEXT_ICONS[item.id]
+          return (
+            <div
+              key={item.id}
+              className="flex items-center gap-3 rounded-[16px] bg-white px-4 py-3.5 shadow-[0px_1px_4px_rgba(0,0,0,0.05)]"
+            >
+              <div className="flex size-10 items-center justify-center rounded-[12px] bg-[#EAF7F5]">
+                <Icon className="size-[18px] text-[#5BBFB5]" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[13px] font-medium text-[#1A1A1E]">{item.title}</p>
+                <p className="text-xs font-light text-[#8A8A96]">{item.subtitle}</p>
+              </div>
+              {item.done ? (
+                <div className="flex size-5 items-center justify-center rounded-[10px] bg-[#5BBFB5]">
+                  <Check className="size-2.5 text-white" strokeWidth={3} />
+                </div>
+              ) : (
+                <div className="size-5 rounded-[10px] border border-black/[0.12]" />
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
   )
 
   const renderStepContent = () => {
-    if (step === 1) {
-      return (
-        <Card className="mt-6 overflow-hidden p-0">
-          <div className="h-56 bg-gradient-to-b from-[#D0F1F0] to-[#FEFFFF]" />
-          <div className="space-y-3 p-6">
-            <p className="text-xs text-[#8a8a96]">1 of 3</p>
-            <h1 className="text-2xl font-semibold text-[#2D1012]">Real people. Real time together.</h1>
-            <p className="text-sm text-[#8a8a96]">
-              Hagu connects you with thoughtful, vetted companions for shared experiences - a meal, a walk, a conversation that actually goes somewhere.
-            </p>
-            <div className="flex gap-2 pt-1">
-              <span className="h-1 w-6 rounded-full bg-[#5bbfb5]" />
-              <span className="h-1 w-2 rounded-full bg-black/15" />
-              <span className="h-1 w-2 rounded-full bg-black/15" />
-            </div>
-          </div>
-        </Card>
-      )
-    }
+    if (step === 1) return renderIntro()
+    if (step === 2) return renderCreateAccount()
+    if (step === 3) return renderPreferences()
+    if (step === 4) return renderProfile()
+    if (step === 5) return renderCharacter()
+    return renderSuccess()
+  }
 
-    if (step === 2) {
-      return (
-        <div className="mt-6 space-y-6">
-          <div>
-            <h1 className="text-3xl font-semibold text-[#2D1012]">Create your account</h1>
-            <p className="mt-2 text-sm text-[#8a8a96]">Takes about 2 minutes.</p>
-          </div>
-
-          <button type="button" className="gsi-material-button" aria-label="Continue with Google">
-            <div className="gsi-material-button-state" />
-            <div className="gsi-material-button-content-wrapper">
-              <div className="gsi-material-button-icon">
-                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" xmlnsXlink="http://www.w3.org/1999/xlink" className="block">
-                  <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
-                  <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
-                  <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
-                  <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
-                  <path fill="none" d="M0 0h48v48H0z" />
-                </svg>
-              </div>
-              <span className="gsi-material-button-contents">Sign in with Google</span>
-            </div>
-          </button>
-
-          <div className="flex items-center gap-3">
-            <div className="h-px flex-1 bg-black/10" />
-            <span className="text-xs text-[#8a8a96]">or</span>
-            <div className="h-px flex-1 bg-black/10" />
-          </div>
-
-          <div className="space-y-4">
-            <Input label="First name" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="Alex" />
-            <Input label="Email address" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="alex@hagu.app" />
-            <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 6 characters" />
-          </div>
-
-          <label className="flex items-start gap-2 text-xs text-[#8a8a96]">
-            <input type="checkbox" checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} className="mt-0.5 size-4 rounded border-black/20" />
-            I agree to the terms and privacy policy.
-          </label>
-        </div>
-      )
-    }
-
-    if (step === 3) {
-      return (
-        <div className="mt-6 space-y-6">
-          <div>
-            <h1 className="text-3xl font-semibold text-[#2D1012]">What are you looking for?</h1>
-            <p className="mt-2 text-sm text-[#8a8a96]">This helps us match you with the right people.</p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            {activityOptions.map((option) => {
-              const selected = activities.includes(option)
-              return (
-                <button
-                  key={option}
-                  type="button"
-                  onClick={() => toggleValue(option, activities, setActivities)}
-                  className={`rounded-2xl border p-4 text-left transition ${
-                    selected ? "border-hagu-accent bg-hagu-accent/40" : "border-black/10 bg-[#FEFFFF]"
-                  }`}
-                >
-                  <p className="text-sm font-medium text-[#2D1012]">{option}</p>
-                  <p className="mt-1 text-xs text-[#8a8a96]">Tap to select</p>
-                </button>
-              )
-            })}
-          </div>
-
-          <div>
-            <p className="text-sm font-medium text-[#2D1012]">What kind of energy?</p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {vibeOptions.map((option) => {
-                const selected = vibes.includes(option)
-                return (
-                  <button
-                    key={option}
-                    type="button"
-                    onClick={() => toggleValue(option, vibes, setVibes)}
-                    className={`rounded-full border px-4 py-2 text-sm transition ${
-                      selected ? "border-hagu-accent bg-hagu-accent/40 text-[#2D1012]" : "border-black/10 bg-[#FEFFFF] text-[#4a4a52]"
-                    }`}
-                  >
-                    {option}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        </div>
-      )
-    }
-
-    if (step === 4) {
-      return (
-        <div className="mt-6 space-y-6">
-          <div>
-            <h1 className="text-3xl font-semibold text-[#2D1012]">A little about you</h1>
-            <p className="mt-2 text-sm text-[#8a8a96]">This appears on your public profile.</p>
-          </div>
-
-          <div className="rounded-2xl border border-black/5 p-4">
-            <p className="text-sm font-medium text-[#2D1012]">Profile photo</p>
-            <p className="mt-1 text-xs text-[#8a8a96]">You can update this later.</p>
-            <button type="button" className="mt-3 flex size-20 items-center justify-center rounded-2xl border-2 border-dashed border-hagu-accent bg-hagu-accent/30 text-sm text-[#2D1012]">
-              Add
-            </button>
-          </div>
-
-          <div className="space-y-4">
-            <Input label="Age" value={age} onChange={(e) => setAge(e.target.value)} placeholder="28" />
-            <Input label="Gender" value={gender} onChange={(e) => setGender(e.target.value)} placeholder="Male" />
-            <Input label="City" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Amsterdam" />
-            <label className="flex w-full flex-col gap-1.5">
-              <span className="text-xs text-[#4a4a52]">One line about you (optional)</span>
-              <textarea
-                value={oneLiner}
-                onChange={(e) => setOneLiner(e.target.value)}
-                placeholder="Tell people a little bit about your vibe."
-                className="min-h-20 w-full rounded-[20px] border border-black/10 bg-[#FEFFFF] px-4 py-3 text-[15px] text-[#2D1012] outline-none transition placeholder:text-[#8a8a96] focus:border-[#D0F1F0] focus:ring-2 focus:ring-[#D0F1F0]/50"
-              />
-            </label>
-          </div>
-        </div>
-      )
-    }
-
-    if (step === 5) {
-      return (
-        <div className="mt-6 space-y-6">
-          <div>
-            <p className="text-sm text-[#8a8a96]">Your character</p>
-            <h1 className="mt-1 text-3xl font-semibold text-[#2D1012]">What makes you a little different?</h1>
-            <p className="mt-2 text-sm text-[#8a8a96]">Choose at least 3 traits so people get your vibe.</p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            {characterOptions.map((option) => {
-              const selected = characterTraits.includes(option)
-              return (
-                <button
-                  key={option}
-                  type="button"
-                  onClick={() => toggleValue(option, characterTraits, setCharacterTraits)}
-                  className={`rounded-2xl border px-4 py-4 text-left transition ${
-                    selected ? "border-hagu-accent bg-hagu-accent/40" : "border-black/10 bg-[#FEFFFF]"
-                  }`}
-                >
-                  <p className="text-sm font-medium text-[#2D1012]">{option}</p>
-                </button>
-              )
-            })}
-          </div>
-          <p className="text-xs text-[#8a8a96]">Selected: {characterTraits.length}/3 minimum</p>
-        </div>
-      )
-    }
-
+  if (step === 1) {
     return (
-      <div className="mt-8 space-y-6">
-        <div className="mx-auto flex size-20 items-center justify-center rounded-full bg-hagu-accent/40 text-hagu-primary">
-          <Check className="size-8" />
-        </div>
-        <div className="text-center">
-          <h1 className="text-3xl font-semibold text-[#2D1012]">You&apos;re all set, {firstName || "there"}.</h1>
-          <p className="mt-2 text-sm text-[#8a8a96]">Your Hugee profile is ready. You can now explore companions and send your first request.</p>
-        </div>
-        <div className="space-y-3">
-          <Card className="p-4">
-            <p className="text-sm font-medium text-[#2D1012]">Browse companions</p>
-            <p className="text-xs text-[#8a8a96]">Find people that match your vibe.</p>
-          </Card>
-          <Card className="p-4">
-            <p className="text-sm font-medium text-[#2D1012]">Send your first request</p>
-            <p className="text-xs text-[#8a8a96]">It takes less than a minute.</p>
-          </Card>
-          <Card className="p-4">
-            <p className="text-sm font-medium text-[#2D1012]">Chat when matched</p>
-            <p className="text-xs text-[#8a8a96]">Coordinate time and place safely.</p>
-          </Card>
-        </div>
-      </div>
+      <HaguFlowScreen
+        showHeader={false}
+        ctaLabel={ctaLabel}
+        onCta={handleContinue}
+        ctaDisabled={!isPrototypeMode() && !canContinue}
+        className="relative bg-[#FCFFFF]"
+        footer={
+          <p className="mt-4 text-center text-[13px] text-[#8A8A96]">
+            Already have an account?{" "}
+            <Link href={ROUTES.login} className="font-medium text-[#1A1A1E]">
+              Log in
+            </Link>
+          </p>
+        }
+      >
+        {renderIntro()}
+      </HaguFlowScreen>
+    )
+  }
+
+  if (step === 6) {
+    return (
+      <HaguFlowScreen
+        showHeader={false}
+        ctaLabel={ctaLabel}
+        onCta={handleContinue}
+        className="bg-[#F7F6F3]"
+        footer={
+          <p className="mt-2 text-center text-xs font-light text-[#B8B8C2]">
+            You can update your profile anytime in settings
+          </p>
+        }
+      >
+        {renderSuccess()}
+      </HaguFlowScreen>
     )
   }
 
   return (
-    <PageShell>
-      <PageContent className="pt-3">
-        <div className="flex items-center justify-between">
-          <button
-            type="button"
-            onClick={handleBack}
-            aria-label="Back to previous step"
-            className="flex size-11 items-center justify-center rounded-full border border-[#D0F1F0]/60 bg-white/30 backdrop-blur-xl"
-          >
-            <ChevronLeft className="size-4 text-[#2D1012]" />
-          </button>
-          <div className="rounded-full border border-[#D0F1F0]/60 bg-white/30 px-8 py-2 backdrop-blur-xl">
-            <span className="text-[32px] font-bold leading-none tracking-tight text-[#2D1012]">HAGU</span>
-          </div>
-          <div className="flex size-11 items-center justify-center rounded-full border border-[#D0F1F0]/60 bg-white/30 backdrop-blur-xl">
-            {headerRight}
-          </div>
-        </div>
-
-        {step > 1 && step < 6 ? (
-          <div className="mt-3 h-1 w-full rounded-full bg-black/10">
-            <div className="h-1 rounded-full bg-hagu-accent transition-all duration-300" style={{ width: progressWidth }} />
-          </div>
-        ) : null}
-        {renderStepContent()}
-      </PageContent>
-
-      <PageActions>
-        <Button size="lg" className="w-full" onClick={handleContinue} disabled={!isPrototypeMode() && !canContinue}>
-          {step < 6 ? "Continue" : "Start exploring"}
-        </Button>
-        {step === 1 ? (
-          <p className="text-center text-sm text-[#8a8a96]">
-            Already have an account? <Link href="/login" className="font-medium text-[#2D1012]">Log in</Link>
-          </p>
-        ) : null}
-      </PageActions>
-    </PageShell>
+    <HaguFlowScreen
+      onBack={handleBack}
+      closeHref={editMode ? ROUTES.profile : ROUTES.selectRole}
+      progress={progress}
+      ctaLabel={ctaLabel}
+      onCta={handleContinue}
+      ctaDisabled={!editMode && !isPrototypeMode() && !canContinue}
+    >
+      {renderStepContent()}
+    </HaguFlowScreen>
   )
 }

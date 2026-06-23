@@ -1,5 +1,6 @@
-import { HaguChatThread } from "@/components/hagu/hagu-chat-thread"
+import { redirect } from "next/navigation"
+import { ROUTES } from "@/lib/routes"
 
 export default function ChatPage() {
-  return <HaguChatThread />
+  redirect(ROUTES.chatThread("luca"))
 }

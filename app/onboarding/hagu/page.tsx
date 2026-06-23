@@ -1,8 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
 import { Camera, ChevronRight } from "lucide-react"
 import { HaguFlowScreen } from "@/components/hagu/hagu-flow-screen"
 import { Card } from "@/components/ui/card"
@@ -30,7 +30,21 @@ type PaymentMethod = "stripe" | "paypal" | null
 
 export default function HaguOnboardingPage() {
   const router = useRouter()
-  const [step, setStep] = useState<HaguStep>(1)
+  const searchParams = useSearchParams()
+  const editMode = searchParams.get("edit") === "1"
+  const stepFromQuery = Number(searchParams.get("step"))
+  const [step, setStep] = useState<HaguStep>(() => {
+    if (editMode && stepFromQuery >= 2 && stepFromQuery <= 9) {
+      return stepFromQuery as HaguStep
+    }
+    return 1
+  })
+
+  useEffect(() => {
+    if (editMode && stepFromQuery >= 2 && stepFromQuery <= 9) {
+      setStep(stepFromQuery as HaguStep)
+    }
+  }, [editMode, stepFromQuery])
 
   const [displayName, setDisplayName] = useState("Anouk V.")
   const [tagline, setTagline] = useState("")
@@ -82,6 +96,10 @@ export default function HaguOnboardingPage() {
   })()
 
   const handleBack = () => {
+    if (editMode) {
+      router.push(ROUTES.settings)
+      return
+    }
     if (step === 1) {
       router.push(ROUTES.selectRole)
       return
@@ -90,6 +108,11 @@ export default function HaguOnboardingPage() {
   }
 
   const handleContinue = () => {
+    if (editMode) {
+      router.push(ROUTES.settings)
+      return
+    }
+
     if (!isPrototypeMode() && !canContinue) return
 
     if (step === 7 && !idScanned) {
@@ -106,9 +129,14 @@ export default function HaguOnboardingPage() {
     router.push(ROUTES.discover)
   }
 
-  const progress = step <= 1 ? 0 : ((step - 1) / 8) * 100
-  const ctaLabel =
-    step === 7 && !idScanned ? "Scan ID" : step === 7 ? "Next: Connect payment" : CONTINUE_LABELS[step]
+  const progress = editMode || step <= 1 ? undefined : ((step - 1) / 8) * 100
+  const ctaLabel = editMode
+    ? "Save changes"
+    : step === 7 && !idScanned
+      ? "Scan ID"
+      : step === 7
+        ? "Next: Connect payment"
+        : CONTINUE_LABELS[step]
 
   const renderIntro = () => (
     <>
@@ -488,11 +516,11 @@ export default function HaguOnboardingPage() {
   return (
     <HaguFlowScreen
       onBack={handleBack}
-      closeHref={ROUTES.selectRole}
+      closeHref={editMode ? ROUTES.settings : ROUTES.selectRole}
       progress={progress}
       ctaLabel={ctaLabel}
       onCta={handleContinue}
-      ctaDisabled={!isPrototypeMode() && !canContinue}
+      ctaDisabled={!editMode && !isPrototypeMode() && !canContinue}
     >
       {renderStepContent()}
     </HaguFlowScreen>

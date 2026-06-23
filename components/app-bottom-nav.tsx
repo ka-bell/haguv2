@@ -3,7 +3,6 @@
 import { Calendar, CalendarCheck, Home, MessageCircle, Search, User } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { BottomGlassNavigation } from "@/components/ui/bottom-glass-navigation"
-import { isPrototypeMode } from "@/lib/prototype"
 import {
   APP_TABS,
   PROVIDER_TABS,
@@ -29,7 +28,7 @@ const PROVIDER_ICONS = {
 export function AppBottomNav() {
   const pathname = usePathname()
   const session = getSession()
-  const isProvider = session.role === "HAGU" || isPrototypeMode()
+  const isProvider = session.role === "HAGU"
 
   if (isProvider) {
     const activeKey = providerTabFromPathname(pathname)

@@ -1,6 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils"
+import { PAGE_FIXED_HEADER_OFFSET, PageFixedHeader } from "@/components/ui/page-shell"
 import { HaguFlowCta } from "./hagu-flow-cta"
 import { HaguFlowHeader } from "./hagu-flow-header"
 
@@ -36,17 +37,27 @@ export function HaguFlowScreen({
         className,
       )}
     >
-      <div className="flex flex-1 flex-col overflow-y-auto px-6 pb-6 pt-14">
-        {showHeader ? <HaguFlowHeader onBack={onBack} closeHref={closeHref} /> : null}
+      {showHeader ? (
+        <PageFixedHeader>
+          <HaguFlowHeader onBack={onBack} closeHref={closeHref} />
+        </PageFixedHeader>
+      ) : null}
+
+      <div
+        className={cn(
+          "flex flex-1 flex-col overflow-y-auto px-6 pb-6",
+          showHeader && PAGE_FIXED_HEADER_OFFSET,
+        )}
+      >
         {typeof progress === "number" ? (
-          <div className="mt-4 h-[3px] w-full rounded-full bg-black/[0.07]">
+          <div className="h-[3px] w-full rounded-full bg-black/[0.07]">
             <div
               className="h-[3px] rounded-full bg-[#1A1A1E] transition-all duration-300"
               style={{ width: `${progress}%` }}
             />
           </div>
         ) : null}
-        <div className="mt-5 flex-1">{children}</div>
+        <div className={cn("flex-1", typeof progress === "number" ? "mt-5" : null)}>{children}</div>
         {footer}
       </div>
       <HaguFlowCta label={ctaLabel} onClick={onCta} disabled={ctaDisabled} />

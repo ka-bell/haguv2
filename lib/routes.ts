@@ -9,7 +9,13 @@ export const ROUTES = {
   bookings: "/bookings",
   calendar: "/calendar",
   chat: "/chat",
+  chatThread: (id: string) => `/chat/${id}` as const,
+  requests: "/requests",
+  reviews: "/reviews",
+  review: (id: string) => `/reviews/${id}` as const,
   profile: "/profile",
+  settings: "/settings",
+  settingsTransactions: "/settings/transactions",
 } as const
 
 export type AppTab = "discover" | "bookings" | "chat" | "profile"
@@ -28,7 +34,7 @@ export const PROVIDER_TABS: { key: ProviderTab; label: string; href: string }[] 
   { key: "home", label: "Home", href: ROUTES.discover },
   { key: "bookings", label: "Bookings", href: ROUTES.bookings },
   { key: "calendar", label: "Calendar", href: ROUTES.calendar },
-  { key: "settings", label: "Settings", href: ROUTES.profile },
+  { key: "settings", label: "Settings", href: ROUTES.settings },
 ]
 
 export function tabFromPathname(pathname: string): AppTab {
@@ -41,6 +47,8 @@ export function tabFromPathname(pathname: string): AppTab {
 export function providerTabFromPathname(pathname: string): ProviderTab {
   if (pathname.startsWith(ROUTES.bookings)) return "bookings"
   if (pathname.startsWith(ROUTES.calendar)) return "calendar"
-  if (pathname.startsWith(ROUTES.profile)) return "profile"
+  if (pathname.startsWith(ROUTES.settings) || pathname.startsWith(ROUTES.profile)) return "settings"
+  if (pathname.startsWith(ROUTES.requests)) return "home"
+  if (pathname.startsWith(ROUTES.reviews)) return "home"
   return "home"
 }

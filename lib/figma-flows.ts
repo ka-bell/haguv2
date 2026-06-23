@@ -3,6 +3,8 @@
  * File: https://www.figma.com/design/YCZ3EsQcr4rUfTgPutKj3E/Hagu
  */
 
+import { ROUTES } from "@/lib/routes"
+
 export const FIGMA_FILE_KEY = "YCZ3EsQcr4rUfTgPutKj3E"
 
 export const FIGMA_BASE = `https://www.figma.com/design/${FIGMA_FILE_KEY}/Hagu`
@@ -54,7 +56,7 @@ export const HAGU_PROVIDER_APP_FLOW: FigmaFlow = {
       name: "Requests",
       figmaNodeId: "2467:13610",
       route: "/requests",
-      notes: "Sub-page of Home. 3 new requests, Decline / Accept per card. NAV: Home active.",
+      codePath: "app/(app)/requests/page.tsx",
     },
     {
       id: "bookings",
@@ -86,8 +88,8 @@ export const HAGU_PROVIDER_APP_FLOW: FigmaFlow = {
       id: "settings",
       name: "Settings / Profile",
       figmaNodeId: "2467:14188",
-      route: "/profile",
-      codePath: "app/(app)/profile/page.tsx",
+      route: "/settings",
+      codePath: "app/(app)/settings/page.tsx",
       navTab: "settings",
       notes: "Cover photo, stats, account/payout/preferences sections, log out. NAV: Settings active.",
     },
@@ -95,7 +97,7 @@ export const HAGU_PROVIDER_APP_FLOW: FigmaFlow = {
       id: "transactions",
       name: "Transactions / Earnings",
       figmaNodeId: "2467:14361",
-      route: "/profile/transactions",
+      route: "/settings/transactions",
       notes: "Available balance, withdraw, transaction history. Sub-page under Settings.",
     },
     {
@@ -105,6 +107,33 @@ export const HAGU_PROVIDER_APP_FLOW: FigmaFlow = {
       route: "/chat",
       notes: "Standard thread with header (Online · Booking date). Same route as chat tab, different state.",
     },
+    {
+      id: "review-post-booking",
+      name: "Review (post-booking)",
+      figmaNodeId: "2467:14555",
+      route: "/reviews/luca-dinner",
+      codePath: "app/(app)/reviews/[id]/page.tsx",
+      notes: "Star ratings, criteria, optional note, accept-again toggle. Home banner when pending.",
+    },
+  ],
+}
+
+/** HAGEE client — onboarding + profile (frame `2467:15227`). */
+export const HAGEE_CLIENT_FLOW: FigmaFlow = {
+  id: "hagee-client",
+  name: "HAGEE Client Flow",
+  figmaNodeId: "2467:15227",
+  description: "HAGEE onboarding and profile screens.",
+  audience: "HAGEE",
+  screens: [
+    { id: "intro", name: "What is HAGU", figmaNodeId: "2467:15232", route: ROUTES.onboardingHagee, codePath: "app/onboarding/page.tsx" },
+    { id: "account", name: "Create Account", figmaNodeId: "2467:15232", route: ROUTES.onboardingHagee },
+    { id: "preferences", name: "Preferences", figmaNodeId: "2467:15232", route: ROUTES.onboardingHagee },
+    { id: "profile-setup", name: "Your Profile", figmaNodeId: "2467:15232", route: ROUTES.onboardingHagee },
+    { id: "character", name: "Your character", figmaNodeId: "2467:15232", route: ROUTES.onboardingHagee },
+    { id: "success", name: "You're in", figmaNodeId: "2467:15615", route: ROUTES.onboardingHagee },
+    { id: "profile", name: "My profile", figmaNodeId: "2467:15693", route: ROUTES.profile, codePath: "components/hagee/hagee-profile-screen.tsx" },
+    { id: "profile-edit", name: "Edit profile", figmaNodeId: "2467:15693", route: `${ROUTES.onboardingHagee}?edit=1&step=4` },
   ],
 }
 
@@ -113,16 +142,16 @@ export const AUTH_ONBOARDING_FLOWS: FigmaFlow[] = [
   {
     id: "hagee-onboarding",
     name: "HAGEE Onboarding",
-    figmaNodeId: "2393:9244",
+    figmaNodeId: "2467:15227",
     description: "Client onboarding after selecting HAGEE.",
     audience: "HAGEE",
     screens: [
-      { id: "intro", name: "Intro carousel", figmaNodeId: "2393:9244", route: "/onboarding" },
-      { id: "account", name: "Create account", figmaNodeId: "2393:9244", route: "/onboarding" },
-      { id: "preferences", name: "What are you looking for?", figmaNodeId: "2393:9244", route: "/onboarding" },
-      { id: "about", name: "About you", figmaNodeId: "2393:9244", route: "/onboarding" },
-      { id: "character", name: "Character traits", figmaNodeId: "2393:9244", route: "/onboarding" },
-      { id: "success", name: "All set", figmaNodeId: "2393:9244", route: "/onboarding" },
+      { id: "intro", name: "Intro carousel", figmaNodeId: "2467:15232", route: "/onboarding" },
+      { id: "account", name: "Create account", figmaNodeId: "2467:15232", route: "/onboarding" },
+      { id: "preferences", name: "What are you looking for?", figmaNodeId: "2467:15232", route: "/onboarding" },
+      { id: "about", name: "About you", figmaNodeId: "2467:15232", route: "/onboarding" },
+      { id: "character", name: "Character traits", figmaNodeId: "2467:15232", route: "/onboarding" },
+      { id: "success", name: "All set", figmaNodeId: "2467:15615", route: "/onboarding" },
     ],
   },
   {
@@ -157,8 +186,8 @@ export const NAV_MAPPING = {
     { tab: "Discover", route: "/discover", mapsTo: "Home (Provider Home)" },
     { tab: "Bookings", route: "/bookings", mapsTo: "Bookings" },
     { tab: "Calendar", route: "/calendar", mapsTo: "Calendar / Availability" },
-    { tab: "Profile", route: "/profile", mapsTo: "Settings" },
+    { tab: "Settings", route: "/settings", mapsTo: "Settings" },
   ],
 } as const
 
-export const ALL_FLOWS: FigmaFlow[] = [HAGU_PROVIDER_APP_FLOW, ...AUTH_ONBOARDING_FLOWS]
+export const ALL_FLOWS: FigmaFlow[] = [HAGU_PROVIDER_APP_FLOW, HAGEE_CLIENT_FLOW, ...AUTH_ONBOARDING_FLOWS]

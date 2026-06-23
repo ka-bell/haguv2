@@ -35,7 +35,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     )
   }
 
-  const hideBottomNav = pathname.startsWith(ROUTES.chat)
+  const hideBottomNav =
+    pathname.startsWith(ROUTES.chat) || pathname.startsWith(ROUTES.reviews)
 
   return (
     <>

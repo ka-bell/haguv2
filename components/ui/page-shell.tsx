@@ -5,6 +5,32 @@ import { cn } from "@/lib/utils"
 
 type DivProps = React.HTMLAttributes<HTMLDivElement>
 
+/** Safe-area top + glass chrome height + spacing below header. */
+export const PAGE_FIXED_HEADER_OFFSET = "pt-[calc(3.5rem+45px+1.25rem)]" as const
+
+type PageContentProps = DivProps & {
+  /** Reserve space for a PageFixedHeader so content scrolls underneath it. */
+  underFixedHeader?: boolean
+}
+
+/**
+ * Fixed glass header chrome — stays pinned while page content scrolls.
+ * Use on every HAGU screen with HaguFlowHeader (tab screens, flow screens, settings).
+ */
+export function PageFixedHeader({ className, children, ...props }: DivProps) {
+  return (
+    <div
+      className={cn(
+        "pointer-events-none fixed inset-x-0 top-0 z-30 mx-auto w-full max-w-md px-6 pt-14",
+        className,
+      )}
+      {...props}
+    >
+      <div className="pointer-events-auto">{children}</div>
+    </div>
+  )
+}
+
 export function PageShell({ className, ...props }: DivProps) {
   return (
     <main
@@ -14,8 +40,13 @@ export function PageShell({ className, ...props }: DivProps) {
   )
 }
 
-export function PageContent({ className, ...props }: DivProps) {
-  return <div className={cn("space-y-0 pb-24", className)} {...props} />
+export function PageContent({ className, underFixedHeader, ...props }: PageContentProps) {
+  return (
+    <div
+      className={cn("space-y-0 pb-24", underFixedHeader && PAGE_FIXED_HEADER_OFFSET, className)}
+      {...props}
+    />
+  )
 }
 
 export function PageActions({ className, ...props }: DivProps) {
