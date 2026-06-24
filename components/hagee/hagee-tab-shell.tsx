@@ -8,7 +8,7 @@ type HageeTabShellProps = {
 /** HAGEE tab screens — scrollable content with bottom nav spacing. */
 export function HageeTabShell({ children, className }: HageeTabShellProps) {
   return (
-    <PageShell className={className ?? "bg-[#FCFFFF] px-5 pb-28 pt-0"}>
+    <PageShell className={className ?? "bg-hagu-canvas px-5 pb-28 pt-0"}>
       <PageContent className="pb-0 pt-14">{children}</PageContent>
     </PageShell>
   )

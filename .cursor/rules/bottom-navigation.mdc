@@ -1,0 +1,59 @@
+---
+description: HAGEE vs HAGU bottom navigation — separate tab configs, never mix roles
+globs:
+  - lib/app-navigation.ts
+  - components/app-bottom-nav.tsx
+  - app/(app)/layout.tsx
+---
+
+# Bottom navigation by role
+
+HAGEE (client) and HAGU (provider) use **different** bottom navs. Do not share one tab array for both.
+
+## Single source of truth
+
+All tab definitions live in `lib/app-navigation.ts`:
+
+- `HAGEE_BOTTOM_NAV` — client app
+- `HAGU_BOTTOM_NAV` — provider app
+- `getBottomNavConfig(role)` — pick the correct nav for the session role
+- `shouldHideBottomNav(pathname)` — hide nav on full-screen subflows
+
+`AppBottomNav` only renders icons + calls `getBottomNavConfig`; it must not define tabs inline.
+
+## HAGEE tabs
+
+| Key | Label | Route |
+|-----|-------|-------|
+| home | Home | `/home` |
+| explore | Explore | `/explore` |
+| chat | Chat | `/chat` |
+| profile | Profile | `/profile` |
+
+Active tab: `hageeNavTabFromPathname(pathname)`
+
+## HAGU tabs
+
+| Key | Label | Route |
+|-----|-------|-------|
+| home | Home | `/discover` (provider home) |
+| bookings | Bookings | `/bookings` |
+| calendar | Calendar | `/calendar` |
+| settings | Settings | `/settings` |
+
+Active tab: `haguNavTabFromPathname(pathname)`
+
+## Role separation
+
+HAGEE and HAGU are separate route trees. Never render both audiences from one page.
+
+- HAGEE: `/home`, `/explore`, `/chat`, `/profile`
+- HAGU: `/discover`, `/bookings`, `/calendar`, `/settings`
+
+`roleGuardRedirect()` in `lib/app-navigation.ts` enforces this in `app/(app)/layout.tsx`.
+
+## When adding a tab or route
+
+1. Update the correct array in `lib/app-navigation.ts` only (HAGEE or HAGU).
+2. Extend the matching `*NavTabFromPathname` helper so the active state highlights correctly.
+3. If the screen is a subflow (chat thread, refine, edit profile), add it to `shouldHideBottomNav`.

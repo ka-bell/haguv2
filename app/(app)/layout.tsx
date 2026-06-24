@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { AppBottomNav } from "@/components/app-bottom-nav"
+import { roleGuardRedirect, shouldHideBottomNav } from "@/lib/app-navigation"
 import { isPrototypeMode } from "@/lib/prototype"
 import { ROUTES } from "@/lib/routes"
 import { getSession } from "@/lib/session"
@@ -11,6 +12,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
   const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    if (!ready) return
+
+    const session = getSession()
+    const redirect = roleGuardRedirect(pathname, session.role)
+    if (redirect && pathname !== redirect) {
+      router.replace(redirect)
+    }
+  }, [pathname, ready, router])
 
   useEffect(() => {
     if (isPrototypeMode()) {
@@ -35,8 +46,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     )
   }
 
-  const hideBottomNav =
-    pathname.startsWith(ROUTES.chat) || pathname.startsWith(ROUTES.reviews)
+  const hideBottomNav = shouldHideBottomNav(pathname)
 
   return (
     <>

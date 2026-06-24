@@ -13,7 +13,7 @@ export default function LoginPage() {
 
   const handleSignIn = () => {
     loginAsReturningUser("HAGEE")
-    router.push(ROUTES.discover)
+    router.push(ROUTES.home)
     router.refresh()
   }
 

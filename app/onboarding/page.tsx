@@ -4,10 +4,12 @@ import Link from "next/link"
 import Image from "next/image"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Camera, Check, FileText, MessageCircle, Users } from "lucide-react"
+import { Camera } from "lucide-react"
 import { AppleSignInButton } from "@/components/hagu/apple-sign-in-button"
 import { GoogleSignInButton } from "@/components/hagu/google-sign-in-button"
-import { HaguFlowScreen } from "@/components/hagu/hagu-flow-screen"
+import { HageeActivityCard } from "@/components/hagee/hagee-activity-card"
+import { HageeFlowScreen } from "@/components/hagee/hagee-flow-screen"
+import { HageeOnboardingSuccess } from "@/components/hagee/hagee-onboarding-success"
 import { Input } from "@/components/ui/input"
 import { ROUTES } from "@/lib/routes"
 import { completeOnboarding } from "@/lib/session"
@@ -20,14 +22,16 @@ import {
   HageeStep,
   INTRO_HERO_IMAGE,
   VIBE_OPTIONS,
-  WHATS_NEXT_ITEMS,
 } from "./hagee/data"
 
-const WHATS_NEXT_ICONS = {
-  browse: Users,
-  request: FileText,
-  chat: MessageCircle,
-} as const
+const selectedPillClass =
+  "border-hagu-accent-strong bg-hagu-accent-selected text-hagu-accent-strong"
+const unselectedPillClass =
+  "border-hagu-border bg-hagu-white text-hagu-label"
+const selectedCardClass =
+  "border-hagu-accent-strong bg-hagu-accent-selected"
+const unselectedCardClass =
+  "border-hagu-border bg-hagu-white"
 
 export default function HageeOnboardingPage() {
   const router = useRouter()
@@ -103,7 +107,7 @@ export default function HageeOnboardingPage() {
     }
 
     completeOnboarding("HAGEE")
-    router.push(ROUTES.discover)
+    router.push(ROUTES.home)
   }
 
   const handleSkipIntro = () => setStep(2)
@@ -122,7 +126,7 @@ export default function HageeOnboardingPage() {
         Skip
       </button>
 
-      <div className="relative -mx-6 -mt-2 h-[min(42vh,340px)] overflow-hidden px-6">
+      <div className="relative -mx-7 -mt-2 h-[min(42vh,340px)] overflow-hidden px-7">
         <div className="relative h-full overflow-hidden rounded-[24px]">
           <Image src={INTRO_HERO_IMAGE} alt="" fill className="object-cover" sizes="400px" priority />
           <div className="absolute inset-0 bg-gradient-to-t from-[#FCFFFF] via-[rgba(252,255,255,0.6)] via-40% to-transparent" />
@@ -188,35 +192,27 @@ export default function HageeOnboardingPage() {
   )
 
   const renderPreferences = () => (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-[26px] font-semibold tracking-tight text-[#1A1A1E]">What are you looking for?</h1>
-        <p className="mt-1 text-sm font-light text-[#8A8A96]">This helps us match you with the right people.</p>
+    <div className="space-y-5">
+      <div className="space-y-1.5">
+        <h1 className="text-[26px] font-semibold tracking-[-0.5px] text-[#1A1A1E]">What are you looking for?</h1>
+        <p className="text-sm font-light text-[#8A8A96]">This helps us match you with the right people.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        {ACTIVITY_OPTIONS.map((option) => {
-          const selected = activities.includes(option.id)
-          return (
-            <button
-              key={option.id}
-              type="button"
-              onClick={() => toggleValue(option.id, activities, setActivities)}
-              className={cn(
-                "rounded-[20px] border p-4 text-left transition",
-                selected ? "border-[#5BBFB5] bg-[rgba(208,241,240,0.4)]" : "border-black/[0.06] bg-white",
-              )}
-            >
-              <p className="text-sm font-medium text-[#1A1A1E]">
-                {option.emoji} {option.label}
-              </p>
-            </button>
-          )
-        })}
+        {ACTIVITY_OPTIONS.map((option) => (
+          <HageeActivityCard
+            key={option.id}
+            icon={option.icon}
+            label={option.label}
+            subtitle={option.subtitle}
+            selected={activities.includes(option.id)}
+            onClick={() => toggleValue(option.id, activities, setActivities)}
+          />
+        ))}
       </div>
 
-      <div>
-        <p className="text-sm font-medium text-[#1A1A1E]">What kind of energy?</p>
+      <div className="pt-1">
+        <p className="text-[13px] font-medium tracking-[0.1px] text-[#4A4A52]">What kind of energy?</p>
         <div className="mt-3 flex flex-wrap gap-2">
           {VIBE_OPTIONS.map((option) => {
             const selected = vibes.includes(option)
@@ -226,10 +222,8 @@ export default function HageeOnboardingPage() {
                 type="button"
                 onClick={() => toggleValue(option, vibes, setVibes)}
                 className={cn(
-                  "rounded-full border px-4 py-2 text-sm transition",
-                  selected
-                    ? "border-[#5BBFB5] bg-[rgba(208,241,240,0.4)] text-[#1A1A1E]"
-                    : "border-black/[0.06] bg-white text-[#4A4A52]",
+                  "rounded-full border px-[17px] py-2 text-[13px] transition",
+                  selected ? selectedPillClass : unselectedPillClass,
                 )}
               >
                 {option}
@@ -296,7 +290,7 @@ export default function HageeOnboardingPage() {
               onClick={() => toggleValue(option.id, characterTraits, setCharacterTraits)}
               className={cn(
                 "rounded-[20px] border px-4 py-4 text-left transition",
-                selected ? "border-[#5BBFB5] bg-[rgba(208,241,240,0.4)]" : "border-black/[0.06] bg-white",
+                selected ? selectedCardClass : unselectedCardClass,
               )}
             >
               <p className="text-sm font-medium text-[#1A1A1E]">
@@ -310,58 +304,7 @@ export default function HageeOnboardingPage() {
     </div>
   )
 
-  const renderSuccess = () => (
-    <div className="relative -mx-6 flex flex-1 flex-col px-6">
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-80"
-        style={{
-          background:
-            "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(91,191,181,0.18) 0%, rgba(91,191,181,0) 70%)",
-        }}
-      />
-
-      <div className="relative flex flex-col items-center pt-10 text-center">
-        <div className="flex size-20 items-center justify-center rounded-[40px] bg-gradient-to-br from-[#5BBFB5] to-[#3DA89E] shadow-[0px_8px_16px_rgba(91,191,181,0.3)]">
-          <Check className="size-9 text-white" strokeWidth={2.5} />
-        </div>
-        <h1 className="mt-6 text-[30px] font-semibold leading-tight tracking-tight text-[#1A1A1E]">
-          You&apos;re all set,
-          <br />
-          {displayName}.
-        </h1>
-        <p className="mt-3 max-w-[280px] text-[15px] font-light leading-relaxed text-[#8A8A96]">
-          Your profile is ready. Start exploring people available near you this week.
-        </p>
-      </div>
-
-      <div className="relative mt-8 space-y-2.5">
-        {WHATS_NEXT_ITEMS.map((item) => {
-          const Icon = WHATS_NEXT_ICONS[item.id]
-          return (
-            <div
-              key={item.id}
-              className="flex items-center gap-3 rounded-[16px] bg-white px-4 py-3.5 shadow-[0px_1px_4px_rgba(0,0,0,0.05)]"
-            >
-              <div className="flex size-10 items-center justify-center rounded-[12px] bg-[#EAF7F5]">
-                <Icon className="size-[18px] text-[#5BBFB5]" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-[13px] font-medium text-[#1A1A1E]">{item.title}</p>
-                <p className="text-xs font-light text-[#8A8A96]">{item.subtitle}</p>
-              </div>
-              {item.done ? (
-                <div className="flex size-5 items-center justify-center rounded-[10px] bg-[#5BBFB5]">
-                  <Check className="size-2.5 text-white" strokeWidth={3} />
-                </div>
-              ) : (
-                <div className="size-5 rounded-[10px] border border-black/[0.12]" />
-              )}
-            </div>
-          )
-        })}
-      </div>
-    </div>
-  )
+  const renderSuccess = () => <HageeOnboardingSuccess displayName={displayName} />
 
   const renderStepContent = () => {
     if (step === 1) return renderIntro()
@@ -374,12 +317,11 @@ export default function HageeOnboardingPage() {
 
   if (step === 1) {
     return (
-      <HaguFlowScreen
-        showHeader={false}
+      <HageeFlowScreen
         ctaLabel={ctaLabel}
         onCta={handleContinue}
         ctaDisabled={!isPrototypeMode() && !canContinue}
-        className="relative bg-[#FCFFFF]"
+        className="relative"
         footer={
           <p className="mt-4 text-center text-[13px] text-[#8A8A96]">
             Already have an account?{" "}
@@ -390,38 +332,35 @@ export default function HageeOnboardingPage() {
         }
       >
         {renderIntro()}
-      </HaguFlowScreen>
+      </HageeFlowScreen>
     )
   }
 
   if (step === 6) {
     return (
-      <HaguFlowScreen
-        showHeader={false}
+      <HageeFlowScreen
         ctaLabel={ctaLabel}
         onCta={handleContinue}
-        className="bg-[#F7F6F3]"
         footer={
-          <p className="mt-2 text-center text-xs font-light text-[#B8B8C2]">
+          <p className="mt-2 text-center text-xs text-hagu-placeholder">
             You can update your profile anytime in settings
           </p>
         }
       >
         {renderSuccess()}
-      </HaguFlowScreen>
+      </HageeFlowScreen>
     )
   }
 
   return (
-    <HaguFlowScreen
+    <HageeFlowScreen
       onBack={handleBack}
-      closeHref={editMode ? ROUTES.profile : ROUTES.selectRole}
       progress={progress}
       ctaLabel={ctaLabel}
       onCta={handleContinue}
       ctaDisabled={!editMode && !isPrototypeMode() && !canContinue}
     >
       {renderStepContent()}
-    </HaguFlowScreen>
+    </HageeFlowScreen>
   )
 }

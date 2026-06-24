@@ -5,6 +5,7 @@ import {
   FIGMA_BASE,
   HAGU_PROVIDER_APP_FLOW,
   HAGEE_CLIENT_FLOW,
+  HAGEE_DISCOVERY_FLOW,
   AUTH_ONBOARDING_FLOWS,
   figmaNode,
 } from "@/lib/figma-flows"
@@ -31,6 +32,14 @@ const ONBOARDING_SCREENS: FlowScreen[] = AUTH_ONBOARDING_FLOWS.map((flow) => ({
   figma: figmaNode(flow.figmaNodeId),
 }))
 
+const HAGEE_DISCOVERY_SCREENS: FlowScreen[] = HAGEE_DISCOVERY_FLOW.screens.map((screen) => ({
+  href: screen.route,
+  name: screen.name,
+  group: "HAGEE Discovery",
+  figma: figmaNode(screen.figmaNodeId),
+  notes: screen.notes,
+}))
+
 const HAGEE_APP_SCREENS: FlowScreen[] = HAGEE_CLIENT_FLOW.screens.map((screen) => ({
   href: screen.route,
   name: screen.name,
@@ -51,9 +60,16 @@ const DEV_SCREENS: FlowScreen[] = [
   { href: "/dev/components", name: "Component library", group: "Dev" },
 ]
 
-const SCREENS: FlowScreen[] = [...AUTH_SCREENS, ...ONBOARDING_SCREENS, ...APP_SCREENS, ...HAGEE_APP_SCREENS, ...DEV_SCREENS]
+const SCREENS: FlowScreen[] = [
+  ...AUTH_SCREENS,
+  ...ONBOARDING_SCREENS,
+  ...APP_SCREENS,
+  ...HAGEE_DISCOVERY_SCREENS,
+  ...HAGEE_APP_SCREENS,
+  ...DEV_SCREENS,
+]
 
-const GROUPS = ["Auth", "Onboarding", "HAGU Provider App", "HAGEE Client App", "Dev"] as const
+const GROUPS = ["Auth", "Onboarding", "HAGU Provider App", "HAGEE Discovery", "HAGEE Client App", "Dev"] as const
 
 export default function DevFlowPage() {
   const prototype = isPrototypeMode()
@@ -65,6 +81,16 @@ export default function DevFlowPage() {
         Dev index for all screens. Figma is the source of truth — see <code className="text-xs">docs/HANDOFF.md</code>{" "}
         in the repo.
       </p>
+
+      <a
+        href={figmaNode(HAGEE_DISCOVERY_FLOW.figmaNodeId)}
+        target="_blank"
+        rel="noreferrer"
+        className="mt-4 block rounded-2xl border border-[#5BBFB5] bg-[rgba(208,241,240,0.4)] px-4 py-3 text-sm text-[#1A1A1E] hover:underline"
+      >
+        <strong>HAGEE Discovery flow</strong> — {HAGEE_DISCOVERY_FLOW.screens.length} screens in Figma frame{" "}
+        <code className="text-xs">{HAGEE_DISCOVERY_FLOW.figmaNodeId}</code>
+      </a>
 
       <a
         href={figmaNode(HAGEE_CLIENT_FLOW.figmaNodeId)}

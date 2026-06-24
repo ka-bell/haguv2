@@ -1,6 +1,6 @@
-import { redirect } from "next/navigation"
-import { ROUTES } from "@/lib/routes"
+import { HageeConnectionsScreen } from "@/components/hagee/hagee-connections-screen"
 
+/** HAGEE connections list — HAGU sessions are redirected to a provider thread by the app layout. */
 export default function ChatPage() {
-  redirect(ROUTES.chatThread("luca"))
+  return <HageeConnectionsScreen />
 }
