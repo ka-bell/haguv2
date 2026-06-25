@@ -4,7 +4,7 @@ import { ChevronLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface HageeFlowHeaderProps {
-  onBack: () => void
+  onBack?: () => void
   progress?: number
   className?: string
 }
@@ -13,14 +13,18 @@ interface HageeFlowHeaderProps {
 export function HageeFlowHeader({ onBack, progress, className }: HageeFlowHeaderProps) {
   return (
     <div className={cn("space-y-4", className)}>
-      <button
-        type="button"
-        onClick={onBack}
-        aria-label="Go back"
-        className="flex size-9 items-center justify-center rounded-[18px] border border-hagu-border bg-hagu-white shadow-[0px_1px_2px_rgba(0,0,0,0.06)]"
-      >
-        <ChevronLeft className="size-4 text-hagu-heading" />
-      </button>
+      {onBack ? (
+        <button
+          type="button"
+          onClick={onBack}
+          aria-label="Go back"
+          className="pointer-events-auto flex size-9 items-center justify-center rounded-[18px] border border-hagu-border bg-hagu-white shadow-[0px_1px_2px_rgba(0,0,0,0.06)]"
+        >
+          <ChevronLeft className="size-4 text-hagu-heading" />
+        </button>
+      ) : (
+        <div className="size-9" aria-hidden />
+      )}
 
       {typeof progress === "number" ? (
         <div className="h-[3px] w-full rounded-full bg-hagu-border">

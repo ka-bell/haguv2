@@ -2,12 +2,11 @@
 
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { PageFixedHeader } from "@/components/ui/page-shell"
 import { HaguFlowCta } from "@/components/hagu/hagu-flow-cta"
+import { HaguFlowHeader } from "@/components/hagu/hagu-flow-header"
 import { HageeInterestPicker } from "@/components/hagee/hagee-interest-picker"
-import { HageeRefineHeader } from "@/components/hagee/hagee-refine-header"
 import { HageeSelectableRow } from "@/components/hagee/hagee-selectable-row"
-import { HAGEE_FLOW_HEADER_OFFSET } from "@/components/hagee/hagee-flow-screen"
+import { ScreenLayout } from "@/components/ui/screen-layout"
 import { INTEREST_CATEGORIES, REFINE_ACTIVITIES } from "@/lib/hagee-discover"
 import {
   DEFAULT_DISCOVER_ACTIVITIES,
@@ -20,6 +19,8 @@ import { isPrototypeMode } from "@/lib/prototype"
 import { ROUTES } from "@/lib/routes"
 
 type RefineStep = 1 | 2
+
+const REFINE_TOTAL_STEPS = 2
 
 export default function ExploreRefinePage() {
   const router = useRouter()
@@ -96,20 +97,42 @@ export default function ExploreRefinePage() {
     )
   }
 
-  return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col bg-hagu-canvas text-hagu-ink">
-      <PageFixedHeader className="px-7">
-        <HageeRefineHeader
-          step={step}
-          totalSteps={3}
-          onBack={handleBack}
-          onSkip={cancel}
-          showBack={!isFirstSetup || step > 1}
-          showSkip={!isFirstSetup}
-        />
-      </PageFixedHeader>
+  const showBack = !isFirstSetup || step > 1
+  const progress = (step / REFINE_TOTAL_STEPS) * 100
 
-      <div className={`flex flex-1 flex-col overflow-y-auto px-7 pb-6 ${HAGEE_FLOW_HEADER_OFFSET}`}>
+  return (
+    <ScreenLayout
+      className="bg-hagu-canvas text-hagu-ink"
+      contentPadding="px-7"
+      headerClassName="px-6"
+      reserveHeader
+      headerVariant="brand"
+      header={
+        showBack ? (
+          <HaguFlowHeader
+            onBack={handleBack}
+            closeHref={isFirstSetup ? null : ROUTES.explore}
+          />
+        ) : (
+          <HaguFlowHeader />
+        )
+      }
+      footer={
+        <HaguFlowCta
+          label={step === 2 ? (isFirstSetup ? "Start exploring" : "Save changes") : "Continue"}
+          onClick={handleContinue}
+          disabled={!isPrototypeMode() && !canContinue}
+        />
+      }
+    >
+      <div className="flex-1 pb-6">
+        <div className="mb-5 h-[3px] w-full rounded-full bg-hagu-border">
+          <div
+            className="h-[3px] rounded-full bg-hagu-accent-strong transition-all duration-300"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+
         {step === 1 ? (
           <div className="space-y-5">
             <div className="space-y-2">
@@ -161,12 +184,6 @@ export default function ExploreRefinePage() {
           </div>
         )}
       </div>
-
-      <HaguFlowCta
-        label={step === 2 ? (isFirstSetup ? "Start exploring" : "Save changes") : "Continue"}
-        onClick={handleContinue}
-        disabled={!isPrototypeMode() && !canContinue}
-      />
-    </main>
+    </ScreenLayout>
   )
 }

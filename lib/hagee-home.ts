@@ -14,8 +14,6 @@ export type HageeMoodOption = {
   title: string
   subtitle: string
   icon: LucideIcon
-  iconBg: string
-  cornerBg: string
 }
 
 export type HageeSpotlight = {
@@ -48,32 +46,24 @@ export const HAGEE_MOOD_OPTIONS: HageeMoodOption[] = [
     title: "Dinner Date",
     subtitle: "Fine dining & conversation",
     icon: UtensilsCrossed,
-    iconBg: "bg-[rgba(245,230,200,0.35)]",
-    cornerBg: "bg-[rgba(245,230,200,0.2)]",
   },
   {
     id: "event",
     title: "Social Event",
     subtitle: "Galas, parties & mixers",
     icon: Briefcase,
-    iconBg: "bg-hagu-accent-soft",
-    cornerBg: "bg-hagu-accent-strong/20",
   },
   {
     id: "chat",
     title: "Just Chat",
     subtitle: "Coffee & good talk",
     icon: Phone,
-    iconBg: "bg-blue-50",
-    cornerBg: "bg-blue-100",
   },
   {
     id: "surprise",
     title: "Surprise Me",
     subtitle: "Curated selection",
     icon: Sparkles,
-    iconBg: "bg-purple-50",
-    cornerBg: "bg-purple-100",
   },
 ]
 

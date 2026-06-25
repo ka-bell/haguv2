@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Heart, RotateCcw, X } from "lucide-react"
 import { HageeExploreCard } from "@/components/hagee/hagee-explore-card"
 import type { HageeExploreMatch } from "@/lib/hagee-explore"
@@ -13,6 +13,8 @@ type ExitDirection = "left" | "right" | null
 
 interface HageeExploreSwipeStackProps {
   matches: HageeExploreMatch[]
+  className?: string
+  getSharedInterests?: (match: HageeExploreMatch) => string[]
   onPass?: (match: HageeExploreMatch) => void
   onSave?: (match: HageeExploreMatch) => void
   onViewProfile?: (match: HageeExploreMatch) => void
@@ -21,6 +23,8 @@ interface HageeExploreSwipeStackProps {
 
 export function HageeExploreSwipeStack({
   matches,
+  className,
+  getSharedInterests,
   onPass,
   onSave,
   onViewProfile,
@@ -36,10 +40,18 @@ export function HageeExploreSwipeStack({
   const draggingRef = useRef(false)
   const dragXRef = useRef(0)
 
+  useEffect(() => {
+    setDeck(matches)
+    setDragX(0)
+    dragXRef.current = 0
+    setDragging(false)
+    draggingRef.current = false
+    setExitDirection(null)
+    setIsAnimating(false)
+  }, [matches])
+
   const current = deck[0]
   const next = deck[1]
-  const total = matches.length
-  const seen = total - deck.length
 
   const resetDrag = () => {
     setDragX(0)
@@ -137,14 +149,10 @@ export function HageeExploreSwipeStack({
   }
 
   return (
-    <div className="space-y-5">
-      <p className="text-center text-xs text-hagu-text-secondary">
-        {seen + 1} van {total} · swipe links om over te slaan, rechts om te bewaren
-      </p>
-
+    <div className={cn("min-h-0 flex-1", className)}>
       <div
         className={cn(
-          "relative touch-pan-y select-none",
+          "relative h-full touch-none overscroll-contain select-none",
           isAnimating && "pointer-events-none",
         )}
         onPointerDown={(event) => {
@@ -164,47 +172,35 @@ export function HageeExploreSwipeStack({
         onPointerCancel={handlePointerUp}
       >
         {next ? (
-          <div className="absolute inset-y-3 right-0 z-0 w-[92%] translate-x-3 scale-[0.96] opacity-70">
-            <HageeExploreCard match={next} className="pointer-events-none h-full" />
+          <div
+            className={cn(
+              "pointer-events-none absolute inset-0 z-0 origin-center transition-[transform,opacity] duration-300 ease-out",
+              exitDirection ? "scale-100 opacity-100" : "scale-[0.96] opacity-70",
+            )}
+          >
+            <HageeExploreCard match={next} className="h-full" />
           </div>
         ) : null}
 
         <div
           className={cn(
-            "relative z-10",
-            dragging || exitDirection ? "transition-none" : "transition-transform duration-300 ease-out",
-            exitDirection && "transition-transform duration-[280ms] ease-in",
+            "relative z-10 h-full",
+            dragging ? "transition-none" : exitDirection ? "transition-transform duration-[280ms] ease-in" : "",
           )}
           style={{ transform: cardTransform }}
         >
           <HageeExploreCard
             match={current}
+            sharedInterests={getSharedInterests?.(current) ?? []}
             swipeHint={swipeHint}
             swipeProgress={swipeProgress}
+            showActions
+            actionsDisabled={isAnimating}
+            onSkip={() => commitDecision("left")}
+            onSave={() => commitDecision("right")}
             onViewProfile={() => onViewProfile?.(current)}
           />
         </div>
-      </div>
-
-      <div className="flex items-center justify-center gap-6">
-        <button
-          type="button"
-          aria-label="Overslaan"
-          disabled={isAnimating}
-          onClick={() => commitDecision("left")}
-          className="flex size-14 items-center justify-center rounded-full border border-hagu-border bg-hagu-white text-hagu-text-secondary shadow-[0px_4px_16px_rgba(26,26,30,0.08)] transition active:scale-95 disabled:opacity-50"
-        >
-          <X className="size-6" strokeWidth={2.5} />
-        </button>
-        <button
-          type="button"
-          aria-label="Bewaren"
-          disabled={isAnimating}
-          onClick={() => commitDecision("right")}
-          className="flex size-16 items-center justify-center rounded-full border border-[rgba(91,191,181,0.3)] bg-hagu-accent-selected text-hagu-accent-strong shadow-[0px_4px_16px_rgba(91,191,181,0.2)] transition active:scale-95 disabled:opacity-50"
-        >
-          <Heart className="size-7 fill-current" strokeWidth={2} />
-        </button>
       </div>
     </div>
   )

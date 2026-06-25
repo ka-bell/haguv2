@@ -3,8 +3,11 @@
 import { ArrowLeft, Calendar, Send } from "lucide-react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
+import { ChatThreadHeaderActions } from "@/components/chat/chat-thread-header-actions"
+import { PAGE_HEADER_TOP_PADDING } from "@/components/ui/page-shell"
 import { getChatThread } from "@/lib/hagu-chat-threads"
 import { ROUTES } from "@/lib/routes"
+import { cn } from "@/lib/utils"
 
 type HaguChatThreadProps = {
   threadId: string
@@ -33,7 +36,7 @@ export function HaguChatThread({ threadId }: HaguChatThreadProps) {
 
   return (
     <div className="mx-auto flex h-dvh w-full max-w-md flex-col overflow-hidden bg-[#FCFFFF]">
-      <header className="shrink-0 border-b border-black/[0.06] bg-white px-5 pb-3 pt-14">
+      <header className={cn("shrink-0 border-b border-black/[0.06] bg-white px-5 pb-3", PAGE_HEADER_TOP_PADDING)}>
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -61,6 +64,8 @@ export function HaguChatThread({ threadId }: HaguChatThreadProps) {
             <p className="text-[15px] font-semibold text-[#1A1A1E]">{thread.name}</p>
             <p className="text-[11px] text-[#5BBFB5]">{thread.status}</p>
           </div>
+
+          <ChatThreadHeaderActions threadId={threadId} personName={thread.name} variant="hagu" />
         </div>
       </header>
 

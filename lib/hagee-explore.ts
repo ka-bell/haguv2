@@ -9,10 +9,9 @@ export type HageeExploreMatch = {
   tagline: string
   responseTime: string
   vibeTags: string[]
-  badge?: string
+  interests: string[]
+  activities: string[]
 }
-
-export const HAGEE_EXPLORE_LOCATION = "Amsterdam"
 
 export const HAGEE_EXPLORE_MATCHES: HageeExploreMatch[] = [
   {
@@ -26,7 +25,8 @@ export const HAGEE_EXPLORE_MATCHES: HageeExploreMatch[] = [
     tagline: "Great listener · Loves deep conversations",
     responseTime: "Responds within a few hours",
     vibeTags: ["Deep talk", "Calm", "Wine", "Top rated"],
-    badge: "Expert",
+    interests: ["Wine", "Philosophy", "Psychology", "Cooking", "Film"],
+    activities: ["meal", "conversation"],
   },
   {
     id: "sara",
@@ -39,6 +39,8 @@ export const HAGEE_EXPLORE_MATCHES: HageeExploreMatch[] = [
     tagline: "Curious mind · Long dinners, no agenda",
     responseTime: "Responds within a few hours",
     vibeTags: ["Film", "Philosophy", "Night owl"],
+    interests: ["Film", "Philosophy", "Wine", "Restaurants", "Literature"],
+    activities: ["meal", "outing"],
   },
   {
     id: "luca",
@@ -51,6 +53,8 @@ export const HAGEE_EXPLORE_MATCHES: HageeExploreMatch[] = [
     tagline: "City walks · Spontaneous plans",
     responseTime: "Usually replies same day",
     vibeTags: ["Coffee", "Walks", "Spontaneous"],
+    interests: ["Coffee", "Running", "Philosophy", "Cycling"],
+    activities: ["conversation", "outing"],
   },
   {
     id: "mila",
@@ -63,6 +67,7 @@ export const HAGEE_EXPLORE_MATCHES: HageeExploreMatch[] = [
     tagline: "Art lover · Thoughtful and warm",
     responseTime: "Responds within an hour",
     vibeTags: ["Art", "Wine", "Calm"],
-    badge: "Expert",
+    interests: ["Art galleries", "Wine", "Film", "Photography", "Cooking"],
+    activities: ["meal", "outing"],
   },
 ]

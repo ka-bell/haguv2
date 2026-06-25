@@ -3,9 +3,11 @@
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Camera, ChevronLeft } from "lucide-react"
+import { Camera } from "lucide-react"
+import { HaguFlowCta } from "@/components/hagu/hagu-flow-cta"
+import { HaguFlowHeader } from "@/components/hagu/hagu-flow-header"
 import { HaguToggle } from "@/components/ui/hagu-toggle"
-import { PageFixedHeader } from "@/components/ui/page-shell"
+import { ScreenLayout } from "@/components/ui/screen-layout"
 import { CHARACTER_OPTIONS } from "@/app/onboarding/hagee/data"
 import {
   DEFAULT_HAGEE_PROFILE_DATA,
@@ -117,29 +119,26 @@ export function HageeProfileEditScreen() {
   const bioLength = profile.bio.length
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col bg-hagu-canvas text-hagu-ink">
-      <PageFixedHeader className="border-b border-black/[0.06] bg-hagu-canvas/90 px-5 backdrop-blur-md">
-        <div className="flex items-center justify-between">
-          <button
-            type="button"
-            onClick={() => router.push(ROUTES.profile)}
-            aria-label="Go back"
-            className="flex size-8 items-center justify-center rounded-2xl border border-hagu-border bg-hagu-white shadow-[0px_1px_4px_rgba(0,0,0,0.08)]"
-          >
-            <ChevronLeft className="size-4 text-hagu-heading" />
-          </button>
-          <h1 className="text-base font-semibold tracking-tight text-hagu-heading">Edit Profile</h1>
-          <button
-            type="button"
-            onClick={handleSave}
-            className="rounded-full bg-hagu-accent-strong px-3.5 py-1.5 text-xs font-medium text-white"
-          >
-            Save
-          </button>
+    <ScreenLayout
+      className="bg-hagu-canvas text-hagu-ink"
+      contentPadding="px-5"
+      headerClassName="px-6"
+      reserveHeader
+      headerVariant="brand"
+      header={
+        <HaguFlowHeader
+          onBack={() => router.push(ROUTES.profile)}
+          closeHref={ROUTES.profile}
+        />
+      }
+      footer={<HaguFlowCta label="Save changes" onClick={handleSave} />}
+    >
+      <div className="space-y-3 pb-6">
+        <div className="space-y-1">
+          <h1 className="text-[26px] font-semibold tracking-tight text-hagu-heading">Edit profile</h1>
+          <p className="text-sm text-hagu-text-secondary">Update how people see you on Hagu.</p>
         </div>
-      </PageFixedHeader>
 
-      <div className="flex-1 space-y-3 overflow-y-auto px-5 pb-10 pt-[calc(3.5rem+3.25rem)]">
         <div className="relative h-40 overflow-hidden rounded-[20px]">
           <Image src={profile.coverImage} alt="" fill className="object-cover" sizes="400px" />
           <div className="absolute inset-0 flex items-center justify-center bg-black/35">
@@ -287,6 +286,6 @@ export function HageeProfileEditScreen() {
           </button>
         </ProfileEditSection>
       </div>
-    </main>
+    </ScreenLayout>
   )
 }

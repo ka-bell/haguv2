@@ -228,6 +228,16 @@
 }
 
 @layer components {
+  .hagu-brand-transition {
+    view-transition-name: hagu-brand;
+  }
+
+  ::view-transition-old(hagu-brand),
+  ::view-transition-new(hagu-brand) {
+    animation-duration: 0.35s;
+    animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
   .gsi-material-button {
     position: relative;
     display: block;

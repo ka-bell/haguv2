@@ -1,16 +1,20 @@
 "use client"
 
+import { forwardRef } from "react"
 import Image from "next/image"
 import { Heart } from "lucide-react"
 import type { HageeExploreMatch } from "@/lib/hagee-explore"
+import { cn } from "@/lib/utils"
 
 interface HageeSavedProfilesProps {
   profiles: HageeExploreMatch[]
+  className?: string
 }
 
-export function HageeSavedProfiles({ profiles }: HageeSavedProfilesProps) {
+export const HageeSavedProfiles = forwardRef<HTMLElement, HageeSavedProfilesProps>(
+  function HageeSavedProfiles({ profiles, className }, ref) {
   return (
-    <section className="space-y-3">
+    <section ref={ref} id="saved-profiles" className={cn("scroll-mt-28 space-y-3", className)}>
       <div className="flex items-center justify-between">
         <h2 className="text-base font-semibold text-hagu-heading">Bewaarde profielen</h2>
         {profiles.length > 0 ? (
@@ -43,11 +47,6 @@ export function HageeSavedProfiles({ profiles }: HageeSavedProfilesProps) {
                   sizes="140px"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                {profile.badge ? (
-                  <span className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-hagu-heading">
-                    {profile.badge}
-                  </span>
-                ) : null}
                 <div className="absolute inset-x-2.5 bottom-2.5">
                   <p className="text-sm font-semibold text-white">
                     {profile.name}, {profile.age}
@@ -63,4 +62,5 @@ export function HageeSavedProfiles({ profiles }: HageeSavedProfilesProps) {
       )}
     </section>
   )
-}
+},
+)

@@ -3,8 +3,11 @@
 import Image from "next/image"
 import { ArrowLeft, Send } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { ChatThreadHeaderActions } from "@/components/chat/chat-thread-header-actions"
+import { PAGE_HEADER_TOP_PADDING } from "@/components/ui/page-shell"
 import { getHageeChatThread } from "@/lib/hagee-chat"
 import { ROUTES } from "@/lib/routes"
+import { cn } from "@/lib/utils"
 
 type HageeChatThreadProps = {
   threadId: string
@@ -31,7 +34,7 @@ export function HageeChatThread({ threadId }: HageeChatThreadProps) {
 
   return (
     <div className="mx-auto flex h-dvh w-full max-w-md flex-col overflow-hidden bg-hagu-canvas">
-      <header className="shrink-0 border-b border-hagu-border bg-hagu-white px-5 pb-3 pt-14">
+      <header className={cn("shrink-0 border-b border-hagu-border bg-hagu-white px-5 pb-3", PAGE_HEADER_TOP_PADDING)}>
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -59,6 +62,8 @@ export function HageeChatThread({ threadId }: HageeChatThreadProps) {
             <p className="text-[15px] font-semibold text-hagu-heading">{thread.name}</p>
             <p className="text-[11px] text-hagu-accent-strong">{thread.status}</p>
           </div>
+
+          <ChatThreadHeaderActions threadId={threadId} personName={thread.name} variant="hagee" />
         </div>
       </header>
 

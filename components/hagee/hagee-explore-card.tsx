@@ -9,7 +9,12 @@ export type HageeExploreSwipeHint = "pass" | "save" | null
 
 interface HageeExploreCardProps {
   match: HageeExploreMatch
+  sharedInterests?: string[]
   onViewProfile?: () => void
+  onSkip?: () => void
+  onSave?: () => void
+  actionsDisabled?: boolean
+  showActions?: boolean
   swipeHint?: HageeExploreSwipeHint
   swipeProgress?: number
   className?: string
@@ -18,7 +23,12 @@ interface HageeExploreCardProps {
 
 export function HageeExploreCard({
   match,
+  sharedInterests = [],
   onViewProfile,
+  onSkip,
+  onSave,
+  actionsDisabled = false,
+  showActions = false,
   swipeHint = null,
   swipeProgress = 0,
   className,
@@ -32,7 +42,7 @@ export function HageeExploreCard({
   return (
     <article
       className={cn(
-        "relative h-[min(68vh,560px)] w-full overflow-hidden rounded-[28px] shadow-[0px_8px_32px_rgba(26,26,30,0.12)]",
+        "relative h-full min-h-0 w-full overflow-hidden rounded-[28px] shadow-[0px_8px_32px_rgba(26,26,30,0.12)]",
         className,
       )}
       style={style}
@@ -63,58 +73,96 @@ export function HageeExploreCard({
         </div>
       </div>
 
-      <div className="absolute inset-0 flex flex-col justify-between bg-gradient-to-b from-black/25 via-transparent to-black/70 p-6">
-        <div className="flex items-start justify-between gap-2">
-          <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[10px] tracking-wide text-white/90 backdrop-blur-md">
-            <Star className="mr-1 inline size-2.5 fill-white text-white" />
-            {match.rating.toFixed(1)}
-            {match.verified ? " · Verified" : ""}
-          </span>
-          <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[10px] text-white/90 backdrop-blur-md">
-            {match.availabilityLabel}
-          </span>
+      <div className="absolute inset-0 flex flex-col justify-between bg-gradient-to-b from-black/25 via-transparent to-black/80">
+        <div className="p-6 pr-[4.75rem]">
+          <div className="flex items-start justify-between gap-2">
+            <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[10px] tracking-wide text-white/90 backdrop-blur-md">
+              <Star className="mr-1 inline size-2.5 fill-white text-white" />
+              {match.rating.toFixed(1)}
+              {match.verified ? " · Verified" : ""}
+            </span>
+            <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[10px] text-white/90 backdrop-blur-md">
+              {match.availabilityLabel}
+            </span>
+          </div>
         </div>
 
-        <div className="space-y-5">
-          <div className="space-y-2">
-            <div className="flex items-end gap-2">
-              <h2 className="text-2xl font-semibold text-white">
-                {match.name}, {match.age}
-              </h2>
-              {match.badge ? (
-                <span className="mb-1 rounded-full border border-hagu-heading bg-white/90 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-hagu-heading backdrop-blur-sm">
-                  {match.badge}
-                </span>
+        <div className="mt-auto">
+          <div className="space-y-5 p-6 pr-[4.75rem] pb-0">
+            <div className="space-y-2">
+              <div className="flex items-end gap-2">
+                <h2 className="text-2xl font-semibold text-white">
+                  {match.name}, {match.age}
+                </h2>
+              </div>
+              <p className="text-sm leading-relaxed text-white">{match.tagline}</p>
+              {sharedInterests.length > 0 ? (
+                <div className="space-y-1">
+                  <span className="inline-flex items-center rounded-full border border-[rgba(208,241,240,0.35)] bg-[rgba(91,191,181,0.2)] px-2.5 py-1 text-[10px] font-semibold tracking-wide text-[#D0F1F0]">
+                    {sharedInterests.length} shared interest{sharedInterests.length === 1 ? "" : "s"}
+                  </span>
+                  <p className="text-[11px] text-white/75">
+                    {sharedInterests.slice(0, 3).join(" · ")}
+                    {sharedInterests.length > 3 ? ` +${sharedInterests.length - 3} more` : ""}
+                  </p>
+                </div>
               ) : null}
+              <p className="flex items-center gap-1.5 text-[11px] text-white/60">
+                <Clock className="size-3" />
+                {match.responseTime}
+              </p>
             </div>
-            <p className="text-sm leading-relaxed text-white">{match.tagline}</p>
-            <p className="flex items-center gap-1.5 text-[11px] text-white/60">
-              <Clock className="size-3" />
-              {match.responseTime}
-            </p>
+
+            <div className="flex flex-wrap gap-1.5">
+              {match.vibeTags.map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full border border-white/15 px-2.5 py-1 text-[9px] uppercase tracking-wide text-white/50"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
           </div>
 
-          <div className="flex flex-wrap gap-1.5">
-            {match.vibeTags.map((tag) => (
-              <span
-                key={tag}
-                className="rounded-full border border-white/15 px-2.5 py-1 text-[9px] uppercase tracking-wide text-white/50"
-              >
-                {tag}
-              </span>
-            ))}
+          <div className="flex justify-center px-6 pb-6 pt-5">
+            <button
+              type="button"
+              onClick={onViewProfile}
+              onPointerDown={(event) => event.stopPropagation()}
+              className="w-full max-w-[18rem] rounded-2xl border border-white/15 bg-white/10 px-10 py-[1.125rem] text-base font-semibold text-white backdrop-blur-xl transition active:bg-white/20"
+            >
+              View profile
+            </button>
           </div>
-
-          <button
-            type="button"
-            onClick={onViewProfile}
-            onPointerDown={(event) => event.stopPropagation()}
-            className="w-full rounded-xl border border-white/15 bg-white/10 py-4 text-sm font-semibold text-white backdrop-blur-xl transition active:bg-white/20"
-          >
-            View profile
-          </button>
         </div>
       </div>
+
+      {showActions && onSkip && onSave ? (
+        <div
+          className="absolute right-3 top-1/2 z-20 flex -translate-y-1/2 flex-col gap-4"
+          onPointerDown={(event) => event.stopPropagation()}
+        >
+          <button
+            type="button"
+            aria-label="Skip"
+            disabled={actionsDisabled}
+            onClick={onSkip}
+            className="flex size-14 items-center justify-center rounded-full border border-white/20 bg-white/95 text-hagu-heading shadow-[0px_4px_16px_rgba(0,0,0,0.18)] transition active:scale-[0.97] disabled:opacity-50"
+          >
+            <X className="size-6" strokeWidth={2.25} />
+          </button>
+          <button
+            type="button"
+            aria-label="Save"
+            disabled={actionsDisabled}
+            onClick={onSave}
+            className="flex size-14 items-center justify-center rounded-full bg-hagu-heading text-white shadow-[0px_8px_24px_rgba(0,0,0,0.28)] transition active:scale-[0.97] disabled:opacity-50"
+          >
+            <Heart className="size-6 fill-current" strokeWidth={2} />
+          </button>
+        </div>
+      ) : null}
     </article>
   )
 }

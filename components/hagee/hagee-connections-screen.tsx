@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Search } from "lucide-react"
 import { HageeTabShell } from "@/components/hagee/hagee-tab-shell"
@@ -16,6 +17,11 @@ import { ROUTES } from "@/lib/routes"
 import { cn } from "@/lib/utils"
 
 type ConnectionsTab = "chats" | "bookings" | "liked"
+
+function parseConnectionsTab(value: string | null): ConnectionsTab {
+  if (value === "liked" || value === "bookings" || value === "chats") return value
+  return "chats"
+}
 
 function ConnectionsTabs({
   active,
@@ -151,8 +157,14 @@ function LikedTab({ saved }: { saved: HageeExploreMatch[] }) {
 }
 
 export function HageeConnectionsScreen() {
-  const [tab, setTab] = useState<ConnectionsTab>("chats")
+  const searchParams = useSearchParams()
+  const tabFromQuery = searchParams.get("tab")
+  const [tab, setTab] = useState<ConnectionsTab>(() => parseConnectionsTab(tabFromQuery))
   const [saved, setSaved] = useState<HageeExploreMatch[]>([])
+
+  useEffect(() => {
+    setTab(parseConnectionsTab(tabFromQuery))
+  }, [tabFromQuery])
 
   useEffect(() => {
     setSaved(getSavedExploreMatches())

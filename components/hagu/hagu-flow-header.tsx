@@ -28,7 +28,7 @@ export function HaguFlowHeader({ onBack, closeHref = "/", className }: HaguFlowH
   if (!onBack) {
     return (
       <header className={cn("flex w-full justify-center", className)}>
-        <GlassChrome className="w-[147px] px-1">
+        <GlassChrome className="hagu-brand-transition w-[147px] px-1">
           <span className="text-lg font-bold tracking-tight text-[#2D1012]">HAGU</span>
         </GlassChrome>
       </header>
@@ -39,18 +39,18 @@ export function HaguFlowHeader({ onBack, closeHref = "/", className }: HaguFlowH
 
   return (
     <header className={cn("flex w-full items-center justify-center gap-[50px] pl-2.5", className)}>
-      <button type="button" onClick={onBack} aria-label="Go back">
+      <button type="button" onClick={onBack} aria-label="Go back" className="pointer-events-auto">
         <GlassChrome className="w-[46px]">
           <ChevronLeft className="size-4 text-[#2D1012]" />
         </GlassChrome>
       </button>
 
-      <GlassChrome className="w-[147px] px-1">
+      <GlassChrome className="hagu-brand-transition w-[147px] px-1">
         <span className="text-lg font-bold tracking-tight text-[#2D1012]">HAGU</span>
       </GlassChrome>
 
       {showClose ? (
-        <Link href={closeHref} aria-label="Close">
+        <Link href={closeHref} aria-label="Close" className="pointer-events-auto">
           <GlassChrome className="w-[52px]">
             <X className="size-[18px] text-[#2D1012]" />
           </GlassChrome>

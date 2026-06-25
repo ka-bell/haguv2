@@ -13,9 +13,18 @@ interface SegmentedPillGroupProps {
   value: string[]
   onChange?: (value: string[]) => void
   multiSelect?: boolean
+  size?: "default" | "sm"
+  className?: string
 }
 
-export function SegmentedPillGroup({ options, value, onChange, multiSelect = true }: SegmentedPillGroupProps) {
+export function SegmentedPillGroup({
+  options,
+  value,
+  onChange,
+  multiSelect = true,
+  size = "default",
+  className,
+}: SegmentedPillGroupProps) {
   const toggle = (option: string) => {
     if (!onChange) return
 
@@ -28,7 +37,7 @@ export function SegmentedPillGroup({ options, value, onChange, multiSelect = tru
   }
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className={cn("flex flex-wrap gap-2", size === "sm" && "gap-1.5", className)}>
       {options.map((option) => {
         const isActive = value.includes(option.value)
         return (
@@ -37,7 +46,8 @@ export function SegmentedPillGroup({ options, value, onChange, multiSelect = tru
             type="button"
             onClick={() => toggle(option.value)}
             className={cn(
-              "h-11 rounded-full px-5 text-[13px] font-medium transition",
+              "rounded-full font-medium transition",
+              size === "sm" ? "h-9 px-3.5 text-[12px]" : "h-11 px-5 text-[13px]",
               isActive ? "bg-[#1A1A1E] text-white" : "border border-black/[0.08] bg-white text-[#4A4A52] hover:bg-black/[0.03]",
             )}
           >

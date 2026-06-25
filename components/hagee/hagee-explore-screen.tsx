@@ -1,66 +1,54 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
-import { MapPin } from "lucide-react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { HageeExploreSwipeStack } from "@/components/hagee/hagee-explore-swipe-stack"
-import { HageeRefineBanner } from "@/components/hagee/hagee-refine-banner"
-import { HageeSavedProfiles } from "@/components/hagee/hagee-saved-profiles"
+import { HageeExploreToolbar } from "@/components/hagee/hagee-explore-toolbar"
+import { HAGEE_EXPLORE_MATCHES } from "@/lib/hagee-explore"
 import {
-  HAGEE_EXPLORE_LOCATION,
-  HAGEE_EXPLORE_MATCHES,
-} from "@/lib/hagee-explore"
-import { HAGEE_CLIENT_NAME } from "@/lib/hagee-discover"
+  getSharedInterests,
+  HAGEE_EXPLORE_VIEWPORT_HEIGHT,
+  resolveDiscoverPreferences,
+} from "@/lib/hagee-explore-utils"
 import {
   addSavedExploreMatch,
   getSavedExploreMatches,
 } from "@/lib/hagee-saved-storage"
+import {
+  getDiscoverPreferences,
+  type HageeDiscoverPreferences,
+} from "@/lib/hagee-discover-preferences"
 import type { HageeExploreMatch } from "@/lib/hagee-explore"
-
-function timeGreeting() {
-  const hour = new Date().getHours()
-  if (hour < 12) return "Good morning"
-  if (hour < 18) return "Good afternoon"
-  return "Good evening"
-}
+import { cn } from "@/lib/utils"
 
 export function HageeExploreScreen() {
-  const [saved, setSaved] = useState<HageeExploreMatch[]>([])
+  const [savedCount, setSavedCount] = useState(0)
+  const [preferences, setPreferences] = useState<HageeDiscoverPreferences | null>(null)
 
   useEffect(() => {
-    setSaved(getSavedExploreMatches())
+    setSavedCount(getSavedExploreMatches().length)
+    setPreferences(getDiscoverPreferences())
   }, [])
+
+  const interestLabels = useMemo(() => {
+    const { interests } = resolveDiscoverPreferences(preferences)
+    return interests
+  }, [preferences])
 
   const handleSave = useCallback((match: HageeExploreMatch) => {
     addSavedExploreMatch(match)
-    setSaved(getSavedExploreMatches())
+    setSavedCount(getSavedExploreMatches().length)
   }, [])
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-sm text-hagu-text-secondary">{timeGreeting()},</p>
-          <h1 className="text-[32px] font-semibold leading-tight tracking-tight text-hagu-heading">
-            {HAGEE_CLIENT_NAME}
-          </h1>
-        </div>
-        <button
-          type="button"
-          className="flex shrink-0 items-center gap-1.5 rounded-full border border-hagu-border bg-hagu-white px-3 py-2 text-xs font-medium text-hagu-label shadow-[0px_1px_2px_rgba(0,0,0,0.04)]"
-        >
-          <MapPin className="size-3.5 text-hagu-accent-strong" />
-          {HAGEE_EXPLORE_LOCATION}
-        </button>
-      </div>
-
-      <HageeRefineBanner />
+    <div className={cn("flex min-h-0 flex-col gap-2", HAGEE_EXPLORE_VIEWPORT_HEIGHT)}>
+      <HageeExploreToolbar savedCount={savedCount} />
 
       <HageeExploreSwipeStack
+        className="min-h-0 flex-1"
         matches={HAGEE_EXPLORE_MATCHES}
+        getSharedInterests={(match) => getSharedInterests(match, interestLabels)}
         onSave={handleSave}
       />
-
-      <HageeSavedProfiles profiles={saved} />
     </div>
   )
 }

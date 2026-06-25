@@ -1,12 +1,24 @@
 "use client"
 
 import * as React from "react"
+import { ScreenFooter } from "@/components/ui/screen-footer"
 import { cn } from "@/lib/utils"
 
 type DivProps = React.HTMLAttributes<HTMLDivElement>
 
-/** Safe-area top + glass chrome height + spacing below header. */
-export const PAGE_FIXED_HEADER_OFFSET = "pt-[calc(3.5rem+45px+1.25rem)]" as const
+/** Shared top inset for every screen header (safe area + gap). */
+export const PAGE_HEADER_TOP_PADDING = "pt-[calc(env(safe-area-inset-top,2.75rem)+0.5rem)]" as const
+
+/** @see SCREEN_BODY_OFFSET_BRAND in screen-layout.tsx */
+export const PAGE_FIXED_HEADER_OFFSET =
+  "pt-[calc(env(safe-area-inset-top,2.75rem)+0.5rem+45px+0.75rem)]" as const
+
+/** @see SCREEN_BODY_OFFSET_FLOW_HAGEE in screen-layout.tsx */
+export const PAGE_HAGEE_FLOW_HEADER_OFFSET =
+  "pt-[calc(env(safe-area-inset-top,2.75rem)+0.5rem+4.75rem)]" as const
+
+/** Scroll offset below inline toolbar headers (edit profile, chat thread row). */
+export const PAGE_TOOLBAR_HEADER_OFFSET = "pt-[calc(env(safe-area-inset-top,2.75rem)+0.5rem+2.75rem+0.75rem)]" as const
 
 type PageContentProps = DivProps & {
   /** Reserve space for a PageFixedHeader so content scrolls underneath it. */
@@ -21,12 +33,13 @@ export function PageFixedHeader({ className, children, ...props }: DivProps) {
   return (
     <div
       className={cn(
-        "pointer-events-none fixed inset-x-0 top-0 z-30 mx-auto w-full max-w-md px-6 pt-14",
+        "pointer-events-none fixed inset-x-0 top-0 z-30 mx-auto w-full max-w-md px-6",
+        PAGE_HEADER_TOP_PADDING,
         className,
       )}
       {...props}
     >
-      <div className="pointer-events-auto">{children}</div>
+      {children}
     </div>
   )
 }
@@ -34,7 +47,7 @@ export function PageFixedHeader({ className, children, ...props }: DivProps) {
 export function PageShell({ className, ...props }: DivProps) {
   return (
     <main
-      className={cn("mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#FEFFFF] px-6 pb-8 pt-2", className)}
+      className={cn("mx-auto flex min-h-dvh w-full max-w-md flex-col bg-[#FEFFFF] px-6 pb-8 pt-2", className)}
       {...props}
     />
   )
@@ -49,8 +62,7 @@ export function PageContent({ className, underFixedHeader, ...props }: PageConte
   )
 }
 
-export function PageActions({ className, ...props }: DivProps) {
-  const { style, children, ...rest } = props
+export function PageActions({ className, children }: { className?: string; children?: React.ReactNode }) {
   const [hideForKeyboard, setHideForKeyboard] = React.useState(false)
 
   React.useEffect(() => {
@@ -88,21 +100,19 @@ export function PageActions({ className, ...props }: DivProps) {
   }, [])
 
   return (
-    <div
+    <ScreenFooter
       className={cn(
-        "sticky bottom-0 z-20 mt-auto -mx-6 border-t border-black/5 bg-[#FEFFFF]/95 px-6 pb-3 pt-4 backdrop-blur supports-[backdrop-filter]:bg-[#FEFFFF]/90 transition-all duration-200",
+        "transition-all duration-200",
         hideForKeyboard && "pointer-events-none translate-y-full opacity-0",
       )}
-      style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 0.75rem)" }}
+      innerClassName={className}
     >
-      <div className={cn("mx-auto w-full max-w-md space-y-3", className)} style={style} {...rest}>
-        {children}
-      </div>
-    </div>
+      {children}
+    </ScreenFooter>
   )
 }
 
 /**
- * CTA zones are sticky by default across app flows.
- * If a route must not use sticky actions, render custom actions outside PageActions.
+ * Bottom action zone — delegates to ScreenFooter (pinned, not sticky).
+ * Parent shell must be `min-h-dvh` flex column (PageShell or ScreenLayout).
  */

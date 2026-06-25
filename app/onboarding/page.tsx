@@ -118,14 +118,6 @@ export default function HageeOnboardingPage() {
 
   const renderIntro = () => (
     <>
-      <button
-        type="button"
-        onClick={handleSkipIntro}
-        className="absolute right-0 top-0 z-10 px-2 py-2 text-[13px] font-medium text-[#8A8A96]"
-      >
-        Skip
-      </button>
-
       <div className="relative -mx-7 -mt-2 h-[min(42vh,340px)] overflow-hidden px-7">
         <div className="relative h-full overflow-hidden rounded-[24px]">
           <Image src={INTRO_HERO_IMAGE} alt="" fill className="object-cover" sizes="400px" priority />
@@ -321,7 +313,15 @@ export default function HageeOnboardingPage() {
         ctaLabel={ctaLabel}
         onCta={handleContinue}
         ctaDisabled={!isPrototypeMode() && !canContinue}
-        className="relative"
+        headerAction={
+          <button
+            type="button"
+            onClick={handleSkipIntro}
+            className="pointer-events-auto px-1 py-2 text-[13px] font-medium text-[#8A8A96]"
+          >
+            Skip
+          </button>
+        }
         footer={
           <p className="mt-4 text-center text-[13px] text-[#8A8A96]">
             Already have an account?{" "}

@@ -3,7 +3,8 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Clock, MapPin, MessageCircle, Star, Timer } from "lucide-react"
+import { Clock, MessageCircle, Star, Timer } from "lucide-react"
+import { HageeActivityCard } from "@/components/hagee/hagee-activity-card"
 import {
   HAGEE_ACTIVE_BOOKING,
   HAGEE_DAILY_SPOTLIGHT,
@@ -11,7 +12,6 @@ import {
   HAGEE_NEW_ARRIVALS,
 } from "@/lib/hagee-home"
 import { HAGEE_CLIENT_NAME } from "@/lib/hagee-discover"
-import { HAGEE_EXPLORE_LOCATION } from "@/lib/hagee-explore"
 import { ROUTES } from "@/lib/routes"
 
 function timeGreeting() {
@@ -28,20 +28,11 @@ export function HageeHomeScreen() {
 
   return (
     <div className="space-y-8 pb-4">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-[13px] text-hagu-text-secondary">{timeGreeting()}</p>
-          <h1 className="text-2xl font-semibold tracking-tight text-hagu-heading">
-            {HAGEE_CLIENT_NAME}
-          </h1>
-        </div>
-        <button
-          type="button"
-          className="flex shrink-0 items-center gap-2 rounded-full border border-hagu-border bg-hagu-white px-3 py-1.5 text-xs font-medium text-hagu-heading shadow-[0px_2px_5px_rgba(0,0,0,0.03)]"
-        >
-          <MapPin className="size-3.5 text-hagu-accent-strong" />
-          {HAGEE_EXPLORE_LOCATION}
-        </button>
+      <div>
+        <p className="text-[13px] text-hagu-text-secondary">{timeGreeting()}</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-hagu-heading">
+          {HAGEE_CLIENT_NAME}
+        </h1>
       </div>
 
       <section className="relative overflow-hidden rounded-[24px] bg-hagu-heading p-5 shadow-[0px_4px_16px_rgba(26,26,30,0.06)]">
@@ -97,34 +88,23 @@ export function HageeHomeScreen() {
       <section className="space-y-4">
         <h2 className="text-lg font-semibold text-hagu-heading">What&apos;s the mood?</h2>
         <div className="grid grid-cols-2 gap-3">
-          {HAGEE_MOOD_OPTIONS.map((mood) => {
-            const Icon = mood.icon
-            return (
-              <button
-                key={mood.id}
-                type="button"
-                onClick={() => router.push(ROUTES.explore)}
-                className="relative overflow-hidden rounded-2xl border border-hagu-border bg-hagu-white p-4 text-left shadow-[0px_2px_10px_rgba(0,0,0,0.03)] transition active:opacity-90"
-              >
-                <div className={`absolute -right-4 -top-4 size-16 rounded-bl-full ${mood.cornerBg}`} />
-                <div className={`relative flex size-10 items-center justify-center rounded-full ${mood.iconBg}`}>
-                  <Icon className="size-5 text-hagu-heading" strokeWidth={1.75} />
-                </div>
-                <p className="relative mt-3 text-[15px] font-semibold text-hagu-heading">{mood.title}</p>
-                <p className="relative mt-0.5 text-[11px] leading-snug text-hagu-text-secondary">
-                  {mood.subtitle}
-                </p>
-              </button>
-            )
-          })}
+          {HAGEE_MOOD_OPTIONS.map((mood) => (
+            <HageeActivityCard
+              key={mood.id}
+              icon={mood.icon}
+              label={mood.title}
+              subtitle={mood.subtitle}
+              selected={false}
+              onClick={() => router.push(ROUTES.explore)}
+            />
+          ))}
         </div>
       </section>
 
       <section className="space-y-4">
         <h2 className="text-lg font-semibold text-hagu-heading">Daily Spotlight</h2>
-        <article className="relative overflow-hidden rounded-[24px] border border-hagu-border bg-hagu-white p-4 shadow-[0px_4px_20px_rgba(0,0,0,0.04)]">
-          <div className="pointer-events-none absolute -right-4 -top-4 size-20 rounded-bl-full bg-hagu-accent-strong/10" />
-          <div className="relative flex items-center gap-4">
+        <article className="rounded-[24px] border border-hagu-border bg-hagu-white p-4 shadow-[0px_4px_20px_rgba(0,0,0,0.04)]">
+          <div className="flex items-center gap-4">
             <div className="relative size-20 shrink-0 overflow-hidden rounded-2xl border border-hagu-border shadow-sm">
               <Image src={spotlight.photo} alt={spotlight.name} fill className="object-cover" sizes="80px" />
             </div>
@@ -154,7 +134,7 @@ export function HageeHomeScreen() {
 
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-hagu-heading">New in {HAGEE_EXPLORE_LOCATION}</h2>
+          <h2 className="text-lg font-semibold text-hagu-heading">New arrivals</h2>
           <Link href={ROUTES.explore} className="text-xs font-semibold text-hagu-accent-strong">
             View All
           </Link>

@@ -4,11 +4,13 @@ import { X } from "lucide-react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { PAGE_HEADER_TOP_PADDING } from "@/components/ui/page-shell"
 import { HaguStarRating } from "@/components/hagu/hagu-star-rating"
 import { HaguToggle } from "@/components/ui/hagu-toggle"
 import { completeReview } from "@/lib/hagu-review-storage"
 import { REVIEW_CRITERIA, type PendingReview, type ReviewCriterion } from "@/lib/hagu-reviews"
 import { ROUTES } from "@/lib/routes"
+import { cn } from "@/lib/utils"
 
 type HaguReviewScreenProps = {
   review: PendingReview
@@ -42,7 +44,7 @@ export function HaguReviewScreen({ review }: HaguReviewScreenProps) {
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col bg-[#F7F6F3]">
-      <div className="sticky top-0 z-20 flex justify-end bg-[#F7F6F3] px-6 pb-2 pt-14">
+      <div className={cn("sticky top-0 z-20 flex justify-end bg-[#F7F6F3] px-6 pb-2", PAGE_HEADER_TOP_PADDING)}>
         <button
           type="button"
           onClick={() => router.push(ROUTES.discover)}

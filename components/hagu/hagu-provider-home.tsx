@@ -72,6 +72,8 @@ export function HaguProviderHome() {
         </button>
       </div>
 
+      <ProviderHomeTodos />
+
       <button
         type="button"
         onClick={() => router.push(ROUTES.settingsTransactions)}
@@ -91,8 +93,6 @@ export function HaguProviderHome() {
           <HaguWordmark className="pointer-events-none absolute bottom-1 right-3 h-11 w-11 rotate-[14deg]" />
         </div>
       </button>
-
-      <RequestsBanner onNavigate={() => router.push(ROUTES.requests)} />
 
       <section className="space-y-3">
         <div className="flex items-center justify-between gap-3">
@@ -215,9 +215,34 @@ export function HaguProviderHome() {
           ))}
         </div>
       </section>
-
-      <HaguPendingReviewsBanner />
     </div>
+  )
+}
+
+function ProviderHomeTodos() {
+  const router = useRouter()
+  const requestCount = PROVIDER_FEED_TAB_COUNTS.requests
+
+  return (
+    <section className="space-y-3">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-xs font-medium uppercase tracking-wide text-[#1A1A1E]">To do</p>
+        <button
+          type="button"
+          onClick={() => router.push(ROUTES.requests)}
+          className="text-[13px] font-medium text-[#3DA89E]"
+        >
+          View all
+        </button>
+      </div>
+
+      <div className="space-y-2">
+        {requestCount > 0 ? (
+          <RequestsBanner onNavigate={() => router.push(ROUTES.requests)} />
+        ) : null}
+        <HaguPendingReviewsBanner />
+      </div>
+    </section>
   )
 }
 
