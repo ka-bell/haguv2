@@ -42,7 +42,7 @@ export function HageeExploreCard({
   return (
     <article
       className={cn(
-        "relative h-full min-h-0 w-full overflow-hidden rounded-[28px] shadow-[0px_8px_32px_rgba(26,26,30,0.12)]",
+        "relative h-full min-h-0 w-full overflow-hidden rounded-[20px] border border-hagu-border shadow-[0px_2px_8px_rgba(26,26,30,0.04)]",
         className,
       )}
       style={style}
@@ -54,7 +54,7 @@ export function HageeExploreCard({
         style={{ opacity: passOpacity }}
       >
         <div
-          className="flex size-20 items-center justify-center rounded-full border border-white/40 bg-black/20 shadow-[0px_4px_24px_rgba(0,0,0,0.15)] backdrop-blur-md"
+          className="flex size-20 items-center justify-center rounded-full border border-white/30 bg-black/35"
           style={{ transform: `scale(${passScale})` }}
         >
           <X className="size-10 text-white" strokeWidth={2.5} />
@@ -66,7 +66,7 @@ export function HageeExploreCard({
         style={{ opacity: saveOpacity }}
       >
         <div
-          className="flex size-20 items-center justify-center rounded-full border border-white/40 bg-black/20 shadow-[0px_4px_24px_rgba(0,0,0,0.15)] backdrop-blur-md"
+          className="flex size-20 items-center justify-center rounded-full border border-white/30 bg-black/35"
           style={{ transform: `scale(${saveScale})` }}
         >
           <Heart className="size-10 text-white" strokeWidth={2.5} />
@@ -76,12 +76,12 @@ export function HageeExploreCard({
       <div className="absolute inset-0 flex flex-col justify-between bg-gradient-to-b from-black/25 via-transparent to-black/80">
         <div className="p-6 pr-[4.75rem]">
           <div className="flex items-start justify-between gap-2">
-            <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[10px] tracking-wide text-white/90 backdrop-blur-md">
+            <span className="rounded-full bg-black/40 px-3 py-1.5 text-[10px] tracking-wide text-white">
               <Star className="mr-1 inline size-2.5 fill-white text-white" />
               {match.rating.toFixed(1)}
               {match.verified ? " · Verified" : ""}
             </span>
-            <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[10px] text-white/90 backdrop-blur-md">
+            <span className="rounded-full bg-black/40 px-3 py-1.5 text-[10px] text-white">
               {match.availabilityLabel}
             </span>
           </div>
@@ -91,14 +91,14 @@ export function HageeExploreCard({
           <div className="space-y-5 p-6 pr-[4.75rem] pb-0">
             <div className="space-y-2">
               <div className="flex items-end gap-2">
-                <h2 className="text-2xl font-semibold text-white">
+                <h2 className="text-[22px] font-semibold tracking-tight text-white">
                   {match.name}, {match.age}
                 </h2>
               </div>
               <p className="text-sm leading-relaxed text-white">{match.tagline}</p>
               {sharedInterests.length > 0 ? (
                 <div className="space-y-1">
-                  <span className="inline-flex items-center rounded-full border border-[rgba(208,241,240,0.35)] bg-[rgba(91,191,181,0.2)] px-2.5 py-1 text-[10px] font-semibold tracking-wide text-[#D0F1F0]">
+                  <span className="inline-flex items-center rounded-full border border-hagu-glass-border bg-hagu-accent-selected/90 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-hagu-accent-strong">
                     {sharedInterests.length} shared interest{sharedInterests.length === 1 ? "" : "s"}
                   </span>
                   <p className="text-[11px] text-white/75">
@@ -130,7 +130,7 @@ export function HageeExploreCard({
               type="button"
               onClick={onViewProfile}
               onPointerDown={(event) => event.stopPropagation()}
-              className="w-full max-w-[18rem] rounded-2xl border border-white/15 bg-white/10 px-10 py-[1.125rem] text-base font-semibold text-white backdrop-blur-xl transition active:bg-white/20"
+              className="h-11 w-full max-w-[18rem] rounded-[10px] bg-hagu-white px-8 text-sm font-medium text-hagu-heading transition"
             >
               View profile
             </button>
@@ -148,7 +148,7 @@ export function HageeExploreCard({
             aria-label="Skip"
             disabled={actionsDisabled}
             onClick={onSkip}
-            className="flex size-14 items-center justify-center rounded-full border border-white/20 bg-white/95 text-hagu-heading shadow-[0px_4px_16px_rgba(0,0,0,0.18)] transition active:scale-[0.97] disabled:opacity-50"
+            className="flex size-14 items-center justify-center rounded-full border border-white/20 bg-white/95 text-hagu-heading shadow-[0px_4px_16px_rgba(0,0,0,0.18)] transition disabled:opacity-50"
           >
             <X className="size-6" strokeWidth={2.25} />
           </button>
@@ -157,7 +157,7 @@ export function HageeExploreCard({
             aria-label="Save"
             disabled={actionsDisabled}
             onClick={onSave}
-            className="flex size-14 items-center justify-center rounded-full bg-hagu-heading text-white shadow-[0px_8px_24px_rgba(0,0,0,0.28)] transition active:scale-[0.97] disabled:opacity-50"
+            className="flex size-14 items-center justify-center rounded-full bg-hagu-heading text-white shadow-[0px_8px_24px_rgba(0,0,0,0.28)] transition disabled:opacity-50"
           >
             <Heart className="size-6 fill-current" strokeWidth={2} />
           </button>

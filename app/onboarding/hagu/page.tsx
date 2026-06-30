@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Camera, ChevronRight } from "lucide-react"
+import { Camera, ChevronRight, Plus, X } from "lucide-react"
 import { HaguFlowScreen } from "@/components/hagu/hagu-flow-screen"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -26,6 +26,7 @@ import { CharacterCard, SectionLabel } from "./onboarding-chrome"
 
 type ActivityPricing = "included" | "extra"
 type ActivityState = { enabled: boolean; pricing: ActivityPricing; extraCost: string }
+type ActivityMenuItem = { id: string; label: string; custom?: boolean }
 type PaymentMethod = "stripe" | "paypal" | null
 
 export default function HaguOnboardingPage() {
@@ -55,6 +56,9 @@ export default function HaguOnboardingPage() {
   const [characters, setCharacters] = useState<string[]>(["night-owl", "deep-diver"])
   const [hosting, setHosting] = useState<string[]>(["hosting", "visiting"])
   const [rates, setRates] = useState({ one: "60", two: "95", three: "130", four: "160" })
+  const [activityItems, setActivityItems] = useState<ActivityMenuItem[]>(
+    ACTIVITY_ITEMS.map((item) => ({ ...item, custom: false })),
+  )
   const [activities, setActivities] = useState<Record<string, ActivityState>>({
     cuddling: { enabled: true, pricing: "included", extraCost: "" },
     "back-scratching": { enabled: true, pricing: "extra", extraCost: "10" },
@@ -83,11 +87,37 @@ export default function HaguOnboardingPage() {
     setActivities((prev) => ({ ...prev, [id]: { ...prev[id], ...patch } }))
   }
 
+  const addActivity = () => {
+    const id = `custom-${Date.now()}`
+    setActivityItems((prev) => [...prev, { id, label: "", custom: true }])
+    setActivities((prev) => ({
+      ...prev,
+      [id]: { enabled: true, pricing: "included", extraCost: "" },
+    }))
+  }
+
+  const updateActivityLabel = (id: string, label: string) => {
+    setActivityItems((prev) => prev.map((item) => (item.id === id ? { ...item, label } : item)))
+  }
+
+  const removeActivity = (id: string) => {
+    setActivityItems((prev) => prev.filter((item) => item.id !== id))
+    setActivities((prev) => {
+      const next = { ...prev }
+      delete next[id]
+      return next
+    })
+  }
+
   const canContinue = (() => {
     if (step === 2) return displayName.trim() !== "" && age.trim() !== "" && sex.trim() !== ""
     if (step === 3) return neighborhood.trim() !== "" && languages.length > 0 && characters.length >= 2
     if (step === 4) return hosting.length > 0 && rates.one.trim() !== ""
-    if (step === 5) return Object.values(activities).some((item) => item.enabled)
+    if (step === 5) {
+      const enabledItems = activityItems.filter((item) => activities[item.id]?.enabled)
+      if (enabledItems.length === 0) return false
+      return enabledItems.every((item) => !item.custom || item.label.trim() !== "")
+    }
     if (step === 6) return selectedDays.length > 0 && timePreferences.length > 0
     if (step === 7) return true
     if (step === 8) return socialHandle.trim() !== ""
@@ -97,7 +127,7 @@ export default function HaguOnboardingPage() {
 
   const handleBack = () => {
     if (editMode) {
-      router.push(ROUTES.settings)
+      router.push(ROUTES.profile)
       return
     }
     if (step === 1) {
@@ -109,7 +139,7 @@ export default function HaguOnboardingPage() {
 
   const handleContinue = () => {
     if (editMode) {
-      router.push(ROUTES.settings)
+      router.push(ROUTES.profile)
       return
     }
 
@@ -285,8 +315,9 @@ export default function HaguOnboardingPage() {
       <SectionLabel>Physical Comfort</SectionLabel>
 
       <div className="space-y-3">
-        {ACTIVITY_ITEMS.map((activity) => {
+        {activityItems.map((activity) => {
           const state = activities[activity.id]
+          if (!state) return null
           return (
             <div
               key={activity.id}
@@ -296,23 +327,44 @@ export default function HaguOnboardingPage() {
               )}
             >
               <div className="flex items-center justify-between gap-3">
-                <p className="text-[15px] font-medium text-[#2D1012]">{activity.label}</p>
-                <button
-                  type="button"
-                  onClick={() => updateActivity(activity.id, { enabled: !state.enabled })}
-                  className={cn(
-                    "relative h-7 w-12 rounded-full transition",
-                    state.enabled ? "bg-[#2D1012]" : "bg-black/10",
-                  )}
-                  aria-label={`Toggle ${activity.label}`}
-                >
-                  <span
-                    className={cn(
-                      "absolute top-1 size-5 rounded-full bg-white transition",
-                      state.enabled ? "left-6" : "left-1",
-                    )}
+                {activity.custom ? (
+                  <input
+                    value={activity.label}
+                    onChange={(e) => updateActivityLabel(activity.id, e.target.value)}
+                    placeholder="Activity name"
+                    className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-[#2D1012] outline-none placeholder:text-[#B8B8C2]"
                   />
-                </button>
+                ) : (
+                  <p className="text-[15px] font-medium text-[#2D1012]">{activity.label}</p>
+                )}
+                <div className="flex shrink-0 items-center gap-2">
+                  {activity.custom ? (
+                    <button
+                      type="button"
+                      onClick={() => removeActivity(activity.id)}
+                      className="flex size-8 items-center justify-center rounded-full text-[#8A8A96]"
+                      aria-label="Remove activity"
+                    >
+                      <X className="size-4" />
+                    </button>
+                  ) : null}
+                  <button
+                    type="button"
+                    onClick={() => updateActivity(activity.id, { enabled: !state.enabled })}
+                    className={cn(
+                      "relative h-7 w-12 rounded-full transition",
+                      state.enabled ? "bg-[#2D1012]" : "bg-black/10",
+                    )}
+                    aria-label={`Toggle ${activity.label || "activity"}`}
+                  >
+                    <span
+                      className={cn(
+                        "absolute top-1 size-5 rounded-full bg-white transition",
+                        state.enabled ? "left-6" : "left-1",
+                      )}
+                    />
+                  </button>
+                </div>
               </div>
 
               {state.enabled ? (
@@ -327,12 +379,13 @@ export default function HaguOnboardingPage() {
                     onChange={(value) => updateActivity(activity.id, { pricing: value[0] as ActivityPricing })}
                   />
                   {state.pricing === "extra" ? (
-                    <div className="flex h-11 items-center rounded-xl border border-black/10 bg-white px-3">
-                      <span className="pr-2 text-[#8a8a96]">+ €</span>
+                    <div className="flex h-11 items-center gap-2 rounded-xl border border-black/10 bg-white px-3">
+                      <span className="shrink-0 text-sm text-[#8A8A96]">€</span>
                       <input
                         value={state.extraCost}
                         onChange={(e) => updateActivity(activity.id, { extraCost: e.target.value })}
-                        className="w-full bg-transparent text-sm text-[#2D1012] outline-none"
+                        inputMode="decimal"
+                        className="min-w-0 flex-1 bg-transparent text-sm text-[#2D1012] outline-none"
                         placeholder="10.00"
                       />
                     </div>
@@ -342,6 +395,15 @@ export default function HaguOnboardingPage() {
             </div>
           )
         })}
+
+        <button
+          type="button"
+          onClick={addActivity}
+          className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-black/[0.12] bg-white py-3.5 text-sm font-medium text-[#4A4A52] transition active:bg-[#F7F6F3]"
+        >
+          <Plus className="size-4" />
+          Add activity
+        </button>
       </div>
     </div>
   )
@@ -516,7 +578,7 @@ export default function HaguOnboardingPage() {
   return (
     <HaguFlowScreen
       onBack={handleBack}
-      closeHref={editMode ? ROUTES.settings : ROUTES.selectRole}
+      closeHref={editMode ? ROUTES.profile : ROUTES.selectRole}
       progress={progress}
       ctaLabel={ctaLabel}
       onCta={handleContinue}

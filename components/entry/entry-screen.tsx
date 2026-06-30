@@ -26,7 +26,7 @@ export function EntryScreen() {
   return (
     <EntryGate>
       <ScreenLayout
-        className="bg-[#FEFFFF]"
+        className="bg-hagu-canvas"
         contentClassName="flex flex-col justify-center pb-6"
         header={<BrandHeaderSpacer />}
         footer={
@@ -43,10 +43,10 @@ export function EntryScreen() {
         }
       >
         <div className="text-center">
-          <h1 className="hagu-brand-transition text-5xl font-black tracking-tight text-[#2D1012]">
+          <h1 className="hagu-brand-transition text-5xl font-black tracking-tight text-hagu-heading">
             HAGU
           </h1>
-          <p className="mt-3 text-sm text-[#8a8a96]">The app for unconventional companionship.</p>
+          <p className="mt-3 text-sm text-hagu-text-secondary">The app for unconventional companionship.</p>
         </div>
       </ScreenLayout>
     </EntryGate>

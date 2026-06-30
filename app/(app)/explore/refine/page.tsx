@@ -136,10 +136,10 @@ export default function ExploreRefinePage() {
         {step === 1 ? (
           <div className="space-y-5">
             <div className="space-y-2">
-              <p className="text-xs font-medium uppercase tracking-[0.3px] text-hagu-accent-strong">
+              <p className="hagu-section-label text-hagu-accent-strong">
                 What you&apos;re looking for
               </p>
-              <h1 className="text-[26px] font-semibold tracking-tight text-hagu-heading">
+              <h1 className="hagu-page-title text-hagu-heading">
                 {isFirstSetup
                   ? "What kind of time do you want to spend?"
                   : "Update what you're looking for"}
@@ -165,10 +165,10 @@ export default function ExploreRefinePage() {
         ) : (
           <div className="space-y-5">
             <div className="space-y-2">
-              <p className="text-xs font-medium uppercase tracking-[0.3px] text-hagu-accent-strong">
+              <p className="hagu-section-label text-hagu-accent-strong">
                 Your interests
               </p>
-              <h1 className="text-[26px] font-semibold tracking-tight text-hagu-heading">
+              <h1 className="hagu-page-title text-hagu-heading">
                 {isFirstSetup ? "What lights you up?" : "Update your interests"}
               </h1>
               <p className="text-sm text-hagu-text-secondary">

@@ -12,7 +12,7 @@ export function HageeRefineBanner({ className }: HageeRefineBannerProps) {
     <Link
       href={ROUTES.exploreRefine}
       className={cn(
-        "flex items-center gap-3.5 rounded-[20px] border border-[rgba(91,191,181,0.22)] bg-hagu-accent-selected px-5 py-4 transition active:opacity-90",
+        "flex items-center gap-3.5 rounded-[20px] border border-hagu-glass-border bg-hagu-accent-selected px-5 py-4 transition",
         className,
       )}
     >

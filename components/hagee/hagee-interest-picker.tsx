@@ -2,8 +2,8 @@
 
 import { cn } from "@/lib/utils"
 
-const selectedClass = "border-hagu-accent-strong bg-hagu-accent-selected text-hagu-accent-strong"
-const unselectedClass = "border-hagu-border bg-hagu-white text-hagu-label"
+const selectedClass = "border-2 border-hagu-accent-strong bg-hagu-accent-soft text-hagu-ink"
+const unselectedClass = "border border-hagu-border bg-hagu-white text-hagu-label"
 
 interface HageeInterestPickerProps {
   categories: { id: string; label: string; options: string[] }[]

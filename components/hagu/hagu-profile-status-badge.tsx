@@ -10,7 +10,7 @@ export function HaguProfileStatusBadge({ active, className }: HaguProfileStatusB
     <span
       className={cn(
         "rounded-full px-2.5 py-0.5 text-[11px] font-semibold",
-        active ? "bg-[#EAF7F5] text-[#3DA89E]" : "bg-[#F7F6F3] text-[#8A8A96]",
+        active ? "bg-hagu-accent-selected text-hagu-accent-strong" : "bg-hagu-surface-muted text-hagu-text-secondary",
         className,
       )}
     >

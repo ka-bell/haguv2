@@ -1,0 +1,42 @@
+---
+description: Screen layout — fixed header/body/footer zones, no ad-hoc spacing
+globs:
+  - components/ui/screen-layout.tsx
+  - components/ui/screen-footer.tsx
+  - components/ui/page-shell.tsx
+  - components/hagu/hagu-flow-screen.tsx
+  - components/hagee/hagee-flow-screen.tsx
+  - app/page.tsx
+  - app/login/**
+  - app/select-role/**
+  - app/onboarding/**
+---
+
+# Screen layout
+
+Use `ScreenLayout` for auth, onboarding, and flow screens. Never ad-hoc `pt-24` or custom sticky footers.
+
+## Structure
+
+| Zone | Component | Notes |
+|------|-----------|-------|
+| Header | `PageFixedHeader` via `ScreenLayout` | Always reserve slot (`reserveHeader`) on intro steps |
+| Body | scrollable `flex-1` | Offset from `screenHeaderBodyOffset(variant)` |
+| Footer | `ScreenFooter` / `HaguFlowCta` | Pinned bottom, `h-16` buttons, same safe-area |
+
+## Header variants
+
+- `brand` / `flowHagu` / `none` → same body offset (45px glass chrome)
+- `flowHagee` → taller offset (back + progress)
+
+## Tokens
+
+Defined in [`screen-layout.tsx`](components/ui/screen-layout.tsx) and [`page-shell.tsx`](components/ui/page-shell.tsx):
+
+- `PAGE_HEADER_TOP_PADDING`
+- `PAGE_FIXED_HEADER_OFFSET`
+- `PAGE_HAGEE_FLOW_HEADER_OFFSET`
+
+## View transition
+
+Entry hero and glass header share `hagu-brand-transition` (`view-transition-name: hagu-brand`).

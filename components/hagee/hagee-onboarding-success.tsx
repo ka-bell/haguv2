@@ -21,7 +21,7 @@ export function HageeOnboardingSuccess({ displayName }: HageeOnboardingSuccessPr
         <Check className="size-9 text-hagu-accent-strong" strokeWidth={2.5} />
       </div>
 
-      <h1 className="mt-6 text-[28px] font-semibold tracking-tight text-hagu-heading">
+      <h1 className="mt-6 hagu-page-title text-hagu-heading">
         You&apos;re all set, {displayName}.
       </h1>
       <p className="mt-2 max-w-[300px] text-sm leading-relaxed text-hagu-text-secondary">
@@ -32,7 +32,7 @@ export function HageeOnboardingSuccess({ displayName }: HageeOnboardingSuccessPr
         {WHATS_NEXT_ITEMS.map((item) => {
           const Icon = ICONS[item.id]
           return (
-            <Card key={item.id} className="flex flex-row items-center gap-3 rounded-[20px] p-4">
+            <Card key={item.id} className="hagu-surface-card flex flex-row items-center gap-3 p-4">
               <div className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-hagu-accent-soft">
                 <Icon className="size-[18px] text-hagu-accent-strong" />
               </div>

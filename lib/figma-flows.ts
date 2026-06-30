@@ -88,7 +88,7 @@ export const HAGU_PROVIDER_APP_FLOW: FigmaFlow = {
       id: "settings",
       name: "Settings / Profile",
       figmaNodeId: "2467:14188",
-      route: "/settings",
+      route: "/profile",
       codePath: "app/(app)/settings/page.tsx",
       navTab: "settings",
       notes: "Cover photo, stats, account/payout/preferences sections, log out. NAV: Settings active.",
@@ -237,7 +237,7 @@ export const NAV_MAPPING = {
     { tab: "Discover", route: "/discover", mapsTo: "Home (Provider Home)" },
     { tab: "Bookings", route: "/bookings", mapsTo: "Bookings" },
     { tab: "Calendar", route: "/calendar", mapsTo: "Calendar / Availability" },
-    { tab: "Settings", route: "/settings", mapsTo: "Settings" },
+    { tab: "Profile", route: "/profile", mapsTo: "Settings / Profile" },
   ],
 } as const
 

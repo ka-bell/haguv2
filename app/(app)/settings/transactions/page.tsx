@@ -9,7 +9,7 @@ export default function SettingsTransactionsPage() {
   const router = useRouter()
 
   return (
-    <HaguFlowPageShell onBack={() => router.back()} closeHref={ROUTES.settings}>
+    <HaguFlowPageShell onBack={() => router.back()} closeHref={ROUTES.profile}>
       <HaguTransactionsScreen />
     </HaguFlowPageShell>
   )

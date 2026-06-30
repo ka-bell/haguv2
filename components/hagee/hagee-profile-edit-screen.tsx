@@ -208,8 +208,8 @@ export function HageeProfileEditScreen() {
                     className={cn(
                       "rounded-full border px-3 py-1.5 text-xs transition",
                       selected
-                        ? "border-hagu-accent-strong bg-hagu-accent-selected text-hagu-accent-strong"
-                        : "border-hagu-border bg-hagu-white text-hagu-label",
+                        ? "border-2 border-hagu-accent-strong bg-hagu-accent-soft text-hagu-ink"
+                        : "border border-hagu-border bg-hagu-white text-hagu-label",
                     )}
                   >
                     {option.emoji} {option.label}

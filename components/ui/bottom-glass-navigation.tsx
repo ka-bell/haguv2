@@ -32,7 +32,9 @@ export function BottomGlassNavigation({ items, activeKey, fixed = true, classNam
           return (
             <Link key={item.key} href={item.href} className="flex min-w-0 flex-col items-center gap-1">
               <span className={cn("text-[#2D1012]", !active && "opacity-35")}>{item.icon}</span>
-              <span className={cn("text-[10px] font-medium", active ? "text-[#2D1012]" : "text-[#8a8a96]")}>{item.label}</span>
+              <span className={cn("text-[10px] font-medium", active ? "text-[#2D1012]" : "text-[#8a8a96]")}>
+                {item.label}
+              </span>
             </Link>
           )
         })}

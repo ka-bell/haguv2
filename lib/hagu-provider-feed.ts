@@ -1,7 +1,8 @@
+import { HAGU_PROVIDER_PROFILE } from "@/lib/hagu-provider-profile"
+
 export const PROVIDER_PROFILE = {
-  firstName: "Sarah",
-  photo:
-    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&h=400&fit=crop&crop=face",
+  firstName: HAGU_PROVIDER_PROFILE.firstName,
+  photo: HAGU_PROVIDER_PROFILE.photo,
 } as const
 
 export type AgendaItemType = "booking" | "open" | "blocked"

@@ -297,4 +297,32 @@
     color: #2d1012;
     white-space: nowrap;
   }
+
+  .hagu-surface-card {
+    @apply overflow-hidden rounded-[20px] border border-hagu-border bg-hagu-white shadow-[0px_2px_8px_rgba(26,26,30,0.04)];
+  }
+
+  .hagu-page-title {
+    @apply text-[26px] font-semibold tracking-tight text-hagu-ink;
+  }
+
+  .hagu-page-greeting {
+    @apply text-[13px] text-hagu-text-secondary;
+  }
+
+  .hagu-section-label {
+    @apply text-xs font-medium uppercase tracking-wide text-hagu-ink;
+  }
+
+  .hagu-action-btn {
+    @apply flex h-9 flex-1 items-center justify-center gap-1.5 rounded-[10px] text-xs font-medium transition;
+  }
+
+  .hagu-action-btn-muted {
+    @apply flex h-9 flex-1 items-center justify-center gap-1.5 rounded-[10px] bg-hagu-surface-muted text-xs font-medium text-hagu-ink transition;
+  }
+
+  .hagu-action-btn-dark {
+    @apply flex h-9 flex-1 items-center justify-center gap-1.5 rounded-[10px] bg-hagu-heading text-xs font-medium text-hagu-white transition;
+  }
 }

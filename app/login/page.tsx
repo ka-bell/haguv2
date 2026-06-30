@@ -5,15 +5,17 @@ import { useRouter } from "next/navigation"
 import { GoogleSignInButton } from "@/components/hagu/google-sign-in-button"
 import { HaguFlowScreen } from "@/components/hagu/hagu-flow-screen"
 import { Input } from "@/components/ui/input"
+import { getDefaultRouteForRole } from "@/lib/app-navigation"
 import { ROUTES } from "@/lib/routes"
-import { loginAsReturningUser } from "@/lib/session"
+import { getPendingRole, loginAsReturningUser } from "@/lib/session"
 
 export default function LoginPage() {
   const router = useRouter()
 
   const handleSignIn = () => {
-    loginAsReturningUser("HAGEE")
-    router.push(ROUTES.home)
+    const role = getPendingRole() ?? "HAGEE"
+    loginAsReturningUser(role)
+    router.push(getDefaultRouteForRole(role))
     router.refresh()
   }
 

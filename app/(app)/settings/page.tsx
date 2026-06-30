@@ -1,18 +1,20 @@
 "use client"
 
-import { HaguSettingsScreen } from "@/components/hagu/hagu-settings-screen"
-import { HaguFlowHeader } from "@/components/hagu/hagu-flow-header"
-import { PageContent, PageFixedHeader, PageShell } from "@/components/ui/page-shell"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { ROUTES } from "@/lib/routes"
 
-export default function SettingsPage() {
+/** Legacy URL — profile lives at `/profile` for both roles. */
+export default function SettingsRedirectPage() {
+  const router = useRouter()
+
+  useEffect(() => {
+    router.replace(ROUTES.profile)
+  }, [router])
+
   return (
-    <PageShell className="relative bg-[#FCFFFF] px-0 pb-28 pt-0">
-      <PageFixedHeader>
-        <HaguFlowHeader />
-      </PageFixedHeader>
-      <PageContent className="pb-0">
-        <HaguSettingsScreen />
-      </PageContent>
-    </PageShell>
+    <main className="mx-auto flex min-h-dvh w-full max-w-md items-center justify-center bg-hagu-canvas">
+      <p className="text-sm text-hagu-text-secondary">Loading…</p>
+    </main>
   )
 }

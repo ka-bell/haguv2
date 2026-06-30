@@ -50,7 +50,7 @@ export function HaguProviderHome() {
         </div>
         <button
           type="button"
-          onClick={() => router.push(ROUTES.settings)}
+          onClick={() => router.push(ROUTES.profile)}
           className="relative shrink-0"
           aria-label="Open profile settings"
         >

@@ -11,7 +11,7 @@ type HageeExploreToolbarProps = {
 }
 
 const iconButtonClassName =
-  "pointer-events-auto flex size-11 items-center justify-center rounded-full border border-hagu-border bg-hagu-white text-hagu-heading shadow-[0px_1px_3px_rgba(0,0,0,0.06)] transition active:scale-[0.97] active:opacity-90"
+  "pointer-events-auto flex size-9 items-center justify-center rounded-[10px] bg-hagu-surface-muted text-hagu-ink transition"
 
 export function HageeExploreToolbar({ savedCount, className }: HageeExploreToolbarProps) {
   return (

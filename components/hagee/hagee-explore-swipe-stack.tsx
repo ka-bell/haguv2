@@ -131,15 +131,15 @@ export function HageeExploreSwipeStack({
 
   if (!current) {
     return (
-      <div className="flex min-h-[min(68vh,560px)] flex-col items-center justify-center gap-4 rounded-[28px] border border-hagu-border bg-hagu-white px-8 py-12 text-center shadow-[0px_4px_16px_rgba(26,26,30,0.06)]">
-        <p className="text-lg font-semibold text-hagu-heading">Je hebt iedereen gezien</p>
+      <div className="flex min-h-[min(68vh,560px)] flex-col items-center justify-center gap-4 hagu-surface-card px-8 py-12 text-center">
+        <p className="text-[15px] font-medium text-hagu-ink">Je hebt iedereen gezien</p>
         <p className="text-sm text-hagu-text-secondary">
           Kom later terug voor nieuwe companions, of pas je voorkeuren aan.
         </p>
         <button
           type="button"
           onClick={() => setDeck(matches)}
-          className="mt-2 flex items-center gap-2 rounded-full border border-hagu-border bg-hagu-canvas px-5 py-2.5 text-sm font-medium text-hagu-heading"
+          className="mt-2 flex h-9 items-center gap-2 rounded-[10px] bg-hagu-surface-muted px-4 text-xs font-medium text-hagu-ink"
         >
           <RotateCcw className="size-4" />
           Opnieuw bekijken

@@ -25,13 +25,13 @@ import {
 } from "./hagee/data"
 
 const selectedPillClass =
-  "border-hagu-accent-strong bg-hagu-accent-selected text-hagu-accent-strong"
+  "border-2 border-hagu-accent-strong bg-hagu-accent-soft text-hagu-ink"
 const unselectedPillClass =
-  "border-hagu-border bg-hagu-white text-hagu-label"
+  "border border-hagu-border bg-hagu-white text-hagu-label"
 const selectedCardClass =
-  "border-hagu-accent-strong bg-hagu-accent-selected"
+  "border-2 border-hagu-accent-strong bg-hagu-accent-soft"
 const unselectedCardClass =
-  "border-hagu-border bg-hagu-white"
+  "border border-hagu-border bg-hagu-white"
 
 export default function HageeOnboardingPage() {
   const router = useRouter()
@@ -121,27 +121,27 @@ export default function HageeOnboardingPage() {
       <div className="relative -mx-7 -mt-2 h-[min(42vh,340px)] overflow-hidden px-7">
         <div className="relative h-full overflow-hidden rounded-[24px]">
           <Image src={INTRO_HERO_IMAGE} alt="" fill className="object-cover" sizes="400px" priority />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#FCFFFF] via-[rgba(252,255,255,0.6)] via-40% to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-hagu-canvas via-hagu-canvas/60 via-40% to-transparent" />
         </div>
       </div>
 
       <div className="mt-7 space-y-4">
-        <span className="inline-flex rounded-full border border-[rgba(91,191,181,0.25)] bg-[rgba(91,191,181,0.12)] px-3 py-0.5 text-[11px] font-semibold tracking-wide text-[#3DA89E]">
+        <span className="inline-flex rounded-full bg-hagu-accent-selected px-3 py-0.5 text-[11px] font-semibold tracking-wide text-hagu-accent-strong">
           1 of 3
         </span>
-        <h1 className="text-[28px] font-semibold leading-tight tracking-tight text-[#1A1A1E]">
+        <h1 className="hagu-page-title leading-tight">
           Real people.
           <br />
           Real time together.
         </h1>
-        <p className="text-[15px] font-light leading-relaxed text-[#4A4A52]">
+        <p className="text-[15px] font-light leading-relaxed text-hagu-label">
           Hagu connects you with thoughtful, vetted companions for shared experiences — a meal, a walk, a
           conversation that actually goes somewhere.
         </p>
         <div className="flex gap-1.5 pt-1">
-          <span className="h-[3px] w-5 rounded-full bg-[#5BBFB5]" />
-          <span className="h-[3px] w-1.5 rounded-full bg-black/[0.12]" />
-          <span className="h-[3px] w-1.5 rounded-full bg-black/[0.12]" />
+          <span className="h-[3px] w-5 rounded-full bg-hagu-accent-strong" />
+          <span className="h-[3px] w-1.5 rounded-full bg-hagu-border" />
+          <span className="h-[3px] w-1.5 rounded-full bg-hagu-border" />
         </div>
       </div>
     </>
@@ -150,8 +150,8 @@ export default function HageeOnboardingPage() {
   const renderCreateAccount = () => (
     <div className="space-y-6">
       <div>
-        <h1 className="text-[26px] font-semibold tracking-tight text-[#1A1A1E]">Create your account</h1>
-        <p className="mt-1 text-sm font-light text-[#8A8A96]">Takes about 2 minutes.</p>
+        <h1 className="hagu-page-title">Create your account</h1>
+        <p className="mt-1 text-sm font-light text-hagu-text-secondary">Takes about 2 minutes.</p>
       </div>
 
       <div className="space-y-3">
@@ -160,9 +160,9 @@ export default function HageeOnboardingPage() {
       </div>
 
       <div className="flex items-center gap-3">
-        <div className="h-px flex-1 bg-black/[0.08]" />
-        <span className="text-xs text-[#8A8A96]">or</span>
-        <div className="h-px flex-1 bg-black/[0.08]" />
+        <div className="h-px flex-1 bg-hagu-border" />
+        <span className="text-xs text-hagu-text-secondary">or</span>
+        <div className="h-px flex-1 bg-hagu-border" />
       </div>
 
       <div className="space-y-4">
@@ -171,7 +171,7 @@ export default function HageeOnboardingPage() {
         <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 6 characters" />
       </div>
 
-      <label className="flex items-start gap-2 text-xs text-[#8A8A96]">
+      <label className="flex items-start gap-2 text-xs text-hagu-text-secondary">
         <input
           type="checkbox"
           checked={acceptedTerms}
@@ -186,8 +186,8 @@ export default function HageeOnboardingPage() {
   const renderPreferences = () => (
     <div className="space-y-5">
       <div className="space-y-1.5">
-        <h1 className="text-[26px] font-semibold tracking-[-0.5px] text-[#1A1A1E]">What are you looking for?</h1>
-        <p className="text-sm font-light text-[#8A8A96]">This helps us match you with the right people.</p>
+        <h1 className="hagu-page-title">What are you looking for?</h1>
+        <p className="text-sm font-light text-hagu-text-secondary">This helps us match you with the right people.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -204,7 +204,7 @@ export default function HageeOnboardingPage() {
       </div>
 
       <div className="pt-1">
-        <p className="text-[13px] font-medium tracking-[0.1px] text-[#4A4A52]">What kind of energy?</p>
+        <p className="text-[13px] font-medium text-hagu-label">What kind of energy?</p>
         <div className="mt-3 flex flex-wrap gap-2">
           {VIBE_OPTIONS.map((option) => {
             const selected = vibes.includes(option)
@@ -230,21 +230,21 @@ export default function HageeOnboardingPage() {
   const renderProfile = () => (
     <div className="space-y-6">
       <div>
-        <h1 className="text-[26px] font-semibold tracking-tight text-[#1A1A1E]">A little about you</h1>
-        <p className="mt-1 text-sm font-light text-[#8A8A96]">This appears on your public profile.</p>
+        <h1 className="hagu-page-title">A little about you</h1>
+        <p className="mt-1 text-sm font-light text-hagu-text-secondary">This appears on your public profile.</p>
       </div>
 
       <div className="flex flex-col items-center pt-2">
-        <div className="relative flex size-[120px] items-center justify-center rounded-full border-2 border-dashed border-[#D0F1F0] bg-[rgba(208,241,240,0.4)]">
-          <Camera className="size-8 text-[#8A8A96]" />
+        <div className="relative flex size-[120px] items-center justify-center rounded-full border-2 border-dashed border-hagu-accent bg-hagu-accent-soft">
+          <Camera className="size-8 text-hagu-text-secondary" />
           <button
             type="button"
-            className="absolute bottom-0 right-0 flex size-9 items-center justify-center rounded-[18px] border-[3px] border-[#FCFFFF] bg-[#2D1012] text-lg text-white"
+            className="absolute bottom-0 right-0 flex size-9 items-center justify-center rounded-[18px] border-[3px] border-hagu-canvas bg-hagu-heading text-lg text-white"
           >
             +
           </button>
         </div>
-        <p className="mt-3 text-[13px] font-medium text-[#1A1A1E]">Upload profile photo</p>
+        <p className="mt-3 text-[13px] font-medium text-hagu-ink">Upload profile photo</p>
       </div>
 
       <div className="space-y-4">
@@ -252,12 +252,12 @@ export default function HageeOnboardingPage() {
         <Input label="Gender" value={gender} onChange={(e) => setGender(e.target.value)} placeholder="Male" />
         <Input label="City" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Amsterdam" />
         <label className="flex w-full flex-col gap-1.5">
-          <span className="text-xs text-[#4A4A52]">One line about you (optional)</span>
+          <span className="text-xs text-hagu-label">One line about you (optional)</span>
           <textarea
             value={oneLiner}
             onChange={(e) => setOneLiner(e.target.value)}
             placeholder="Tell people a little bit about your vibe."
-            className="min-h-20 w-full rounded-[20px] border border-black/10 bg-white px-4 py-3 text-[15px] text-[#1A1A1E] outline-none transition placeholder:text-[#8A8A96] focus:border-[#D0F1F0] focus:ring-2 focus:ring-[#D0F1F0]/50"
+            className="min-h-20 w-full rounded-[20px] border border-hagu-border bg-hagu-white px-4 py-3 text-[15px] text-hagu-ink outline-none transition placeholder:text-hagu-text-secondary focus:border-hagu-accent focus:ring-2 focus:ring-hagu-accent/50"
           />
         </label>
       </div>
@@ -267,9 +267,9 @@ export default function HageeOnboardingPage() {
   const renderCharacter = () => (
     <div className="space-y-6">
       <div>
-        <p className="text-sm text-[#8A8A96]">Your character</p>
-        <h1 className="mt-1 text-[26px] font-semibold tracking-tight text-[#1A1A1E]">What makes you a little different?</h1>
-        <p className="mt-1 text-sm font-light text-[#8A8A96]">Choose at least 3 traits so people get your vibe.</p>
+        <p className="text-sm text-hagu-text-secondary">Your character</p>
+        <h1 className="mt-1 hagu-page-title">What makes you a little different?</h1>
+        <p className="mt-1 text-sm font-light text-hagu-text-secondary">Choose at least 3 traits so people get your vibe.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -285,14 +285,14 @@ export default function HageeOnboardingPage() {
                 selected ? selectedCardClass : unselectedCardClass,
               )}
             >
-              <p className="text-sm font-medium text-[#1A1A1E]">
+              <p className="text-sm font-medium text-hagu-ink">
                 {option.emoji} {option.label}
               </p>
             </button>
           )
         })}
       </div>
-      <p className="text-xs text-[#8A8A96]">Selected: {characterTraits.length}/3 minimum</p>
+      <p className="text-xs text-hagu-text-secondary">Selected: {characterTraits.length}/3 minimum</p>
     </div>
   )
 
@@ -317,15 +317,15 @@ export default function HageeOnboardingPage() {
           <button
             type="button"
             onClick={handleSkipIntro}
-            className="pointer-events-auto px-1 py-2 text-[13px] font-medium text-[#8A8A96]"
+            className="pointer-events-auto px-1 py-2 text-[13px] font-medium text-hagu-text-secondary"
           >
             Skip
           </button>
         }
         footer={
-          <p className="mt-4 text-center text-[13px] text-[#8A8A96]">
+          <p className="mt-4 text-center text-[13px] text-hagu-text-secondary">
             Already have an account?{" "}
-            <Link href={ROUTES.login} className="font-medium text-[#1A1A1E]">
+            <Link href={ROUTES.login} className="font-medium text-hagu-ink">
               Log in
             </Link>
           </p>

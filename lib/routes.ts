@@ -8,6 +8,7 @@ export const ROUTES = {
   home: "/home",
   /** HAGEE — swipe explore stack and sub-flows */
   explore: "/explore",
+  exploreProfile: (id: string) => `/explore/${id}` as const,
   exploreRefine: "/explore/refine",
   exploreMatches: "/explore/matches",
   /** HAGU — provider home (not shared with HAGEE explore) */
