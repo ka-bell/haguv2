@@ -69,7 +69,7 @@ export function HageeChatLockedScreen({ request }: HageeChatLockedScreenProps) {
 
         <button
           type="button"
-          onClick={() => router.push(`${ROUTES.chat}?tab=bookings`)}
+          onClick={() => router.push(ROUTES.connectionsTab("bookings"))}
           className="mt-6 text-sm font-medium text-hagu-accent-strong"
         >
           View booking status

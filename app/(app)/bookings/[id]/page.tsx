@@ -37,7 +37,7 @@ export default function BookingDetailPage({ params }: { params: Promise<{ id: st
   }
 
   return (
-    <HageeFlowPageShell onBack={() => router.back()} closeHref={ROUTES.bookings}>
+    <HageeFlowPageShell onBack={() => router.back()} closeHref={ROUTES.connectionsTab("bookings")}>
       <HageeBookingDetailScreen bookingId={id} />
     </HageeFlowPageShell>
   )

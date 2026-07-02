@@ -24,6 +24,8 @@ export const ROUTES = {
   booking: (id: string) => `/bookings/${id}` as const,
   calendar: "/calendar",
   chat: "/chat",
+  /** HAGEE Connections tab — chats (default), bookings, or liked */
+  connectionsTab: (tab: "bookings" | "liked") => `/chat?tab=${tab}` as const,
   chatThread: (id: string) => `/chat/${id}` as const,
   requests: "/requests",
   reviews: "/reviews",

@@ -45,6 +45,31 @@ function labelForStatus(status: HageeBookingRequest["status"]): string {
   return "Declined"
 }
 
+export function connectionBookingTitle(request: HageeBookingRequest): string {
+  const service = request.serviceLabel.toLowerCase()
+  if (service.includes("dinner")) return `Dinner with ${request.profileName}`
+  if (service.includes("walk")) return `City walk with ${request.profileName}`
+  return `${request.serviceLabel} with ${request.profileName}`
+}
+
+export function connectionBookingDate(request: HageeBookingRequest): string {
+  if (request.dateLabel && request.timeLabel) {
+    return `${request.dateLabel}, ${request.timeLabel}`
+  }
+  return request.dateLabel || request.timeLabel || "Date TBD"
+}
+
+export function connectionBookingStatusLabel(status: HageeBookingRequest["status"]): string {
+  if (status === "pending") return "Pending"
+  if (status === "confirmed") return "Confirmed"
+  if (status === "cancelled") return "Cancelled"
+  return "Declined"
+}
+
+export function activeConnectionBookings(bookings: HageeBookingRequest[]): HageeBookingRequest[] {
+  return bookings.filter((booking) => booking.status === "confirmed" || booking.status === "pending")
+}
+
 export function toClientBookingOverview(request: HageeBookingRequest): HageeClientBookingOverview {
   const dateLine = [request.dateLabel, request.timeLabel].filter(Boolean).join(" · ")
   const isActive = request.status === "confirmed" || request.status === "pending"

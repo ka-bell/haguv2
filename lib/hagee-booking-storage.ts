@@ -13,6 +13,8 @@ import { HAGEE_CLIENT_CHAT_ID, HAGEE_CLIENT_NAME, HAGEE_CLIENT_PHOTO } from "@/l
 /** Demo booking shown on home — Dinner with Sarah. */
 export const HAGEE_DEMO_BOOKING_ID = "demo-sara-dinner"
 
+export const HAGEE_DEMO_MAYA_BOOKING_ID = "demo-maya-walk"
+
 const SEED_BOOKINGS: HageeBookingRequest[] = [
   {
     id: HAGEE_DEMO_BOOKING_ID,
@@ -24,7 +26,7 @@ const SEED_BOOKINGS: HageeBookingRequest[] = [
     clientChatId: HAGEE_CLIENT_CHAT_ID,
     clientName: HAGEE_CLIENT_NAME,
     clientPhoto: HAGEE_CLIENT_PHOTO,
-    serviceLabel: "Dinner for two",
+    serviceLabel: "Dinner",
     dateLabel: "Tonight",
     timeLabel: "19:00",
     durationLabel: "2 hours",
@@ -33,6 +35,26 @@ const SEED_BOOKINGS: HageeBookingRequest[] = [
     amount: "€95",
     status: "confirmed",
     createdAt: "2026-06-28T10:00:00.000Z",
+  },
+  {
+    id: HAGEE_DEMO_MAYA_BOOKING_ID,
+    profileId: "maya",
+    profileName: "Maya",
+    profilePhoto:
+      "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=200&q=80",
+    chatId: "maya",
+    clientChatId: HAGEE_CLIENT_CHAT_ID,
+    clientName: HAGEE_CLIENT_NAME,
+    clientPhoto: HAGEE_CLIENT_PHOTO,
+    serviceLabel: "City walk",
+    dateLabel: "Sat",
+    timeLabel: "14:00",
+    durationLabel: "2 hours",
+    vibeLabel: "Easygoing",
+    message: "A relaxed walk through the city centre.",
+    amount: "€45",
+    status: "pending",
+    createdAt: "2026-06-27T14:00:00.000Z",
   },
 ]
 

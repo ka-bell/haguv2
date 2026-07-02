@@ -51,7 +51,7 @@ export function HageeBookingDetailScreen({ bookingId }: HageeBookingDetailScreen
         <p className="text-sm text-hagu-text-secondary">Booking not found.</p>
         <button
           type="button"
-          onClick={() => router.push(ROUTES.bookings)}
+          onClick={() => router.push(ROUTES.connectionsTab("bookings"))}
           className="mt-4 text-sm font-medium text-hagu-accent-strong"
         >
           Back to bookings

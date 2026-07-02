@@ -129,18 +129,3 @@ export const HAGEE_CHAT_THREADS: Record<string, HageeChatThread> = {
 export function getHageeChatThread(id: string): HageeChatThread | undefined {
   return HAGEE_CHAT_THREADS[id]
 }
-
-export const HAGEE_CONNECTIONS_BOOKINGS = [
-  {
-    id: "sarah-dinner",
-    title: "Dinner with Sarah",
-    date: "Tonight, 19:00",
-    status: "Confirmed",
-  },
-  {
-    id: "maya-walk",
-    title: "City walk with Maya",
-    date: "Sat, 14:00",
-    status: "Pending",
-  },
-]

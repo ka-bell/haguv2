@@ -2,14 +2,17 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
+import { Search } from "lucide-react"
 import { HageeTabShell } from "@/components/hagee/hagee-tab-shell"
+import { HAGEE_CHAT_PREVIEWS, type HageeChatPreview } from "@/lib/hagee-chat"
 import {
-  HAGEE_CHAT_PREVIEWS,
-  HAGEE_CONNECTIONS_BOOKINGS,
-  type HageeChatPreview,
-} from "@/lib/hagee-chat"
+  activeConnectionBookings,
+  connectionBookingDate,
+  connectionBookingStatusLabel,
+  connectionBookingTitle,
+} from "@/lib/hagee-client-booking-detail"
 import {
   getBookingRequests,
   HAGEE_BOOKING_UPDATED_EVENT,
@@ -102,57 +105,51 @@ function ChatRow({ chat }: { chat: HageeChatPreview }) {
 }
 
 function BookingsTab({ requests }: { requests: HageeBookingRequest[] }) {
-  const storedBookings = requests.map((request) => ({
-    id: request.id,
-    title: `${request.serviceLabel} with ${request.profileName}`,
-    date: [request.dateLabel, request.timeLabel].filter(Boolean).join(" · ") || "Date TBD",
-    status: request.status === "pending" ? "Awaiting confirmation" : request.status === "confirmed" ? "Confirmed" : "Declined",
-    chatId: request.chatId,
-    locked: request.status === "pending",
-  }))
+  const router = useRouter()
+  const bookings = activeConnectionBookings(requests)
 
-  const bookings = [
-    ...storedBookings,
-    ...HAGEE_CONNECTIONS_BOOKINGS.map((booking) => ({ ...booking, chatId: null as string | null, locked: false })),
-  ]
+  if (bookings.length === 0) {
+    return (
+      <div className="hagu-surface-card border-dashed px-4 py-10 text-center">
+        <p className="text-sm text-hagu-text-secondary">No bookings yet. Book someone from Explore to get started.</p>
+        <Link href={ROUTES.explore} className="mt-3 inline-block text-[13px] font-medium text-hagu-accent-strong">
+          Naar Explore
+        </Link>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-3 pt-2">
-      {bookings.map((booking) => (
-        <article key={booking.id} className="hagu-surface-card p-4">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="text-[15px] font-medium text-hagu-ink">{booking.title}</p>
-              <p className="mt-1 text-[13px] text-hagu-text-secondary">{booking.date}</p>
-              {booking.locked ? (
-                <p className="mt-2 text-[12px] text-hagu-text-secondary">
-                  They may reach out first — you can reply once they confirm
-                </p>
-              ) : null}
+      {bookings.map((booking) => {
+        const statusLabel = connectionBookingStatusLabel(booking.status)
+
+        return (
+          <button
+            key={booking.id}
+            type="button"
+            onClick={() => router.push(ROUTES.booking(booking.id))}
+            className="hagu-surface-card w-full p-4 text-left transition active:opacity-95"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[15px] font-medium text-hagu-ink">{connectionBookingTitle(booking)}</p>
+                <p className="mt-1 text-[13px] text-hagu-text-secondary">{connectionBookingDate(booking)}</p>
+              </div>
+              <span
+                className={cn(
+                  "shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold",
+                  booking.status === "confirmed"
+                    ? "bg-hagu-accent-selected text-hagu-accent-strong"
+                    : "bg-[#FFF8E7] text-[#D4900A]",
+                )}
+              >
+                {statusLabel}
+              </span>
             </div>
-            <span
-              className={cn(
-                "rounded-full px-2.5 py-1 text-[10px] font-semibold",
-                booking.status === "Confirmed"
-                  ? "bg-hagu-accent-selected text-hagu-accent-strong"
-                  : booking.status === "Declined"
-                    ? "bg-hagu-surface-muted text-hagu-text-secondary"
-                    : "bg-amber-50 text-amber-700",
-              )}
-            >
-              {booking.status}
-            </span>
-          </div>
-          {"chatId" in booking && booking.chatId && booking.status === "Confirmed" ? (
-            <Link
-              href={ROUTES.chatThread(booking.chatId)}
-              className="mt-3 inline-block text-[13px] font-medium text-hagu-accent-strong"
-            >
-              Open chat
-            </Link>
-          ) : null}
-        </article>
-      ))}
+          </button>
+        )
+      })}
     </div>
   )
 }
@@ -195,6 +192,7 @@ function LikedTab({ saved }: { saved: HageeExploreMatch[] }) {
 }
 
 export function HageeConnectionsScreen() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const ready = useClientReady()
   const tabFromQuery = searchParams.get("tab")
@@ -238,12 +236,27 @@ export function HageeConnectionsScreen() {
     ...HAGEE_CHAT_PREVIEWS.filter((chat) => !pendingChatIds.has(chat.id)),
   ]
 
+  const handleTabChange = (next: ConnectionsTab) => {
+    setTab(next)
+    const href = next === "chats" ? ROUTES.chat : ROUTES.connectionsTab(next)
+    router.replace(href, { scroll: false })
+  }
+
   return (
     <HageeTabShell>
       <div className="space-y-5">
-        <h1 className="hagu-page-title">Connections</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="hagu-page-title">Connections</h1>
+          <button
+            type="button"
+            aria-label="Search"
+            className="flex size-9 items-center justify-center rounded-[10px] bg-hagu-surface-muted text-hagu-ink"
+          >
+            <Search className="size-[18px]" />
+          </button>
+        </div>
 
-        <ConnectionsTabs active={tab} onChange={setTab} />
+        <ConnectionsTabs active={tab} onChange={handleTabChange} />
 
         {tab === "chats" ? (
           <div className="hagu-surface-card px-4">

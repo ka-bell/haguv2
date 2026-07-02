@@ -156,7 +156,7 @@ export function HageeProfileScreen() {
       </ProfileSection>
 
       <Link
-        href={ROUTES.bookings}
+        href={ROUTES.connectionsTab("bookings")}
         className="flex items-center justify-between hagu-surface-card px-5 py-4 transition"
       >
         <div>

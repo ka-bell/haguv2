@@ -113,7 +113,7 @@ export function HageeBookingFlow({ profile }: HageeBookingFlowProps) {
       setStep(5)
       return
     }
-    router.push(`${ROUTES.chat}?tab=bookings`)
+    router.push(ROUTES.connectionsTab("bookings"))
   }
 
   const ctaLabel =
