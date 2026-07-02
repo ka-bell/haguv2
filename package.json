@@ -9,7 +9,7 @@
     "dev:webpack": "next dev -H 0.0.0.0 -p 3010",
     "dev:preview": "rm -rf .next && next build && next start -H 0.0.0.0 -p 3010",
     "lint": "next lint",
-    "start": "next start -p 3010"
+    "start": "next start -H 0.0.0.0"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

@@ -20,6 +20,7 @@ App runs at:
 | `npm run dev:webpack` | Fallback if one page fails under Turbopack |
 | `npm run dev:preview` | Stable mobile test (production build, no HMR) |
 | `npm run build` | Deploy check — **only when dev is stopped** |
+| `PORT=3010 npm run start` | Local production preview (Forge uses `PORT` from env) |
 
 ## Rules
 
