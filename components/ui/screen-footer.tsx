@@ -15,7 +15,7 @@ export function ScreenFooter({ children, className, innerClassName, pinned = tru
     <div
       className={cn(
         pinned
-          ? "hagu-screen-footer fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-md shrink-0 border-t border-black/[0.06] bg-[#FCFFFF] px-4"
+          ? "hagu-screen-footer fixed bottom-0 left-1/2 z-40 w-full max-w-md -translate-x-1/2 shrink-0 border-t border-black/[0.06] bg-[#FCFFFF] px-4"
           : "shrink-0 border-t border-black/[0.06] bg-[#FCFFFF] px-4 pt-4",
         !pinned && "pb-[var(--hagu-inset-bottom)]",
         className,

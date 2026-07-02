@@ -4,7 +4,6 @@ import Image from "next/image"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Search } from "lucide-react"
 import { HageeTabShell } from "@/components/hagee/hagee-tab-shell"
 import {
   HAGEE_CHAT_PREVIEWS,
@@ -242,16 +241,7 @@ export function HageeConnectionsScreen() {
   return (
     <HageeTabShell>
       <div className="space-y-5">
-        <div className="flex items-center justify-between">
-          <h1 className="hagu-page-title">Connections</h1>
-          <button
-            type="button"
-            aria-label="Search"
-            className="flex size-9 items-center justify-center rounded-[10px] bg-hagu-surface-muted text-hagu-ink"
-          >
-            <Search className="size-[18px]" />
-          </button>
-        </div>
+        <h1 className="hagu-page-title">Connections</h1>
 
         <ConnectionsTabs active={tab} onChange={setTab} />
 

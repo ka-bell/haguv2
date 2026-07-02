@@ -118,15 +118,16 @@ export function HageeExploreSwipeStack({
             ? "save"
             : null
   const swipeProgress = exitDirection ? 1 : Math.min(Math.abs(dragX) / 100, 1)
+  const peekProgress = exitDirection ? 1 : Math.min(Math.abs(dragX) / SWIPE_THRESHOLD, 1)
 
   const cardTransform = (() => {
     if (exitDirection === "left") {
-      return "translateX(-130%) rotate(-18deg)"
+      return "translateX(-130%) rotate(-12deg)"
     }
     if (exitDirection === "right") {
-      return "translateX(130%) rotate(18deg)"
+      return "translateX(130%) rotate(12deg)"
     }
-    return `translateX(${dragX}px) rotate(${dragX * 0.04}deg)`
+    return `translateX(${dragX}px)`
   })()
 
   if (!current) {
@@ -152,7 +153,7 @@ export function HageeExploreSwipeStack({
     <div className={cn("min-h-0 flex-1", className)}>
       <div
         className={cn(
-          "relative h-full touch-none overscroll-contain select-none",
+          "relative h-full touch-none overflow-hidden overscroll-contain select-none rounded-[20px]",
           isAnimating && "pointer-events-none",
         )}
         onPointerDown={(event) => {
@@ -173,10 +174,13 @@ export function HageeExploreSwipeStack({
       >
         {next ? (
           <div
-            className={cn(
-              "pointer-events-none absolute inset-0 z-0 origin-center transition-[transform,opacity] duration-300 ease-out",
-              exitDirection ? "scale-100 opacity-100" : "scale-[0.96] opacity-70",
-            )}
+            className="pointer-events-none absolute inset-0 z-0"
+            style={{
+              transform: `scale(${0.96 + peekProgress * 0.04})`,
+              opacity: 0.72 + peekProgress * 0.28,
+              transformOrigin: "bottom center",
+              transition: dragging ? "none" : "transform 280ms ease-out, opacity 280ms ease-out",
+            }}
           >
             <HageeExploreCard match={next} className="h-full" />
           </div>
@@ -184,10 +188,10 @@ export function HageeExploreSwipeStack({
 
         <div
           className={cn(
-            "relative z-10 h-full",
+            "relative z-10 h-full will-change-transform",
             dragging ? "transition-none" : exitDirection ? "transition-transform duration-[280ms] ease-in" : "",
           )}
-          style={{ transform: cardTransform }}
+          style={{ transform: cardTransform, transformOrigin: "bottom center" }}
         >
           <HageeExploreCard
             match={current}

@@ -156,6 +156,17 @@ export function HageeProfileScreen() {
       </ProfileSection>
 
       <Link
+        href={ROUTES.bookings}
+        className="flex items-center justify-between hagu-surface-card px-5 py-4 transition"
+      >
+        <div>
+          <p className="text-sm font-medium text-hagu-ink">My bookings</p>
+          <p className="text-xs text-hagu-text-secondary">View, reschedule, or cancel</p>
+        </div>
+        <ChevronRight className="size-4 text-hagu-placeholder" />
+      </Link>
+
+      <Link
         href={ROUTES.profileEdit}
         className="flex items-center justify-between hagu-surface-card px-5 py-4 transition"
       >

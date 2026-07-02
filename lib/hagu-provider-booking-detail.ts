@@ -121,11 +121,21 @@ function fromStoredRequest(request: HageeBookingRequest): BookingOverview {
         ? "New request"
         : request.status === "confirmed"
           ? "Confirmed"
-          : "Declined",
+          : request.status === "cancelled"
+            ? "Cancelled"
+            : "Declined",
     statusTone:
-      request.status === "pending" ? "new" : request.status === "confirmed" ? "confirmed" : "cancelled",
+      request.status === "pending"
+        ? "new"
+        : request.status === "confirmed"
+          ? "confirmed"
+          : "cancelled",
     category:
-      request.status === "pending" ? "request" : request.status === "confirmed" ? "upcoming" : "cancelled",
+      request.status === "pending"
+        ? "request"
+        : request.status === "confirmed"
+          ? "upcoming"
+          : "cancelled",
   }
 }
 

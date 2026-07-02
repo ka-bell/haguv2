@@ -17,8 +17,8 @@ export const SCREEN_SAFE_TOP = "calc(env(safe-area-inset-top, 2.75rem) + 0.5rem)
 /** Glass HAGU pill height. */
 export const SCREEN_HEADER_BRAND_HEIGHT = "45px" as const
 
-/** HAGEE back row + progress bar. */
-export const SCREEN_HEADER_FLOW_HAGEE_HEIGHT = "4.75rem" as const
+/** HAGEE back row — progress bar scrolls in body (see HageeFlowScreen). */
+export const SCREEN_HEADER_FLOW_HAGEE_HEIGHT = "3rem" as const
 
 /** Body offset below fixed brand / HAGU flow header. */
 export const SCREEN_BODY_OFFSET_BRAND = PAGE_FIXED_HEADER_OFFSET
@@ -81,7 +81,7 @@ export function ScreenLayout({
   return (
     <main
       className={cn(
-        "mx-auto flex min-h-dvh w-full max-w-md flex-col bg-[#FCFFFF] text-[#2D1012]",
+        "mx-auto flex min-h-dvh w-full max-w-md flex-col overflow-x-hidden bg-[#FCFFFF] text-[#2D1012]",
         className,
       )}
     >
@@ -91,7 +91,7 @@ export function ScreenLayout({
 
       <div
         className={cn(
-          "flex min-h-0 flex-1 flex-col overflow-y-auto",
+          "flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto",
           contentPadding,
           bodyOffset,
           footer && SCREEN_FOOTER_SCROLL_PAD,

@@ -13,9 +13,9 @@ export const PAGE_HEADER_TOP_PADDING = "pt-[calc(env(safe-area-inset-top,2.75rem
 export const PAGE_FIXED_HEADER_OFFSET =
   "pt-[calc(env(safe-area-inset-top,2.75rem)+0.5rem+45px+0.75rem)]" as const
 
-/** @see SCREEN_BODY_OFFSET_FLOW_HAGEE in screen-layout.tsx */
+/** HAGEE back button row only — progress lives in scroll body below. */
 export const PAGE_HAGEE_FLOW_HEADER_OFFSET =
-  "pt-[calc(env(safe-area-inset-top,2.75rem)+0.5rem+4.75rem)]" as const
+  "pt-[calc(env(safe-area-inset-top,2.75rem)+0.5rem+2.25rem+0.75rem)]" as const
 
 /** Scroll offset below inline toolbar headers (edit profile, chat thread row). */
 export const PAGE_TOOLBAR_HEADER_OFFSET = "pt-[calc(env(safe-area-inset-top,2.75rem)+0.5rem+2.75rem+0.75rem)]" as const
@@ -33,7 +33,7 @@ export function PageFixedHeader({ className, children, ...props }: DivProps) {
   return (
     <div
       className={cn(
-        "pointer-events-none fixed inset-x-0 top-0 z-30 mx-auto w-full max-w-md px-6",
+        "pointer-events-none fixed top-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 px-6",
         PAGE_HEADER_TOP_PADDING,
         className,
       )}

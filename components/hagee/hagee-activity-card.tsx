@@ -31,12 +31,12 @@ export function HageeActivityCard({
       onClick={onClick}
       aria-pressed={isNav ? undefined : selected}
       className={cn(
-        "flex min-h-[114px] flex-col rounded-[20px] border p-4 text-left transition",
+        "flex min-h-[114px] w-full min-w-0 flex-col rounded-[20px] border p-4 text-left transition",
         isNav
-          ? "border-hagu-border bg-hagu-white"
+          ? "border border-hagu-border bg-hagu-white"
           : selected
             ? "border-2 border-hagu-accent-strong bg-hagu-accent-soft"
-            : "border border-hagu-border bg-hagu-white",
+            : "border-2 border-hagu-border bg-hagu-white",
         className,
       )}
     >
@@ -64,7 +64,7 @@ export function HageeActivityCard({
         ) : null}
       </div>
       <p className="mt-2.5 text-[13px] font-medium text-hagu-ink">{label}</p>
-      <p className="mt-0.5 text-[11px] text-hagu-text-secondary">{subtitle}</p>
+      <p className="mt-0.5 text-[11px] leading-snug text-hagu-text-secondary">{subtitle}</p>
     </button>
   )
 }

@@ -66,7 +66,11 @@ export function HageeHomeScreen() {
           </button>
 
           <div className="mt-4 flex gap-2">
-            <button type="button" className="hagu-action-btn-muted">
+            <button
+              type="button"
+              onClick={() => router.push(ROUTES.booking(booking.id))}
+              className="hagu-action-btn-muted"
+            >
               View booking
             </button>
             <button

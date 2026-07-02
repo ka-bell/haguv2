@@ -5,14 +5,13 @@ import { cn } from "@/lib/utils"
 
 interface HageeFlowHeaderProps {
   onBack?: () => void
-  progress?: number
   className?: string
 }
 
-/** HAGEE onboarding chrome — back pill + teal progress (Figma 2467:15352). */
-export function HageeFlowHeader({ onBack, progress, className }: HageeFlowHeaderProps) {
+/** HAGEE onboarding chrome — back pill (progress renders in flow body). */
+export function HageeFlowHeader({ onBack, className }: HageeFlowHeaderProps) {
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn(className)}>
       {onBack ? (
         <button
           type="button"
@@ -25,15 +24,6 @@ export function HageeFlowHeader({ onBack, progress, className }: HageeFlowHeader
       ) : (
         <div className="size-9" aria-hidden />
       )}
-
-      {typeof progress === "number" ? (
-        <div className="h-[3px] w-full rounded-full bg-hagu-border">
-          <div
-            className="h-[3px] rounded-full bg-hagu-accent-strong transition-all duration-300"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      ) : null}
     </div>
   )
 }

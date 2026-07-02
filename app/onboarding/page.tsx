@@ -223,7 +223,7 @@ export default function HageeOnboardingPage() {
         <p className="text-sm font-light text-hagu-text-secondary">This helps us match you with the right people.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 [&>*]:min-w-0">
         {ACTIVITY_OPTIONS.map((option) => (
           <HageeActivityCard
             key={option.id}
@@ -309,7 +309,7 @@ export default function HageeOnboardingPage() {
         <p className="mt-1 text-sm font-light text-hagu-text-secondary">Choose at least 3 traits so people get your vibe.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 [&>*]:min-w-0">
         {CHARACTER_OPTIONS.map((option) => {
           const selected = characterTraits.includes(option.id)
           return (

@@ -40,12 +40,12 @@ export function HageeFlowScreen({
     <ScreenLayout
       className={cn("bg-hagu-canvas text-hagu-ink", className)}
       contentPadding="px-7"
-      headerClassName="px-7"
+      headerClassName="bg-hagu-canvas px-7"
       reserveHeader
       headerVariant={hasFlowHeader ? "flowHagee" : "none"}
       header={
         hasFlowHeader ? (
-          <HageeFlowHeader onBack={onBack!} progress={progress} />
+          <HageeFlowHeader onBack={onBack!} />
         ) : (
           <div className="relative flex w-full items-center justify-center">
             <HaguFlowHeader className="hagu-brand-transition" />
@@ -57,7 +57,15 @@ export function HageeFlowScreen({
       }
       footer={<HaguFlowCta label={ctaLabel} onClick={onCta} disabled={ctaDisabled} />}
     >
-      <div className="flex-1 pb-6">{children}</div>
+      {typeof progress === "number" ? (
+        <div className="h-[3px] w-full rounded-full bg-hagu-border">
+          <div
+            className="h-[3px] rounded-full bg-hagu-accent-strong transition-all duration-300"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      ) : null}
+      <div className={cn("flex-1 pb-6", typeof progress === "number" ? "mt-5" : null)}>{children}</div>
       {footer}
     </ScreenLayout>
   )

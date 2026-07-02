@@ -14,7 +14,6 @@ export const HAGEE_ONLY_PATH_PREFIXES = [ROUTES.home, ROUTES.explore] as const
 /** HAGU-only route prefixes — HAGEE sessions are redirected away. */
 export const HAGU_ONLY_PATH_PREFIXES = [
   ROUTES.discover,
-  ROUTES.bookings,
   ROUTES.calendar,
   ROUTES.settingsTransactions,
   ROUTES.requests,
@@ -156,6 +155,7 @@ export function shouldHideBottomNav(pathname: string): boolean {
   if (pathname.startsWith(ROUTES.reviews)) return true
   if (pathname.startsWith(ROUTES.exploreRefine)) return true
   if (pathname.startsWith(ROUTES.profileEdit)) return true
+  if (pathname.startsWith(`${ROUTES.bookings}/`)) return true
   if (
     pathname.startsWith(`${ROUTES.explore}/`) &&
     !pathname.startsWith(ROUTES.exploreRefine) &&

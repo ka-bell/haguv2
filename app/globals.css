@@ -215,6 +215,9 @@
 @layer base {
   /* Layout rule: default CTA zones are push-down (non-sticky). */
   /* Sticky CTA is reserved for always-visible confirmation flows only. */
+  html {
+    overflow-x: hidden;
+  }
   * {
     @apply border-border outline-ring/50;
   }

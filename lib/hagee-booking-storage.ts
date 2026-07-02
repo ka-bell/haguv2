@@ -10,7 +10,33 @@ import {
 import type { HageeCompanionProfile } from "@/lib/hagee-companion-profiles"
 import { HAGEE_CLIENT_CHAT_ID, HAGEE_CLIENT_NAME, HAGEE_CLIENT_PHOTO } from "@/lib/hagee-client"
 
-export type HageeBookingRequestStatus = "pending" | "confirmed" | "declined"
+/** Demo booking shown on home — Dinner with Sarah. */
+export const HAGEE_DEMO_BOOKING_ID = "demo-sara-dinner"
+
+const SEED_BOOKINGS: HageeBookingRequest[] = [
+  {
+    id: HAGEE_DEMO_BOOKING_ID,
+    profileId: "sara",
+    profileName: "Sarah",
+    profilePhoto:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80",
+    chatId: "sarah",
+    clientChatId: HAGEE_CLIENT_CHAT_ID,
+    clientName: HAGEE_CLIENT_NAME,
+    clientPhoto: HAGEE_CLIENT_PHOTO,
+    serviceLabel: "Dinner for two",
+    dateLabel: "Tonight",
+    timeLabel: "19:00",
+    durationLabel: "2 hours",
+    vibeLabel: "Thoughtful",
+    message: "Looking forward to a relaxed dinner and good conversation.",
+    amount: "€95",
+    status: "confirmed",
+    createdAt: "2026-06-28T10:00:00.000Z",
+  },
+]
+
+export type HageeBookingRequestStatus = "pending" | "confirmed" | "declined" | "cancelled"
 
 export type HageeBookingRequest = {
   id: string
@@ -63,24 +89,40 @@ function writeRequests(requests: HageeBookingRequest[]) {
   window.dispatchEvent(new CustomEvent(HAGEE_BOOKING_UPDATED_EVENT))
 }
 
+function mergeWithSeeds(requests: HageeBookingRequest[]): HageeBookingRequest[] {
+  const byId = new Map(requests.map((request) => [request.id, request]))
+  for (const seed of SEED_BOOKINGS) {
+    if (!byId.has(seed.id)) {
+      byId.set(seed.id, seed)
+    }
+  }
+  return Array.from(byId.values()).sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  )
+}
+
 export function getBookingRequests(): HageeBookingRequest[] {
-  return readRequests()
+  return mergeWithSeeds(readRequests())
+}
+
+export function getClientBookings(): HageeBookingRequest[] {
+  return getBookingRequests()
 }
 
 export function getBookingRequest(id: string): HageeBookingRequest | undefined {
-  return readRequests().find((request) => request.id === id)
+  return getBookingRequests().find((request) => request.id === id)
 }
 
 export function getBookingRequestByChatId(chatId: string): HageeBookingRequest | undefined {
-  return readRequests().find((request) => request.chatId === chatId)
+  return getBookingRequests().find((request) => request.chatId === chatId)
 }
 
 export function getPendingBookingForChat(chatId: string): HageeBookingRequest | undefined {
-  return readRequests().find((request) => request.chatId === chatId && request.status === "pending")
+  return getBookingRequests().find((request) => request.chatId === chatId && request.status === "pending")
 }
 
 export function getBookingRequestByClientChatId(clientChatId: string): HageeBookingRequest | undefined {
-  return readRequests().find((request) => request.clientChatId === clientChatId)
+  return getBookingRequests().find((request) => request.clientChatId === clientChatId)
 }
 
 /** HAGEE cannot message the HAGU while a booking request is still pending. */
@@ -146,6 +188,24 @@ export function declineBookingRequest(id: string) {
       request.id === id ? { ...request, status: "declined" as const } : request,
     ),
   )
+}
+
+export function cancelBookingRequest(id: string) {
+  const stored = readRequests()
+  const exists = stored.some((request) => request.id === id)
+  if (exists) {
+    writeRequests(
+      stored.map((request) =>
+        request.id === id ? { ...request, status: "cancelled" as const } : request,
+      ),
+    )
+    return
+  }
+
+  const seed = SEED_BOOKINGS.find((request) => request.id === id)
+  if (seed) {
+    writeRequests([{ ...seed, status: "cancelled" }, ...stored])
+  }
 }
 
 export function bookingRequestToProviderRequest(request: HageeBookingRequest) {

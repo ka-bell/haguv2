@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react"
 import { Briefcase, Phone, Sparkles, UtensilsCrossed } from "lucide-react"
 
 export type HageeActiveBooking = {
+  id: string
   title: string
   status: string
   companionPhoto: string
@@ -40,6 +41,7 @@ export type HageeNewArrival = {
 }
 
 export const HAGEE_ACTIVE_BOOKING: HageeActiveBooking = {
+  id: "demo-sara-dinner",
   title: "Dinner with Sarah",
   status: "Confirmed",
   companionPhoto:
