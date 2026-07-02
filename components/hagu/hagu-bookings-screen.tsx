@@ -49,7 +49,18 @@ function BookingCard({
   const badge = bookingBadge(booking)
 
   return (
-    <article className="w-full rounded-[20px] border border-black/[0.06] bg-white px-5 pb-5 pt-4 text-left shadow-[0px_2px_8px_rgba(26,26,30,0.04)]">
+    <article
+      role="button"
+      tabIndex={0}
+      onClick={() => onNavigate(ROUTES.booking(booking.id))}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault()
+          onNavigate(ROUTES.booking(booking.id))
+        }
+      }}
+      className="w-full cursor-pointer rounded-[20px] border border-black/[0.06] bg-white px-5 pb-5 pt-4 text-left shadow-[0px_2px_8px_rgba(26,26,30,0.04)] transition active:opacity-95"
+    >
       <div className="flex items-center gap-3">
         <div className="relative size-12 shrink-0 overflow-hidden rounded-[24px]">
           <Image src={booking.avatar} alt={booking.name} fill className="object-cover" />
@@ -60,7 +71,10 @@ function BookingCard({
         </div>
         <button
           type="button"
-          onClick={() => onNavigate(ROUTES.chatThread(booking.chatId))}
+          onClick={(event) => {
+            event.stopPropagation()
+            onNavigate(ROUTES.chatThread(booking.chatId))
+          }}
           className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#F7F6F3] text-[#1A1A1E] transition active:opacity-80"
           aria-label={`Message ${booking.name}`}
         >
@@ -145,6 +159,7 @@ export function HaguBookingsScreen() {
               <HaguRequestCard
                 key={item.data.id}
                 request={item.data}
+                onOpen={() => router.push(ROUTES.booking(item.data.id))}
                 onMessage={() => router.push(ROUTES.chatThread(item.data.chatId))}
               />
             ) : (

@@ -40,7 +40,11 @@ export type HageeMatch = {
   sharedInterests: string[]
 }
 
-export const HAGEE_CLIENT_NAME = "Alex"
+export {
+  HAGEE_CLIENT_CHAT_ID,
+  HAGEE_CLIENT_NAME,
+  HAGEE_CLIENT_PHOTO,
+} from "@/lib/hagee-client"
 
 export const HAGEE_DISCOVER_STATS: HageeDiscoverStat[] = [
   { value: "4", label: "In your area" },

@@ -24,7 +24,7 @@ export function BottomGlassNavigation({ items, activeKey, fixed = true, classNam
         fixed ? "fixed left-1/2 z-50 w-[min(340px,calc(100%-2rem))] -translate-x-1/2" : "relative z-10 w-full",
         className,
       )}
-      style={fixed ? { bottom: "max(1rem, env(safe-area-inset-bottom))" } : undefined}
+      style={fixed ? { bottom: "var(--hagu-tab-nav-bottom)" } : undefined}
     >
       <div className="relative flex h-16 items-center justify-between rounded-[32px] border border-[#D0F1F0]/50 bg-white/80 px-8 backdrop-blur-2xl shadow-[0px_20px_40px_-10px_rgba(45,16,18,0.1)]">
         {items.map((item) => {

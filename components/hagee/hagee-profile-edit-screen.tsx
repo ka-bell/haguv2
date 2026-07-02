@@ -1,9 +1,10 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Camera } from "lucide-react"
+import { Camera, ChevronRight } from "lucide-react"
 import { HaguFlowCta } from "@/components/hagu/hagu-flow-cta"
 import { HaguFlowHeader } from "@/components/hagu/hagu-flow-header"
 import { HaguToggle } from "@/components/ui/hagu-toggle"
@@ -274,10 +275,17 @@ export function HageeProfileEditScreen() {
         </ProfileEditSection>
 
         <ProfileEditSection title="Account">
+          <Link
+            href={ROUTES.settingsAccount}
+            className="flex w-full items-center justify-between rounded-xl border border-hagu-border bg-hagu-white px-4 py-3.5 text-[13px] font-medium text-hagu-ink transition active:opacity-90"
+          >
+            Email & password
+            <ChevronRight className="size-4 text-hagu-placeholder" />
+          </Link>
           <button
             type="button"
             onClick={() => update("paused", !profile.paused)}
-            className="w-full rounded-xl border border-red-500/20 py-3 text-[13px] text-red-600"
+            className="mt-3 w-full rounded-xl border border-red-500/20 py-3 text-[13px] text-red-600"
           >
             {profile.paused ? "Resume my profile" : "Pause my profile"}
           </button>

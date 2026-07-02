@@ -112,6 +112,7 @@ export function ChatReportSheet({ open, onClose, threadId, personName }: ChatRep
           ) : null}
 
           <HaguFlowCta
+            pinned={false}
             label="Submit report"
             onClick={handleSubmit}
             disabled={!reason}

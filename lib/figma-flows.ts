@@ -166,6 +166,22 @@ export const HAGEE_DISCOVERY_FLOW: FigmaFlow = {
       route: ROUTES.explore,
       codePath: "app/(app)/explore/page.tsx",
     },
+    {
+      id: "companion-profile",
+      name: "Companion profile",
+      figmaNodeId: "2393:10670",
+      route: ROUTES.exploreProfile("elena"),
+      codePath: "app/(app)/explore/[id]/page.tsx",
+      notes: "Entry to booking flow — Book CTA opens step 01 sheet.",
+    },
+    {
+      id: "booking-flow",
+      name: "HAGEE booking flow",
+      figmaNodeId: "2393:10670",
+      route: ROUTES.exploreBook("sara"),
+      codePath: "app/(app)/explore/[id]/book/page.tsx",
+      notes: "Steps 01–05: activity sheet, schedule, note, escrow confirm, request sent.",
+    },
   ],
 }
 

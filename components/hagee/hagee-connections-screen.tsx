@@ -11,7 +11,13 @@ import {
   HAGEE_CONNECTIONS_BOOKINGS,
   type HageeChatPreview,
 } from "@/lib/hagee-chat"
+import {
+  getBookingRequests,
+  HAGEE_BOOKING_UPDATED_EVENT,
+  type HageeBookingRequest,
+} from "@/lib/hagee-booking-storage"
 import { getSavedExploreMatches } from "@/lib/hagee-saved-storage"
+import { useClientReady } from "@/hooks/use-client-ready"
 import type { HageeExploreMatch } from "@/lib/hagee-explore"
 import { ROUTES } from "@/lib/routes"
 import { cn } from "@/lib/utils"
@@ -96,20 +102,56 @@ function ChatRow({ chat }: { chat: HageeChatPreview }) {
   )
 }
 
-function BookingsTab() {
+function BookingsTab({ requests }: { requests: HageeBookingRequest[] }) {
+  const storedBookings = requests.map((request) => ({
+    id: request.id,
+    title: `${request.serviceLabel} with ${request.profileName}`,
+    date: [request.dateLabel, request.timeLabel].filter(Boolean).join(" · ") || "Date TBD",
+    status: request.status === "pending" ? "Awaiting confirmation" : request.status === "confirmed" ? "Confirmed" : "Declined",
+    chatId: request.chatId,
+    locked: request.status === "pending",
+  }))
+
+  const bookings = [
+    ...storedBookings,
+    ...HAGEE_CONNECTIONS_BOOKINGS.map((booking) => ({ ...booking, chatId: null as string | null, locked: false })),
+  ]
+
   return (
     <div className="space-y-3 pt-2">
-      {HAGEE_CONNECTIONS_BOOKINGS.map((booking) => (
+      {bookings.map((booking) => (
         <article key={booking.id} className="hagu-surface-card p-4">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-[15px] font-medium text-hagu-ink">{booking.title}</p>
               <p className="mt-1 text-[13px] text-hagu-text-secondary">{booking.date}</p>
+              {booking.locked ? (
+                <p className="mt-2 text-[12px] text-hagu-text-secondary">
+                  They may reach out first — you can reply once they confirm
+                </p>
+              ) : null}
             </div>
-            <span className="rounded-full bg-hagu-accent-selected px-2.5 py-1 text-[10px] font-semibold text-hagu-accent-strong">
+            <span
+              className={cn(
+                "rounded-full px-2.5 py-1 text-[10px] font-semibold",
+                booking.status === "Confirmed"
+                  ? "bg-hagu-accent-selected text-hagu-accent-strong"
+                  : booking.status === "Declined"
+                    ? "bg-hagu-surface-muted text-hagu-text-secondary"
+                    : "bg-amber-50 text-amber-700",
+              )}
+            >
               {booking.status}
             </span>
           </div>
+          {"chatId" in booking && booking.chatId && booking.status === "Confirmed" ? (
+            <Link
+              href={ROUTES.chatThread(booking.chatId)}
+              className="mt-3 inline-block text-[13px] font-medium text-hagu-accent-strong"
+            >
+              Open chat
+            </Link>
+          ) : null}
         </article>
       ))}
     </div>
@@ -155,17 +197,47 @@ function LikedTab({ saved }: { saved: HageeExploreMatch[] }) {
 
 export function HageeConnectionsScreen() {
   const searchParams = useSearchParams()
+  const ready = useClientReady()
   const tabFromQuery = searchParams.get("tab")
   const [tab, setTab] = useState<ConnectionsTab>(() => parseConnectionsTab(tabFromQuery))
   const [saved, setSaved] = useState<HageeExploreMatch[]>([])
+  const [bookingRequests, setBookingRequests] = useState<HageeBookingRequest[]>([])
 
   useEffect(() => {
     setTab(parseConnectionsTab(tabFromQuery))
   }, [tabFromQuery])
 
   useEffect(() => {
+    if (!ready) return
     setSaved(getSavedExploreMatches())
-  }, [])
+    const refreshBookings = () => setBookingRequests(getBookingRequests())
+    refreshBookings()
+    window.addEventListener(HAGEE_BOOKING_UPDATED_EVENT, refreshBookings)
+    window.addEventListener("storage", refreshBookings)
+    return () => {
+      window.removeEventListener(HAGEE_BOOKING_UPDATED_EVENT, refreshBookings)
+      window.removeEventListener("storage", refreshBookings)
+    }
+  }, [ready])
+
+  const pendingChatIds = new Set(
+    bookingRequests.filter((request) => request.status === "pending").map((request) => request.chatId),
+  )
+  const confirmedChats: HageeChatPreview[] = bookingRequests
+    .filter((request) => request.status === "confirmed")
+    .map((request) => ({
+      id: request.chatId,
+      name: request.profileName,
+      avatar: request.profilePhoto,
+      preview: "Booking confirmed — say hi to coordinate details",
+      time: "Now",
+      online: true,
+    }))
+  const staticChatIds = new Set(HAGEE_CHAT_PREVIEWS.map((chat) => chat.id))
+  const visibleChats = [
+    ...confirmedChats.filter((chat) => !staticChatIds.has(chat.id)),
+    ...HAGEE_CHAT_PREVIEWS.filter((chat) => !pendingChatIds.has(chat.id)),
+  ]
 
   return (
     <HageeTabShell>
@@ -185,13 +257,17 @@ export function HageeConnectionsScreen() {
 
         {tab === "chats" ? (
           <div className="hagu-surface-card px-4">
-            {HAGEE_CHAT_PREVIEWS.map((chat) => (
-              <ChatRow key={chat.id} chat={chat} />
-            ))}
+            {visibleChats.length > 0 ? (
+              visibleChats.map((chat) => <ChatRow key={chat.id} chat={chat} />)
+            ) : (
+              <p className="py-8 text-center text-sm text-hagu-text-secondary">
+                No active chats yet. Book someone and wait for their confirmation to start messaging.
+              </p>
+            )}
           </div>
         ) : null}
 
-        {tab === "bookings" ? <BookingsTab /> : null}
+        {tab === "bookings" ? <BookingsTab requests={bookingRequests} /> : null}
         {tab === "liked" ? <LikedTab saved={saved} /> : null}
       </div>
     </HageeTabShell>

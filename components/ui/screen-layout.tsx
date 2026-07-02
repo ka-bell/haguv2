@@ -8,6 +8,7 @@ import {
   PAGE_HEADER_TOP_PADDING,
   PageFixedHeader,
 } from "@/components/ui/page-shell"
+import { SCREEN_FOOTER_SCROLL_PAD } from "@/components/ui/screen-footer"
 import { cn } from "@/lib/utils"
 
 /** Safe area + gap above header chrome. */
@@ -93,6 +94,7 @@ export function ScreenLayout({
           "flex min-h-0 flex-1 flex-col overflow-y-auto",
           contentPadding,
           bodyOffset,
+          footer && SCREEN_FOOTER_SCROLL_PAD,
           contentClassName,
         )}
       >

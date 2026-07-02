@@ -16,6 +16,14 @@ export type HageeMoodOption = {
   icon: LucideIcon
 }
 
+/** Maps home mood cards to explore refine activity ids. */
+export const HOME_MOOD_TO_ACTIVITIES: Record<string, string[]> = {
+  dinner: ["meal"],
+  event: ["social", "outing"],
+  chat: ["conversation"],
+  surprise: ["meal", "outing", "conversation", "social"],
+}
+
 export type HageeSpotlight = {
   name: string
   role: string

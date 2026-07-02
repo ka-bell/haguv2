@@ -81,6 +81,37 @@ export default function HageeOnboardingPage() {
     return true
   })()
 
+  const continueHint = (() => {
+    if (isPrototypeMode() || editMode || canContinue) return null
+    if (step === 2) {
+      const missing: string[] = []
+      if (!firstName.trim()) missing.push("first name")
+      if (!email.trim()) missing.push("email")
+      if (password.trim().length < 6) missing.push("password (6+ characters)")
+      if (!acceptedTerms) missing.push("terms checkbox")
+      return `To continue: fill in ${missing.join(", ")}.`
+    }
+    if (step === 3) {
+      const missing: string[] = []
+      if (activities.length === 0) missing.push("at least one activity")
+      if (vibes.length === 0) missing.push("at least one vibe")
+      return `To continue: select ${missing.join(" and ")}.`
+    }
+    if (step === 4) {
+      const missing: string[] = []
+      if (!age.trim()) missing.push("age")
+      if (!gender.trim()) missing.push("gender")
+      if (!city.trim()) missing.push("city")
+      return `To continue: fill in ${missing.join(", ")}.`
+    }
+    if (step === 5) {
+      return `To continue: choose ${3 - characterTraits.length} more trait${characterTraits.length === 2 ? "" : "s"}.`
+    }
+    return null
+  })()
+
+  const advanceFromAccount = () => setStep(3)
+
   const handleBack = () => {
     if (editMode) {
       router.push(ROUTES.profile)
@@ -155,8 +186,8 @@ export default function HageeOnboardingPage() {
       </div>
 
       <div className="space-y-3">
-        <GoogleSignInButton label="Sign in with Google" />
-        <AppleSignInButton />
+        <GoogleSignInButton label="Sign in with Google" onClick={advanceFromAccount} />
+        <AppleSignInButton onClick={advanceFromAccount} />
       </div>
 
       <div className="flex items-center gap-3">
@@ -180,6 +211,8 @@ export default function HageeOnboardingPage() {
         />
         I agree to the terms and privacy policy.
       </label>
+
+      {continueHint ? <p className="text-xs text-hagu-text-secondary">{continueHint}</p> : null}
     </div>
   )
 
@@ -224,6 +257,8 @@ export default function HageeOnboardingPage() {
           })}
         </div>
       </div>
+
+      {continueHint ? <p className="text-xs text-hagu-text-secondary">{continueHint}</p> : null}
     </div>
   )
 
@@ -261,6 +296,8 @@ export default function HageeOnboardingPage() {
           />
         </label>
       </div>
+
+      {continueHint ? <p className="text-xs text-hagu-text-secondary">{continueHint}</p> : null}
     </div>
   )
 
@@ -293,6 +330,7 @@ export default function HageeOnboardingPage() {
         })}
       </div>
       <p className="text-xs text-hagu-text-secondary">Selected: {characterTraits.length}/3 minimum</p>
+      {continueHint ? <p className="text-xs text-hagu-text-secondary">{continueHint}</p> : null}
     </div>
   )
 

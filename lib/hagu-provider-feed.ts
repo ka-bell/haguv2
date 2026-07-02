@@ -14,6 +14,7 @@ export type ProviderAgendaItem = {
   subtitle?: string
   type: AgendaItemType
   chatId?: string
+  bookingId?: string
 }
 
 export const PROVIDER_TODAY_LABEL = "Friday, 6 June"
@@ -32,6 +33,7 @@ export const PROVIDER_TODAY_AGENDA: ProviderAgendaItem[] = [
     subtitle: "Luca M.",
     type: "booking",
     chatId: "luca",
+    bookingId: "1",
   },
 ]
 
@@ -96,6 +98,13 @@ export type ProviderBooking = {
   price: string
   avatar: string
   showCalendarIcon?: boolean
+  duration?: string
+  location?: string
+  clientSubtitle?: string
+  message?: string
+  vibe?: string
+  escrowLabel?: string
+  reviewId?: string
 }
 
 export const PROVIDER_REQUESTS: ProviderRequest[] = [
@@ -149,6 +158,12 @@ export const PROVIDER_BOOKINGS: ProviderBooking[] = [
     price: "€95",
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&h=96&fit=crop&crop=face",
     showCalendarIcon: true,
+    duration: "2 hours",
+    location: "De Pijp, Amsterdam",
+    clientSubtitle: "4 bookings · Verified",
+    message: "Looking for someone to join me for dinner in De Pijp. Love good conversation!",
+    vibe: "Relaxed & curious",
+    escrowLabel: "€95 held in escrow until session ends",
   },
   {
     id: "4",
@@ -160,6 +175,10 @@ export const PROVIDER_BOOKINGS: ProviderBooking[] = [
     date: "Mon 2 Jun · 14:00",
     price: "€75",
     avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=96&h=96&fit=crop&crop=face",
+    duration: "2 hours",
+    location: "Rijksmuseum, Amsterdam",
+    clientSubtitle: "2 bookings · ⭐ 4.9",
+    escrowLabel: "Paid out · Mon 2 Jun",
   },
   {
     id: "2",
@@ -171,6 +190,11 @@ export const PROVIDER_BOOKINGS: ProviderBooking[] = [
     date: "Sat 7 Jun · 20:00",
     price: "€60",
     avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=96&h=96&fit=crop&crop=face",
+    duration: "1 hour",
+    location: "At her place · Amsterdam",
+    clientSubtitle: "3 bookings · ⭐ 4.8",
+    vibe: "Warm & calm",
+    escrowLabel: "€60 held in escrow until session ends",
   },
   {
     id: "5",
@@ -182,6 +206,10 @@ export const PROVIDER_BOOKINGS: ProviderBooking[] = [
     date: "Wed 4 Jun · 11:00",
     price: "€45",
     avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=96&h=96&fit=crop&crop=face",
+    duration: "1 hour",
+    location: "Public · Centrum",
+    clientSubtitle: "First booking · Verified",
+    escrowLabel: "Refund issued · Wed 4 Jun",
   },
   {
     id: "3",
@@ -193,6 +221,12 @@ export const PROVIDER_BOOKINGS: ProviderBooking[] = [
     date: "Sun 8 Jun · 15:00",
     price: "€130",
     avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=96&h=96&fit=crop&crop=face",
+    duration: "3 hours",
+    location: "Public · Zuidas",
+    clientSubtitle: "First booking · Verified",
+    message: "Need a plus-one for a gallery opening — dress code smart casual.",
+    vibe: "Social & upbeat",
+    escrowLabel: "€130 held in escrow until session ends",
   },
   {
     id: "6",
@@ -204,6 +238,11 @@ export const PROVIDER_BOOKINGS: ProviderBooking[] = [
     date: "Sat 31 May · 16:00",
     price: "€55",
     avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=96&h=96&fit=crop&crop=face",
+    duration: "1 hour",
+    location: "Vondelpark · Amsterdam",
+    clientSubtitle: "5 bookings · ⭐ 5.0",
+    reviewId: "julia-walk",
+    escrowLabel: "Paid out · Sat 31 May",
   },
 ]
 

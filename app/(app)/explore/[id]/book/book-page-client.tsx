@@ -1,30 +1,17 @@
 "use client"
 
 import { useParams, useRouter } from "next/navigation"
-import { useState } from "react"
-import { HageeBookingActivitySheet } from "@/components/hagee/hagee-booking-activity-sheet"
-import { HageeCompanionProfileScreen } from "@/components/hagee/hagee-companion-profile-screen"
+import { HageeBookingFlow } from "@/components/hagee/hagee-booking-flow"
 import { HaguFlowHeader } from "@/components/hagu/hagu-flow-header"
-import { HaguFlowCta } from "@/components/hagu/hagu-flow-cta"
 import { ScreenLayout } from "@/components/ui/screen-layout"
 import { getCompanionProfile } from "@/lib/hagee-companion-profiles"
 import { ROUTES } from "@/lib/routes"
 
-export default function ExploreCompanionProfilePage() {
+export function ExploreCompanionBookPageClient() {
   const router = useRouter()
   const params = useParams()
   const id = typeof params.id === "string" ? params.id : ""
   const profile = getCompanionProfile(id)
-  const [sheetOpen, setSheetOpen] = useState(false)
-
-  const handleBook = (serviceId?: string) => {
-    if (!profile) return
-    if (serviceId) {
-      router.push(ROUTES.exploreBook(profile.id, serviceId))
-      return
-    }
-    setSheetOpen(true)
-  }
 
   if (!profile) {
     return (
@@ -48,19 +35,5 @@ export default function ExploreCompanionProfilePage() {
     )
   }
 
-  return (
-    <>
-      <ScreenLayout
-        className="bg-hagu-canvas"
-        reserveHeader
-        headerVariant="brand"
-        header={<HaguFlowHeader onBack={() => router.back()} closeHref={ROUTES.explore} />}
-        footer={<HaguFlowCta label={`Book ${profile.name}`} onClick={() => handleBook()} />}
-      >
-        <HageeCompanionProfileScreen profile={profile} onBookService={handleBook} />
-      </ScreenLayout>
-
-      <HageeBookingActivitySheet open={sheetOpen} onClose={() => setSheetOpen(false)} profile={profile} />
-    </>
-  )
+  return <HageeBookingFlow profile={profile} />
 }

@@ -9,6 +9,8 @@ export const ROUTES = {
   /** HAGEE — swipe explore stack and sub-flows */
   explore: "/explore",
   exploreProfile: (id: string) => `/explore/${id}` as const,
+  exploreBook: (id: string, serviceId?: string) =>
+    serviceId ? (`/explore/${id}/book?service=${serviceId}` as const) : (`/explore/${id}/book` as const),
   exploreRefine: "/explore/refine",
   exploreMatches: "/explore/matches",
   /** HAGU — provider home (not shared with HAGEE explore) */
@@ -19,6 +21,7 @@ export const ROUTES = {
   /** @deprecated Use ROUTES.exploreMatches */
   discoverMatches: "/discover/matches",
   bookings: "/bookings",
+  booking: (id: string) => `/bookings/${id}` as const,
   calendar: "/calendar",
   chat: "/chat",
   chatThread: (id: string) => `/chat/${id}` as const,
@@ -28,5 +31,6 @@ export const ROUTES = {
   profile: "/profile",
   profileEdit: "/profile/edit",
   settings: "/settings",
+  settingsAccount: "/settings/account",
   settingsTransactions: "/settings/transactions",
 } as const

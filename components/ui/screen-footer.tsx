@@ -5,14 +5,21 @@ type ScreenFooterProps = {
   children: ReactNode
   className?: string
   innerClassName?: string
+  /** Pin to viewport bottom (flow screens). Set false inside bottom sheets. */
+  pinned?: boolean
 }
 
-/** Pinned bottom action zone — shared by flow CTAs and multi-button auth footers. */
-export function ScreenFooter({ children, className, innerClassName }: ScreenFooterProps) {
+/** Pinned bottom action zone — fixed so safe-area changes don't shift the CTA. */
+export function ScreenFooter({ children, className, innerClassName, pinned = true }: ScreenFooterProps) {
   return (
     <div
-      className={cn("shrink-0 border-t border-black/[0.06] bg-[#FCFFFF] px-4 pt-4", className)}
-      style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}
+      className={cn(
+        pinned
+          ? "hagu-screen-footer fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-md shrink-0 border-t border-black/[0.06] bg-[#FCFFFF] px-4"
+          : "shrink-0 border-t border-black/[0.06] bg-[#FCFFFF] px-4 pt-4",
+        !pinned && "pb-[var(--hagu-inset-bottom)]",
+        className,
+      )}
     >
       <div className={cn("mx-auto flex w-full max-w-[340px] flex-col gap-3", innerClassName)}>
         {children}
@@ -78,3 +85,6 @@ export function ScreenSecondaryButton({
     </button>
   )
 }
+
+/** Reserve scroll space when a fixed ScreenFooter is shown. */
+export const SCREEN_FOOTER_SCROLL_PAD = "pb-[var(--hagu-cta-footer-height)]" as const

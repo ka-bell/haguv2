@@ -117,6 +117,10 @@ export function HaguProviderHome() {
               item={item}
               showBorder={index < PROVIDER_TODAY_AGENDA.length - 1}
               onOpen={() => {
+                if (item.type === "booking" && item.bookingId) {
+                  router.push(ROUTES.booking(item.bookingId))
+                  return
+                }
                 if (item.type === "booking" && item.chatId) {
                   router.push(ROUTES.chatThread(item.chatId))
                   return
@@ -134,7 +138,7 @@ export function HaguProviderHome() {
         <div className="rounded-[20px] border border-black/[0.06] bg-white px-5 pb-5 pt-3 shadow-[0px_2px_8px_rgba(26,26,30,0.04)]">
           <button
             type="button"
-            onClick={() => router.push(ROUTES.bookings)}
+            onClick={() => router.push(ROUTES.booking(nextBooking.id))}
             className="flex w-full items-center gap-3.5 text-left"
           >
             <div className="relative size-[52px] shrink-0 overflow-hidden rounded-[26px]">

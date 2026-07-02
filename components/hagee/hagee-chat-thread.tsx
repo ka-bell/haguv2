@@ -3,9 +3,18 @@
 import Image from "next/image"
 import { ArrowLeft, Send } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 import { ChatThreadHeaderActions } from "@/components/chat/chat-thread-header-actions"
+import { HageeChatLockedScreen } from "@/components/hagee/hagee-chat-locked-screen"
 import { PAGE_HEADER_TOP_PADDING } from "@/components/ui/page-shell"
-import { getHageeChatThread } from "@/lib/hagee-chat"
+import { useClientReady } from "@/hooks/use-client-ready"
+import { getHageeChatThread, type HageeChatThread } from "@/lib/hagee-chat"
+import {
+  getBookingRequestByChatId,
+  getPendingBookingForChat,
+  HAGEE_BOOKING_UPDATED_EVENT,
+  type HageeBookingRequest,
+} from "@/lib/hagee-booking-storage"
 import { ROUTES } from "@/lib/routes"
 import { cn } from "@/lib/utils"
 
@@ -13,9 +22,63 @@ type HageeChatThreadProps = {
   threadId: string
 }
 
+function resolveThread(threadId: string): HageeChatThread | undefined {
+  const staticThread = getHageeChatThread(threadId)
+  if (staticThread) return staticThread
+
+  const confirmedRequest = getBookingRequestByChatId(threadId)
+  if (confirmedRequest?.status !== "confirmed") return undefined
+
+  return {
+    id: threadId,
+    name: confirmedRequest.profileName,
+    avatar: confirmedRequest.profilePhoto,
+    status: "Booking confirmed",
+    messages: [
+      {
+        type: "incoming",
+        text: `Hi! I've accepted your request for ${confirmedRequest.serviceLabel}. Looking forward to it.`,
+        time: "Now",
+      },
+    ],
+  }
+}
+
 export function HageeChatThread({ threadId }: HageeChatThreadProps) {
   const router = useRouter()
-  const thread = getHageeChatThread(threadId)
+  const ready = useClientReady()
+  const [pendingRequest, setPendingRequest] = useState<HageeBookingRequest | undefined>()
+  const [thread, setThread] = useState<HageeChatThread | undefined>()
+
+  useEffect(() => {
+    if (!ready) return
+
+    const refresh = () => {
+      const pending = getPendingBookingForChat(threadId)
+      setPendingRequest(pending)
+      setThread(pending ? undefined : resolveThread(threadId))
+    }
+
+    refresh()
+    window.addEventListener("storage", refresh)
+    window.addEventListener(HAGEE_BOOKING_UPDATED_EVENT, refresh)
+    return () => {
+      window.removeEventListener("storage", refresh)
+      window.removeEventListener(HAGEE_BOOKING_UPDATED_EVENT, refresh)
+    }
+  }, [ready, threadId])
+
+  if (!ready) {
+    return (
+      <div className="mx-auto flex min-h-dvh w-full max-w-md items-center justify-center bg-hagu-canvas">
+        <p className="text-sm text-hagu-text-secondary">Loading…</p>
+      </div>
+    )
+  }
+
+  if (pendingRequest) {
+    return <HageeChatLockedScreen request={pendingRequest} />
+  }
 
   if (!thread) {
     return (

@@ -7,9 +7,10 @@ import { cn } from "@/lib/utils"
 
 type HageeCompanionProfileScreenProps = {
   profile: HageeCompanionProfile
+  onBookService?: (serviceId: string) => void
 }
 
-export function HageeCompanionProfileScreen({ profile }: HageeCompanionProfileScreenProps) {
+export function HageeCompanionProfileScreen({ profile, onBookService }: HageeCompanionProfileScreenProps) {
   return (
     <div className="space-y-5 pb-4">
       <div className="hagu-surface-card overflow-hidden">
@@ -55,24 +56,6 @@ export function HageeCompanionProfileScreen({ profile }: HageeCompanionProfileSc
         </div>
       </div>
 
-      {profile.services.length > 0 ? (
-        <section className="hagu-surface-card p-5">
-          <p className="hagu-section-label">Services</p>
-          <p className="mt-1 text-[13px] text-hagu-text-secondary">Choose what you&apos;d like to book</p>
-          <div className="mt-4 divide-y divide-hagu-border">
-            {profile.services.map((service) => (
-              <div key={service.id} className="flex items-start justify-between gap-4 py-3.5 first:pt-0 last:pb-0">
-                <div className="min-w-0">
-                  <p className="text-[15px] font-medium text-hagu-ink">{service.label}</p>
-                  <p className="mt-0.5 text-[13px] text-hagu-text-secondary">{service.duration}</p>
-                </div>
-                <p className="shrink-0 text-[15px] font-semibold text-hagu-ink">{service.price}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      ) : null}
-
       <section className="hagu-surface-card p-5">
         <p className="hagu-section-label">About</p>
         <p className="mt-2 text-[15px] leading-relaxed text-hagu-label">{profile.bio}</p>
@@ -113,6 +96,29 @@ export function HageeCompanionProfileScreen({ profile }: HageeCompanionProfileSc
               >
                 {tag}
               </span>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {profile.services.length > 0 ? (
+        <section className="hagu-surface-card p-5">
+          <p className="hagu-section-label">Services</p>
+          <p className="mt-1 text-[13px] text-hagu-text-secondary">Choose what you&apos;d like to book</p>
+          <div className="mt-4 divide-y divide-hagu-border">
+            {profile.services.map((service) => (
+              <button
+                key={service.id}
+                type="button"
+                onClick={() => onBookService?.(service.id)}
+                className="flex w-full items-start justify-between gap-4 py-3.5 text-left first:pt-0 last:pb-0 transition active:opacity-80"
+              >
+                <div className="min-w-0">
+                  <p className="text-[15px] font-medium text-hagu-ink">{service.label}</p>
+                  <p className="mt-0.5 text-[13px] text-hagu-text-secondary">{service.duration}</p>
+                </div>
+                <p className="shrink-0 text-[15px] font-semibold text-hagu-ink">{service.price}</p>
+              </button>
             ))}
           </div>
         </section>

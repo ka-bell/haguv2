@@ -107,6 +107,12 @@
   --hagu-white: #ffffff;
   --hagu-success: #10b981;
   --hagu-error: #ef4444;
+
+  /* Stable bottom chrome — prevents CTA / tab bar jumping on mobile Safari */
+  --hagu-inset-bottom: max(1.25rem, env(safe-area-inset-bottom, 1.25rem));
+  --hagu-cta-footer-height: calc(5rem + var(--hagu-inset-bottom));
+  --hagu-tab-nav-bottom: var(--hagu-inset-bottom);
+  --hagu-tab-nav-clearance: calc(5rem + var(--hagu-tab-nav-bottom));
 }
 
 .dark {
@@ -228,6 +234,12 @@
 }
 
 @layer components {
+  .hagu-screen-footer {
+    padding-top: 1rem;
+    padding-bottom: var(--hagu-inset-bottom);
+    min-height: var(--hagu-cta-footer-height);
+  }
+
   .hagu-brand-transition {
     view-transition-name: hagu-brand;
   }

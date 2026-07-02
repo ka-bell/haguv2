@@ -3,9 +3,16 @@
 import { ArrowLeft, Calendar, Send } from "lucide-react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 import { ChatThreadHeaderActions } from "@/components/chat/chat-thread-header-actions"
 import { PAGE_HEADER_TOP_PADDING } from "@/components/ui/page-shell"
-import { getChatThread } from "@/lib/hagu-chat-threads"
+import { useClientReady } from "@/hooks/use-client-ready"
+import { getChatThread, type ChatThread } from "@/lib/hagu-chat-threads"
+import {
+  bookingRequestToHaguChatThread,
+  getBookingRequestByClientChatId,
+  HAGEE_BOOKING_UPDATED_EVENT,
+} from "@/lib/hagee-booking-storage"
 import { ROUTES } from "@/lib/routes"
 import { cn } from "@/lib/utils"
 
@@ -13,9 +20,43 @@ type HaguChatThreadProps = {
   threadId: string
 }
 
+type ResolvedHaguThread = ChatThread & { pending?: boolean }
+
+function resolveHaguChatThread(threadId: string): ResolvedHaguThread | undefined {
+  const staticThread = getChatThread(threadId)
+  if (staticThread) return staticThread
+
+  const booking = getBookingRequestByClientChatId(threadId)
+  if (!booking) return undefined
+
+  return bookingRequestToHaguChatThread(booking)
+}
+
 export function HaguChatThread({ threadId }: HaguChatThreadProps) {
   const router = useRouter()
-  const thread = getChatThread(threadId)
+  const ready = useClientReady()
+  const [thread, setThread] = useState<ResolvedHaguThread | undefined>()
+
+  useEffect(() => {
+    if (!ready) return
+
+    const refresh = () => setThread(resolveHaguChatThread(threadId))
+    refresh()
+    window.addEventListener(HAGEE_BOOKING_UPDATED_EVENT, refresh)
+    window.addEventListener("storage", refresh)
+    return () => {
+      window.removeEventListener(HAGEE_BOOKING_UPDATED_EVENT, refresh)
+      window.removeEventListener("storage", refresh)
+    }
+  }, [ready, threadId])
+
+  if (!ready) {
+    return (
+      <div className="mx-auto flex min-h-dvh w-full max-w-md items-center justify-center bg-[#FCFFFF]">
+        <p className="text-sm text-[#8A8A96]">Loading…</p>
+      </div>
+    )
+  }
 
   if (!thread) {
     return (
@@ -23,10 +64,10 @@ export function HaguChatThread({ threadId }: HaguChatThreadProps) {
         <p className="text-sm text-[#8A8A96]">Chat not found.</p>
         <button
           type="button"
-          onClick={() => router.push(ROUTES.bookings)}
+          onClick={() => router.push(ROUTES.requests)}
           className="mt-4 text-sm font-medium text-[#3DA89E]"
         >
-          Back to bookings
+          Back to requests
         </button>
       </div>
     )
@@ -40,7 +81,7 @@ export function HaguChatThread({ threadId }: HaguChatThreadProps) {
         <div className="flex items-center gap-3">
           <button
             type="button"
-            onClick={() => router.push(ROUTES.bookings)}
+            onClick={() => router.push(thread.pending ? ROUTES.requests : ROUTES.bookings)}
             className="flex size-8 shrink-0 items-center justify-center rounded-2xl bg-[#F7F6F3] text-[#1A1A1E]"
             aria-label="Back"
           >
@@ -70,46 +111,77 @@ export function HaguChatThread({ threadId }: HaguChatThreadProps) {
       </header>
 
       {thread.bookingBar ? (
-        <div className="flex shrink-0 items-center justify-between border-b border-black/[0.04] bg-[#EAF7F5] px-5 py-2.5">
+        <div
+          className={cn(
+            "flex shrink-0 items-center justify-between border-b border-black/[0.04] px-5 py-2.5",
+            thread.pending ? "bg-[#FFF8E7]" : "bg-[#EAF7F5]",
+          )}
+        >
           <div className="flex min-w-0 items-center gap-2">
-            <Calendar className="size-3.5 shrink-0 text-[#3DA89E]" />
-            <p className="truncate text-xs font-medium text-[#3DA89E]">
-              {thread.bookingBar.activity} · {thread.bookingBar.date} · {thread.bookingBar.price}
+            <Calendar className={cn("size-3.5 shrink-0", thread.pending ? "text-[#D4900A]" : "text-[#3DA89E]")} />
+            <p
+              className={cn(
+                "truncate text-xs font-medium",
+                thread.pending ? "text-[#D4900A]" : "text-[#3DA89E]",
+              )}
+            >
+              {thread.pending ? "Pending request" : thread.bookingBar.activity} · {thread.bookingBar.date} ·{" "}
+              {thread.bookingBar.price}
             </p>
           </div>
-          <button type="button" className="shrink-0 text-[11px] font-semibold text-[#5BBFB5]">
-            View
-          </button>
+          {thread.pending ? (
+            <button
+              type="button"
+              onClick={() => router.push(ROUTES.requests)}
+              className="shrink-0 text-[11px] font-semibold text-[#D4900A]"
+            >
+              Review
+            </button>
+          ) : (
+            <button type="button" className="shrink-0 text-[11px] font-semibold text-[#5BBFB5]">
+              View
+            </button>
+          )}
         </div>
       ) : null}
 
       <div className="flex-1 space-y-3 overflow-y-auto px-5 py-4">
-        <div className="flex justify-center pb-1 pt-1">
-          <span className="rounded-full bg-[#F7F6F3] px-3 py-0.5 text-[11px] text-[#B8B8C2]">Today</span>
-        </div>
+        {thread.messages.length > 0 ? (
+          <>
+            <div className="flex justify-center pb-1 pt-1">
+              <span className="rounded-full bg-[#F7F6F3] px-3 py-0.5 text-[11px] text-[#B8B8C2]">Today</span>
+            </div>
 
-        {thread.messages.map((message, index) =>
-          message.type === "incoming" ? (
-            <div key={index} className="flex items-end gap-2">
-              <div className="relative size-7 shrink-0 overflow-hidden rounded-[14px]">
-                <Image src={thread.avatar} alt="" fill className="object-cover" />
-              </div>
-              <div className="max-w-[78%]">
-                <div className="rounded-bl-[4px] rounded-br-[18px] rounded-tl-[18px] rounded-tr-[18px] border border-black/[0.06] bg-white px-4 py-3 text-sm leading-[1.5] text-[#1A1A1E]">
-                  {message.text}
+            {thread.messages.map((message, index) =>
+              message.type === "incoming" ? (
+                <div key={index} className="flex items-end gap-2">
+                  <div className="relative size-7 shrink-0 overflow-hidden rounded-[14px]">
+                    <Image src={thread.avatar} alt="" fill className="object-cover" />
+                  </div>
+                  <div className="max-w-[78%]">
+                    <div className="rounded-bl-[4px] rounded-br-[18px] rounded-tl-[18px] rounded-tr-[18px] border border-black/[0.06] bg-white px-4 py-3 text-sm leading-[1.5] text-[#1A1A1E]">
+                      {message.text}
+                    </div>
+                    <p className="mt-1 text-[10px] text-[#B8B8C2]">{message.time}</p>
+                  </div>
                 </div>
-                <p className="mt-1 text-[10px] text-[#B8B8C2]">{message.time}</p>
-              </div>
-            </div>
-          ) : (
-            <div key={index} className="flex flex-col items-end">
-              <div className="max-w-[78%] rounded-bl-[18px] rounded-br-[4px] rounded-tl-[18px] rounded-tr-[18px] bg-[#1A1A1E] px-4 py-3 text-sm leading-[1.5] text-white">
-                {message.text}
-              </div>
-              <p className="mt-1 text-[10px] text-[#B8B8C2]">{message.time}</p>
-            </div>
-          ),
-        )}
+              ) : (
+                <div key={index} className="flex flex-col items-end">
+                  <div className="max-w-[78%] rounded-bl-[18px] rounded-br-[4px] rounded-tl-[18px] rounded-tr-[18px] bg-[#1A1A1E] px-4 py-3 text-sm leading-[1.5] text-white">
+                    {message.text}
+                  </div>
+                  <p className="mt-1 text-[10px] text-[#B8B8C2]">{message.time}</p>
+                </div>
+              ),
+            )}
+          </>
+        ) : thread.pending ? (
+          <div className="flex flex-col items-center px-4 pt-10 text-center">
+            <p className="text-sm text-[#8A8A96]">
+              {firstName} sent a booking request. You can message them here before accepting or declining.
+            </p>
+          </div>
+        ) : null}
       </div>
 
       <footer className="shrink-0 border-t border-black/[0.06] bg-white px-4 pb-[max(1.75rem,env(safe-area-inset-bottom))] pt-3">

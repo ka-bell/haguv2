@@ -6,6 +6,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { HaguToggle } from "@/components/ui/hagu-toggle"
 import { HaguPrototypeSheet } from "@/components/hagu/hagu-prototype-sheet"
+import { CALENDAR_DAY_TO_BOOKING_ID } from "@/lib/hagu-provider-booking-detail"
 import { ROUTES } from "@/lib/routes"
 import { cn } from "@/lib/utils"
 
@@ -308,13 +309,19 @@ export function HaguCalendarScreen() {
               <p className="mt-2 text-xs text-[#4A4A52]">{booked.time}</p>
             </div>
             <p className="mt-3 text-xs text-[#8A8A96]">
-              Design: quick view with link to full booking + message client. Cannot edit availability while booked.
+              Quick view — open the full booking to message or manage this session.
             </p>
-            <Link href={ROUTES.bookings} className="mt-4 block">
-              <Button variant="outline" className="w-full">
-                View in Bookings
-              </Button>
-            </Link>
+            {CALENDAR_DAY_TO_BOOKING_ID[selectedDay] ? (
+              <Link href={ROUTES.booking(CALENDAR_DAY_TO_BOOKING_ID[selectedDay])} className="mt-4 block">
+                <Button className="w-full">Open booking</Button>
+              </Link>
+            ) : (
+              <Link href={ROUTES.bookings} className="mt-4 block">
+                <Button variant="outline" className="w-full">
+                  View in Bookings
+                </Button>
+              </Link>
+            )}
           </>
         ) : null}
       </HaguPrototypeSheet>

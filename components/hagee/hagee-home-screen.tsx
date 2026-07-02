@@ -13,6 +13,7 @@ import {
 } from "@/lib/hagee-home"
 import { HAGEE_BOOKING_COMPANION_ID } from "@/lib/hagee-companion-profiles"
 import { HAGEE_CLIENT_NAME } from "@/lib/hagee-discover"
+import { applyHomeMoodFilter } from "@/lib/hagee-discover-preferences"
 import { ROUTES } from "@/lib/routes"
 
 function timeGreeting() {
@@ -90,7 +91,10 @@ export function HageeHomeScreen() {
               icon={mood.icon}
               label={mood.title}
               subtitle={mood.subtitle}
-              onClick={() => router.push(ROUTES.explore)}
+              onClick={() => {
+                applyHomeMoodFilter(mood.id)
+                router.push(ROUTES.explore)
+              }}
             />
           ))}
         </div>

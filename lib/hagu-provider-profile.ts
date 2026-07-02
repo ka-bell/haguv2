@@ -15,4 +15,5 @@ export const HAGU_PROVIDER_PROFILE = {
   },
   stripeLabel: "Stripe · ING ****4821",
   stripeStatus: "Connected",
+  email: "sarah@hagu.app",
 } as const

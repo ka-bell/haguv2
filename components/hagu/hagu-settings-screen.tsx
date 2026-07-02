@@ -4,6 +4,7 @@ import {
   BadgeCheck,
   ChevronRight,
   ClipboardList,
+  KeyRound,
   MapPin,
   Pencil,
   Sparkles,
@@ -74,6 +75,12 @@ const FINANCE_ROWS: SettingsRowConfig[] = [
 ]
 
 const ACCOUNT_ROWS: SettingsRowConfig[] = [
+  {
+    id: "credentials",
+    label: "Email & password",
+    icon: KeyRound,
+    href: ROUTES.settingsAccount,
+  },
   { id: "notifications", label: "Notifications", overlay: "notifications" },
   { id: "privacy", label: "Privacy & safety", overlay: "privacy" },
   {

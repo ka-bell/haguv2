@@ -5,14 +5,16 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import type { ProviderRequest } from "@/lib/hagu-provider-feed"
 import { ROUTES } from "@/lib/routes"
+import { cn } from "@/lib/utils"
 
 type HaguRequestCardProps = {
   request: ProviderRequest
   onAccept?: () => void
   onMessage?: () => void
+  onOpen?: () => void
 }
 
-export function HaguRequestCard({ request, onAccept, onMessage }: HaguRequestCardProps) {
+export function HaguRequestCard({ request, onAccept, onMessage, onOpen }: HaguRequestCardProps) {
   const router = useRouter()
 
   const openChat = () => {
@@ -24,7 +26,25 @@ export function HaguRequestCard({ request, onAccept, onMessage }: HaguRequestCar
   }
 
   return (
-    <article className="rounded-[20px] border border-black/[0.06] bg-white px-5 pb-5 pt-5 shadow-[0px_2px_8px_rgba(26,26,30,0.04)]">
+    <article
+      role={onOpen ? "button" : undefined}
+      tabIndex={onOpen ? 0 : undefined}
+      onClick={onOpen}
+      onKeyDown={
+        onOpen
+          ? (event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault()
+                onOpen()
+              }
+            }
+          : undefined
+      }
+      className={cn(
+        "rounded-[20px] border border-black/[0.06] bg-white px-5 pb-5 pt-5 shadow-[0px_2px_8px_rgba(26,26,30,0.04)]",
+        onOpen && "cursor-pointer transition active:opacity-95",
+      )}
+    >
       <div className="flex gap-3">
         <div className="relative size-12 shrink-0 overflow-hidden rounded-[24px]">
           <Image src={request.avatar} alt={request.name} fill className="object-cover" />
@@ -38,7 +58,10 @@ export function HaguRequestCard({ request, onAccept, onMessage }: HaguRequestCar
             <div className="flex shrink-0 items-center gap-2">
               <button
                 type="button"
-                onClick={openChat}
+                onClick={(event) => {
+                  event.stopPropagation()
+                  openChat()
+                }}
                 className="flex size-9 items-center justify-center rounded-full bg-[#F7F6F3] text-[#1A1A1E] transition active:opacity-80"
                 aria-label={`Message ${request.name}`}
               >
@@ -73,6 +96,8 @@ export function HaguRequestCard({ request, onAccept, onMessage }: HaguRequestCar
         <p className="mt-4 text-[13px] leading-[1.5] text-[#4A4A52]">{request.message}</p>
       ) : null}
 
+      <p className="mt-3 text-[11px] text-[#8A8A96]">You can message {request.name.split(" ")[0]} before accepting.</p>
+
       {request.summary ? (
         <div className="mt-4 flex items-center justify-between gap-3">
           <div>
@@ -86,13 +111,19 @@ export function HaguRequestCard({ request, onAccept, onMessage }: HaguRequestCar
       <div className="mt-4 flex gap-2.5">
         <button
           type="button"
+          onClick={(event) => {
+            event.stopPropagation()
+          }}
           className="flex h-10 w-[98px] shrink-0 items-center justify-center rounded-full border border-[#5BBFB5] text-[13px] font-medium text-[#3DA89E] transition active:opacity-80"
         >
           Decline
         </button>
         <button
           type="button"
-          onClick={onAccept}
+          onClick={(event) => {
+            event.stopPropagation()
+            onAccept?.()
+          }}
           className="flex h-10 flex-1 items-center justify-center rounded-full bg-[#1A1A1E] text-[13px] font-medium text-white transition active:opacity-80"
         >
           Accept · {request.price}
