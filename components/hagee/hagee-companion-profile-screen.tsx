@@ -3,7 +3,6 @@
 import { Clock, Star } from "lucide-react"
 import type { HageeCompanionProfile } from "@/lib/hagee-companion-profiles"
 import { HageeProfilePhotoCarousel } from "@/components/hagee/hagee-profile-photo-carousel"
-import { cn } from "@/lib/utils"
 
 type HageeCompanionProfileScreenProps = {
   profile: HageeCompanionProfile
@@ -13,48 +12,26 @@ type HageeCompanionProfileScreenProps = {
 export function HageeCompanionProfileScreen({ profile, onBookService }: HageeCompanionProfileScreenProps) {
   return (
     <div className="space-y-5 pb-4">
-      <div className="hagu-surface-card overflow-hidden">
-        <HageeProfilePhotoCarousel
-          photos={profile.photos}
-          name={profile.name}
-          overlay={
-            <div className="space-y-2 px-5 pb-5">
-              <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-[26px] font-semibold tracking-tight text-white">
-                  {profile.name}, {profile.age}
-                </h1>
-                {profile.verified ? (
-                  <span className="rounded-full border border-hagu-border bg-hagu-canvas px-2.5 py-1 text-[10px] font-semibold text-hagu-ink">
-                    Verified
-                  </span>
-                ) : null}
-              </div>
-              <p className="text-[14px] text-white/90">{profile.role}</p>
-              <p className="max-w-[28rem] text-[13px] leading-relaxed text-white/80">{profile.tagline}</p>
+      <HageeProfilePhotoCarousel
+        photos={profile.photos}
+        name={profile.name}
+        overlay={
+          <div className="space-y-2 px-5 pb-5">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-[26px] font-semibold tracking-tight text-white">
+                {profile.name}, {profile.age}
+              </h1>
+              {profile.verified ? (
+                <span className="rounded-full border border-hagu-border bg-hagu-canvas px-2.5 py-1 text-[10px] font-semibold text-hagu-ink">
+                  Verified
+                </span>
+              ) : null}
             </div>
-          }
-        />
-
-        <div className="grid grid-cols-3 gap-px bg-hagu-border">
-          {[
-            { value: profile.rating.toFixed(1), label: "Rating" },
-            { value: profile.availabilityLabel, label: "Availability" },
-            { value: "Fast", label: "Response" },
-          ].map((stat) => (
-            <div key={stat.label} className="bg-hagu-white px-2.5 py-3.5 text-center">
-              <p
-                className={cn(
-                  "font-semibold tracking-tight text-hagu-ink",
-                  stat.label === "Availability" ? "text-[13px] leading-snug line-clamp-2" : "text-base",
-                )}
-              >
-                {stat.value}
-              </p>
-              <p className="text-[11px] text-hagu-text-secondary">{stat.label}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+            <p className="text-[14px] text-white/90">{profile.role}</p>
+            <p className="max-w-[28rem] text-[13px] leading-relaxed text-white/80">{profile.tagline}</p>
+          </div>
+        }
+      />
 
       <section className="hagu-surface-card p-5">
         <p className="hagu-section-label">About</p>

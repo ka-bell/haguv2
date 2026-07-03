@@ -3,9 +3,10 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
+import { Search } from "lucide-react"
 import { useEffect, useState } from "react"
 import { HageeTabShell } from "@/components/hagee/hagee-tab-shell"
-import { HAGEE_CHAT_PREVIEWS, type HageeChatPreview } from "@/lib/hagee-chat"
+import { HAGEE_CHAT_PREVIEWS, withChatSubtitle, type HageeChatPreview } from "@/lib/hagee-chat"
 import {
   activeConnectionBookings,
   connectionBookingDate,
@@ -21,7 +22,7 @@ import { getSavedExploreMatches } from "@/lib/hagee-saved-storage"
 import { useClientReady } from "@/hooks/use-client-ready"
 import type { HageeExploreMatch } from "@/lib/hagee-explore"
 import { ROUTES } from "@/lib/routes"
-import { selectionPillClass } from "@/lib/hagu-selection-styles"
+import { selectionSegmentClass, selectionSegmentTrackClass } from "@/lib/hagu-selection-styles"
 import { cn } from "@/lib/utils"
 
 type ConnectionsTab = "chats" | "bookings" | "liked"
@@ -45,23 +46,17 @@ function ConnectionsTabs({
   ]
 
   return (
-    <div className="flex gap-2">
-      {tabs.map((tab) => {
-        const selected = active === tab.id
-        return (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => onChange(tab.id)}
-            className={cn(
-              selectionPillClass(selected, "sm"),
-              "flex flex-1 items-center justify-center",
-            )}
-          >
-            {tab.label}
-          </button>
-        )
-      })}
+    <div className={selectionSegmentTrackClass()}>
+      {tabs.map((tab) => (
+        <button
+          key={tab.id}
+          type="button"
+          onClick={() => onChange(tab.id)}
+          className={selectionSegmentClass(active === tab.id)}
+        >
+          {tab.label}
+        </button>
+      ))}
     </div>
   )
 }
@@ -70,7 +65,7 @@ function ChatRow({ chat }: { chat: HageeChatPreview }) {
   return (
     <Link
       href={ROUTES.chatThread(chat.id)}
-      className="flex items-center gap-4 border-b border-hagu-border py-4 last:border-b-0"
+      className="hagu-surface-card flex items-center gap-4 p-4 transition active:opacity-95"
     >
       <div className="relative shrink-0">
         <div className="relative size-[52px] overflow-hidden rounded-[20px]">
@@ -86,6 +81,9 @@ function ChatRow({ chat }: { chat: HageeChatPreview }) {
           <p className="text-[15px] font-medium text-hagu-ink">{chat.name}</p>
           <span className="shrink-0 text-[11px] text-hagu-text-secondary">{chat.time}</span>
         </div>
+        {chat.subtitle ? (
+          <p className="truncate text-[11px] text-hagu-text-secondary">{chat.subtitle}</p>
+        ) : null}
         <p
           className={cn(
             "truncate text-[13px]",
@@ -236,7 +234,8 @@ export function HageeConnectionsScreen() {
       id: request.chatId,
       name: request.profileName,
       avatar: request.profilePhoto,
-      preview: "Booking confirmed — say hi to coordinate details",
+      subtitle: "Booking confirmed",
+      preview: "Say hi to coordinate details",
       time: "Now",
       online: true,
     }))
@@ -244,7 +243,7 @@ export function HageeConnectionsScreen() {
   const visibleChats = [
     ...confirmedChats.filter((chat) => !staticChatIds.has(chat.id)),
     ...HAGEE_CHAT_PREVIEWS.filter((chat) => !pendingChatIds.has(chat.id)),
-  ]
+  ].map(withChatSubtitle)
 
   const handleTabChange = (next: ConnectionsTab) => {
     setTab(next)
@@ -255,20 +254,33 @@ export function HageeConnectionsScreen() {
   return (
     <HageeTabShell>
       <div className="space-y-5">
-        <h1 className="hagu-page-title">Connections</h1>
+        <div className="flex items-center justify-between gap-3">
+          <h1 className="hagu-page-title">Connections</h1>
+          <button
+            type="button"
+            aria-label="Search"
+            className="flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-hagu-surface-muted text-hagu-ink"
+          >
+            <Search className="size-[18px]" />
+          </button>
+        </div>
 
         <ConnectionsTabs active={tab} onChange={handleTabChange} />
 
         {tab === "chats" ? (
-          <div className="hagu-surface-card px-4">
-            {visibleChats.length > 0 ? (
-              visibleChats.map((chat) => <ChatRow key={chat.id} chat={chat} />)
-            ) : (
-              <p className="py-8 text-center text-sm text-hagu-text-secondary">
+          visibleChats.length > 0 ? (
+            <div className="space-y-3">
+              {visibleChats.map((chat) => (
+                <ChatRow key={chat.id} chat={chat} />
+              ))}
+            </div>
+          ) : (
+            <div className="hagu-surface-card border-dashed px-4 py-10 text-center">
+              <p className="text-sm text-hagu-text-secondary">
                 No active chats yet. Book someone and wait for their confirmation to start messaging.
               </p>
-            )}
-          </div>
+            </div>
+          )
         ) : null}
 
         {tab === "bookings" ? <BookingsTab requests={bookingRequests} /> : null}

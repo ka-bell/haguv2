@@ -29,11 +29,22 @@ export const HOSTING_OPTIONS = [
   { value: "public", label: "Public" },
 ]
 
-export const ACTIVITY_ITEMS = [
+export const ACTIVITY_CATALOG = [
   { id: "cuddling", label: "Cuddling" },
   { id: "back-scratching", label: "Back scratching" },
   { id: "hand-holding", label: "Hand holding" },
+  { id: "hugging", label: "Hugging" },
+  { id: "head-scratches", label: "Head scratches" },
+  { id: "shoulder-massage", label: "Shoulder massage" },
+  { id: "foot-rub", label: "Foot rub" },
+  { id: "spooning", label: "Spooning" },
+  { id: "sitting-together", label: "Sitting together" },
 ] as const
+
+/** @deprecated Use ACTIVITY_CATALOG */
+export const ACTIVITY_ITEMS = ACTIVITY_CATALOG
+
+export const DEFAULT_ACTIVITY_IDS = ["cuddling", "back-scratching", "hand-holding"] as const
 
 export const WEEKDAYS = ["M", "T", "W", "T", "F", "S", "S"] as const
 

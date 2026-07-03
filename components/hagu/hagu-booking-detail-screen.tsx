@@ -27,7 +27,7 @@ type HaguBookingDetailScreenProps = {
 }
 
 const STATUS_STYLES: Record<BookingOverviewTone, string> = {
-  confirmed: "bg-[#EAF7F5] text-[#3DA89E]",
+  confirmed: "border border-hagu-border bg-hagu-canvas text-hagu-ink",
   pending: "bg-[#FFF8E7] text-[#D4900A]",
   completed: "border border-black/[0.06] bg-hagu-canvas text-[#8A8A96]",
   cancelled: "bg-[#FCEAEA] text-[#DC3232]",
@@ -61,7 +61,7 @@ export function HaguBookingDetailScreen({ bookingId }: HaguBookingDetailScreenPr
         <button
           type="button"
           onClick={() => router.push(ROUTES.bookings)}
-          className="mt-4 text-sm font-medium text-[#3DA89E]"
+          className="mt-4 text-sm font-medium text-hagu-label"
         >
           Back to bookings
         </button>
@@ -77,7 +77,9 @@ export function HaguBookingDetailScreen({ bookingId }: HaguBookingDetailScreenPr
         ? "completed"
         : category === "request"
           ? "new"
-          : overview.statusTone
+          : category === "upcoming"
+            ? "confirmed"
+            : overview.statusTone
   const statusLabel =
     category === "cancelled"
       ? "Cancelled"
@@ -85,7 +87,9 @@ export function HaguBookingDetailScreen({ bookingId }: HaguBookingDetailScreenPr
         ? "Completed"
         : category === "request"
           ? "New request"
-          : overview.statusLabel
+          : category === "upcoming"
+            ? "Confirmed"
+            : overview.statusLabel
 
   const detailRows = [
     { label: "Activity", value: overview.activity },
@@ -102,8 +106,9 @@ export function HaguBookingDetailScreen({ bookingId }: HaguBookingDetailScreenPr
   const handleAccept = () => {
     if (overview.storageId) {
       confirmBookingRequest(overview.storageId)
+      refresh()
     }
-    router.push(ROUTES.chatThread(overview.chatId))
+    setLocalCategory("upcoming")
   }
 
   const handleDecline = () => {
@@ -197,7 +202,7 @@ export function HaguBookingDetailScreen({ bookingId }: HaguBookingDetailScreenPr
         ) : null}
 
         {overview.escrowLabel && category !== "cancelled" ? (
-          <section className="rounded-[14px] bg-[#EAF7F5] px-4 py-3.5">
+          <section className="rounded-[14px] border border-hagu-border bg-hagu-canvas px-4 py-3.5">
             <p className="text-[13px] font-medium text-[#1A1A1E]">Payment</p>
             <p className="mt-1 text-xs leading-relaxed text-[#4A4A52]">{overview.escrowLabel}</p>
           </section>

@@ -10,11 +10,12 @@ import { cn } from "@/lib/utils"
 type HaguRequestCardProps = {
   request: ProviderRequest
   onAccept?: () => void
+  onDecline?: () => void
   onMessage?: () => void
   onOpen?: () => void
 }
 
-export function HaguRequestCard({ request, onAccept, onMessage, onOpen }: HaguRequestCardProps) {
+export function HaguRequestCard({ request, onAccept, onDecline, onMessage, onOpen }: HaguRequestCardProps) {
   const router = useRouter()
 
   const openChat = () => {
@@ -27,25 +28,24 @@ export function HaguRequestCard({ request, onAccept, onMessage, onOpen }: HaguRe
 
   return (
     <article
-      role={onOpen ? "button" : undefined}
-      tabIndex={onOpen ? 0 : undefined}
-      onClick={onOpen}
-      onKeyDown={
-        onOpen
-          ? (event) => {
-              if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault()
-                onOpen()
-              }
-            }
-          : undefined
-      }
-      className={cn(
-        "rounded-[20px] border border-black/[0.06] bg-white px-5 pb-5 pt-5 shadow-[0px_2px_8px_rgba(26,26,30,0.04)]",
-        onOpen && "cursor-pointer transition active:opacity-95",
-      )}
+      className="rounded-[20px] border border-black/[0.06] bg-white px-5 pb-5 pt-5 shadow-[0px_2px_8px_rgba(26,26,30,0.04)]"
     >
-      <div className="flex gap-3">
+      <div
+        className={cn("flex gap-3", onOpen && "cursor-pointer")}
+        role={onOpen ? "button" : undefined}
+        tabIndex={onOpen ? 0 : undefined}
+        onClick={onOpen}
+        onKeyDown={
+          onOpen
+            ? (event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault()
+                  onOpen()
+                }
+              }
+            : undefined
+        }
+      >
         <div className="relative size-12 shrink-0 overflow-hidden rounded-[24px]">
           <Image src={request.avatar} alt={request.name} fill className="object-cover" />
         </div>
@@ -113,8 +113,9 @@ export function HaguRequestCard({ request, onAccept, onMessage, onOpen }: HaguRe
           type="button"
           onClick={(event) => {
             event.stopPropagation()
+            onDecline?.()
           }}
-          className="flex h-10 w-[98px] shrink-0 items-center justify-center rounded-full border border-[#5BBFB5] text-[13px] font-medium text-[#3DA89E] transition active:opacity-80"
+          className="hagu-btn-secondary h-10 w-[98px] shrink-0 rounded-full text-[13px]"
         >
           Decline
         </button>
@@ -124,7 +125,7 @@ export function HaguRequestCard({ request, onAccept, onMessage, onOpen }: HaguRe
             event.stopPropagation()
             onAccept?.()
           }}
-          className="flex h-10 flex-1 items-center justify-center rounded-full bg-[#1A1A1E] text-[13px] font-medium text-white transition active:opacity-80"
+          className="hagu-btn-primary h-10 flex-1 rounded-full text-[13px]"
         >
           Accept · {request.price}
         </button>

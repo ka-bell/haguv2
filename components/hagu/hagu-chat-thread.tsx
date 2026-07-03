@@ -65,7 +65,7 @@ export function HaguChatThread({ threadId }: HaguChatThreadProps) {
         <button
           type="button"
           onClick={() => router.push(ROUTES.requests)}
-          className="mt-4 text-sm font-medium text-[#3DA89E]"
+          className="mt-4 text-sm font-medium text-hagu-label"
         >
           Back to requests
         </button>
@@ -98,12 +98,12 @@ export function HaguChatThread({ threadId }: HaguChatThreadProps) {
                 className="size-full object-cover"
               />
             </div>
-            <span className="absolute bottom-0 right-0 size-2.5 rounded-[5px] border-2 border-white bg-[#5BBFB5]" />
+            <span className="absolute bottom-0 right-0 size-2.5 rounded-[5px] border-2 border-white bg-hagu-heading" />
           </div>
 
           <div className="min-w-0 flex-1">
             <p className="text-[15px] font-semibold text-[#1A1A1E]">{thread.name}</p>
-            <p className="text-[11px] text-[#5BBFB5]">{thread.status}</p>
+            <p className="text-[11px] text-hagu-text-secondary">{thread.status}</p>
           </div>
 
           <ChatThreadHeaderActions threadId={threadId} personName={thread.name} variant="hagu" />
@@ -114,15 +114,15 @@ export function HaguChatThread({ threadId }: HaguChatThreadProps) {
         <div
           className={cn(
             "flex shrink-0 items-center justify-between border-b border-black/[0.04] px-5 py-2.5",
-            thread.pending ? "bg-[#FFF8E7]" : "bg-[#EAF7F5]",
+            thread.pending ? "bg-[#FFF8E7]" : "bg-hagu-canvas",
           )}
         >
           <div className="flex min-w-0 items-center gap-2">
-            <Calendar className={cn("size-3.5 shrink-0", thread.pending ? "text-[#D4900A]" : "text-[#3DA89E]")} />
+            <Calendar className={cn("size-3.5 shrink-0", thread.pending ? "text-[#D4900A]" : "text-hagu-label")} />
             <p
               className={cn(
                 "truncate text-xs font-medium",
-                thread.pending ? "text-[#D4900A]" : "text-[#3DA89E]",
+                thread.pending ? "text-[#D4900A]" : "text-hagu-ink",
               )}
             >
               {thread.pending ? "Pending request" : thread.bookingBar.activity} · {thread.bookingBar.date} ·{" "}
@@ -138,7 +138,7 @@ export function HaguChatThread({ threadId }: HaguChatThreadProps) {
               Review
             </button>
           ) : (
-            <button type="button" className="shrink-0 text-[11px] font-semibold text-[#5BBFB5]">
+            <button type="button" className="shrink-0 text-[11px] font-semibold text-hagu-ink">
               View
             </button>
           )}

@@ -61,7 +61,7 @@ export function HaguTransactionsScreen() {
       <h1 className="text-[26px] font-semibold tracking-[-0.5px] text-[#1A1A1E]">Earnings</h1>
 
       <div className="relative overflow-hidden rounded-[24px] bg-[#1A1A1E] p-6">
-        <div className="absolute -right-5 -top-5 size-[100px] rounded-full bg-[rgba(91,191,181,0.12)]" />
+        <div className="absolute -right-5 -top-5 size-[100px] rounded-full bg-white/[0.06]" />
         <p className="text-xs font-medium uppercase tracking-[0.5px] text-white/50">Available balance</p>
         <p className="mt-1 text-[40px] font-semibold tracking-[-1.5px] text-white">€ 285,00</p>
         <div className="mt-4 flex gap-2">
@@ -73,7 +73,7 @@ export function HaguTransactionsScreen() {
           </button>
           <button
             type="button"
-            className="flex h-10 flex-1 items-center justify-center rounded-full bg-[#5BBFB5] text-[13px] font-medium text-white transition active:opacity-80"
+            className="flex h-10 flex-1 items-center justify-center rounded-full bg-hagu-heading text-[13px] font-medium text-white transition active:opacity-80"
           >
             Auto payout
           </button>
@@ -81,7 +81,7 @@ export function HaguTransactionsScreen() {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <StatCard label="This month" value="€1.240" hint="+18% vs last month" hintClassName="text-[#5BBFB5]" />
+        <StatCard label="This month" value="€1.240" hint="+18% vs last month" hintClassName="text-hagu-ink" />
         <StatCard label="Pending" value="€285" hint="Clears in 2 days" hintClassName="text-[#D4900A]" />
       </div>
 
@@ -118,12 +118,12 @@ function StatCard({
 }
 
 function TransactionRow({ tx }: { tx: Transaction }) {
-  const amountColor = tx.statusType === "completed" ? "text-[#3DA89E]" : "text-[#D4900A]"
+  const amountColor = tx.statusType === "completed" ? "text-hagu-ink" : "text-[#D4900A]"
 
   return (
     <div className="flex items-center gap-3 py-3.5">
       {tx.payout ? (
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-[20px] bg-[#EAF7F5] text-[#5BBFB5]">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-[20px] border border-hagu-border bg-hagu-canvas text-hagu-ink">
           <ArrowDownToLine className="size-[18px]" />
         </div>
       ) : (

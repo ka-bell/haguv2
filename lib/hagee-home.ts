@@ -41,6 +41,16 @@ export type HageeNewArrival = {
   photo: string
 }
 
+export const HAGEE_MONTHLY_SUMMARY = {
+  periodLabel: "This month",
+  amount: "€ 340",
+  stats: [
+    { label: "Meetups", value: "3" },
+    { label: "Companions", value: "2" },
+    { label: "Pending", value: "€ 95", valueClassName: "text-[#D0F1F0]" },
+  ],
+} as const
+
 export const HAGEE_ACTIVE_BOOKING: HageeActiveBooking = {
   id: "demo-sara-dinner",
   chatId: "sarah",

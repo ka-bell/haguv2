@@ -77,8 +77,8 @@ const TIME_SLOTS = [
 
 const DAY_STYLES: Record<DayState, string> = {
   outside: "text-[#B8B8C2]",
-  available: "bg-[#EAF7F5] text-[#3DA89E] hover:bg-[#D0F1F0]",
-  selected: "border-2 border-[#5BBFB5] text-[#1A1A1E]",
+  available: "border border-hagu-border bg-hagu-canvas text-hagu-label hover:bg-black/[0.03]",
+  selected: "border-2 border-hagu-heading bg-hagu-white text-hagu-ink",
   closed: "text-[#B8B8C2] hover:bg-hagu-canvas",
   booked: "bg-[#1A1A1E] text-white hover:opacity-90",
 }
@@ -193,7 +193,7 @@ export function HaguCalendarScreen() {
             </div>
 
             <div className="flex flex-wrap gap-4 pt-1">
-              <LegendItem color="border border-[#5BBFB5] bg-[#EAF7F5]" label="Available" />
+              <LegendItem color="border border-hagu-border bg-hagu-canvas" label="Available" />
               <LegendItem color="bg-[#1A1A1E]" label="Booked" />
               <LegendItem color="border border-black/10 bg-hagu-canvas" label="Closed" />
             </div>
@@ -238,8 +238,6 @@ export function HaguCalendarScreen() {
             ))}
           </div>
         </article>
-
-        <PrototypeMap />
       </div>
 
       <HaguPrototypeSheet
@@ -381,37 +379,6 @@ function PrototypeField({ label, value }: { label: string; value: string }) {
       <p className="text-[11px] font-medium uppercase tracking-wide text-[#8A8A96]">{label}</p>
       <p className="mt-0.5 text-sm text-[#1A1A1E]">{value}</p>
     </div>
-  )
-}
-
-function PrototypeMap() {
-  return (
-    <details className="rounded-[20px] border border-black/[0.06] bg-white px-4 py-3 text-sm">
-      <summary className="cursor-pointer font-medium text-[#1A1A1E]">Figma screens to design (calendar flow)</summary>
-      <ul className="mt-3 space-y-2 text-xs text-[#8A8A96]">
-        <li>
-          <strong className="text-[#1A1A1E]">Calendar</strong> — main view (2467:14009) ✓
-        </li>
-        <li>
-          <strong className="text-[#1A1A1E]">Sheet · Block time</strong> — + Block time / block hours
-        </li>
-        <li>
-          <strong className="text-[#1A1A1E]">Sheet · Day availability</strong> — tap open day
-        </li>
-        <li>
-          <strong className="text-[#1A1A1E]">Sheet · Reopen day</strong> — tap closed day
-        </li>
-        <li>
-          <strong className="text-[#1A1A1E]">Sheet · Booking detail</strong> — tap booked day
-        </li>
-        <li>
-          <strong className="text-[#1A1A1E]">Dialog · Confirm disable slot</strong> — toggle default slot off
-        </li>
-        <li>
-          <strong className="text-[#1A1A1E]">Empty month state</strong> — month nav → July/August
-        </li>
-      </ul>
-    </details>
   )
 }
 

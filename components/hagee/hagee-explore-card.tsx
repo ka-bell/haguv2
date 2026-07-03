@@ -90,11 +90,9 @@ export function HageeExploreCard({
         <div className="mt-auto">
           <div className="space-y-5 p-6 pr-[4.75rem] pb-0">
             <div className="space-y-2">
-              <div className="flex items-end gap-2">
-                <h2 className="text-[22px] font-semibold tracking-tight text-white">
-                  {match.name}, {match.age}
-                </h2>
-              </div>
+              <h2 className="text-[22px] font-semibold tracking-tight text-white">
+                {match.name}, {match.age}
+              </h2>
               <p className="text-sm leading-relaxed text-white">{match.tagline}</p>
               {sharedInterests.length > 0 ? (
                 <div className="space-y-1">
@@ -130,7 +128,7 @@ export function HageeExploreCard({
               type="button"
               onClick={onViewProfile}
               onPointerDown={(event) => event.stopPropagation()}
-              className="h-11 w-full max-w-[18rem] rounded-[10px] bg-hagu-white px-8 text-sm font-medium text-hagu-heading transition"
+              className="hagu-glass-cta h-11 max-w-[18rem] rounded-[10px] px-8"
             >
               View profile
             </button>

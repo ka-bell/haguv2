@@ -5,8 +5,10 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Clock, MessageCircle, Timer } from "lucide-react"
 import { HageeActivityCard } from "@/components/hagee/hagee-activity-card"
+import { HaguWordmarkSummaryCard } from "@/components/shared/hagu-wordmark-summary-card"
 import {
   HAGEE_ACTIVE_BOOKING,
+  HAGEE_MONTHLY_SUMMARY,
   HAGEE_MOOD_OPTIONS,
   HAGEE_NEW_ARRIVALS,
 } from "@/lib/hagee-home"
@@ -32,6 +34,13 @@ export function HageeHomeScreen() {
         <p className="hagu-page-greeting">{timeGreeting()}</p>
         <h1 className="hagu-page-title">{HAGEE_CLIENT_NAME}</h1>
       </div>
+
+      <HaguWordmarkSummaryCard
+        periodLabel={HAGEE_MONTHLY_SUMMARY.periodLabel}
+        amount={HAGEE_MONTHLY_SUMMARY.amount}
+        onClick={() => router.push(ROUTES.connectionsTab("bookings"))}
+        stats={[...HAGEE_MONTHLY_SUMMARY.stats]}
+      />
 
       <section className="space-y-3">
         <div className="flex items-center justify-between gap-3">

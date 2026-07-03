@@ -149,7 +149,7 @@ export function HaguPrototypeSheet({
 
         <div className="flex shrink-0 items-start justify-between gap-3 px-6">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#5BBFB5]">{figmaLabel}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-hagu-text-secondary">{figmaLabel}</p>
             <h2 id="hagu-sheet-title" className="mt-1 text-lg font-semibold text-[#1A1A1E]">
               {title}
             </h2>

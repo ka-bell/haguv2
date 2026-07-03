@@ -60,12 +60,30 @@ export function HageeProfilePhotoCarousel({
         </div>
       </div>
 
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/20" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/5 to-black/25" />
 
-      {overlay ? <div className="pointer-events-none absolute inset-x-0 bottom-0">{overlay}</div> : null}
-
-      {photos.length > 1 ? (
-        <div className="absolute bottom-[5.5rem] left-0 right-0 flex justify-center gap-1.5">
+      {overlay ? (
+        <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-3 p-4">
+          {photos.length > 1 ? (
+            <div className="flex gap-1.5">
+              {photos.map((photo, index) => (
+                <button
+                  key={`dot-${photo}-${index}`}
+                  type="button"
+                  aria-label={`Photo ${index + 1}`}
+                  onClick={() => emblaApi?.scrollTo(index)}
+                  className={cn(
+                    "h-1.5 rounded-full transition-all",
+                    index === selectedIndex ? "w-5 bg-white" : "w-1.5 bg-white/45",
+                  )}
+                />
+              ))}
+            </div>
+          ) : null}
+          <div className="pointer-events-none w-full">{overlay}</div>
+        </div>
+      ) : photos.length > 1 ? (
+        <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5">
           {photos.map((photo, index) => (
             <button
               key={`dot-${photo}-${index}`}

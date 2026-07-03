@@ -18,7 +18,7 @@ export function HaguToggle({ checked, onChange, label }: HaguToggleProps) {
       onClick={() => onChange(!checked)}
       className={cn(
         "relative h-6 w-11 shrink-0 rounded-full transition-colors",
-        checked ? "bg-[#5BBFB5]" : "bg-black/10",
+        checked ? "bg-hagu-heading" : "bg-black/10",
       )}
     >
       <span

@@ -25,11 +25,27 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3010](http://localhost:3010).
+
+### Troubleshooting
+
+If you see a **server error** or `ENOENT` messages mentioning `.next` / `_buildManifest`:
+
+```bash
+npm run dev:clean
+```
+
+This clears the Next.js cache and restarts the dev server. Do not run `npm run build` while `npm run dev` is already running — both write to `.next` and can corrupt the cache.
+
+If Turbopack keeps crashing, try the webpack dev server instead:
+
+```bash
+npm run dev:webpack
+```
 
 ### Prototype mode (optional click-through)
 
-Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_PROTOTYPE=true`. Then open [http://localhost:3000/dev/flow](http://localhost:3000/dev/flow) to jump to any screen without auth or form validation blocking navigation.
+Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_PROTOTYPE=true`. Then open [http://localhost:3010/dev/flow](http://localhost:3010/dev/flow) to jump to any screen without auth or form validation blocking navigation.
 
 ## Design tokens
 

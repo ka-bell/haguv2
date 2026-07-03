@@ -8,6 +8,8 @@ import {
   resolveBookingService,
 } from "@/lib/hagee-booking"
 import type { ProviderBooking } from "@/lib/hagu-provider-feed"
+import { PROVIDER_BOOKINGS } from "@/lib/hagu-provider-feed"
+import { HAGU_PROVIDER_PROFILE } from "@/lib/hagu-provider-profile"
 import {
   bookingDateLine,
   type RescheduleProposedBy,
@@ -22,6 +24,46 @@ export type { RescheduleProposedBy, RescheduleRequest } from "@/lib/hagee-resche
 export const HAGEE_DEMO_BOOKING_ID = "demo-sara-dinner"
 
 export const HAGEE_DEMO_MAYA_BOOKING_ID = "demo-maya-walk"
+
+/** Provider mock bookings — excluded from HAGEE client lists, used for HAGU reschedule. */
+export const HAGU_PROVIDER_BOOKING_IDS = new Set(
+  PROVIDER_BOOKINGS.filter(
+    (booking) => booking.category === "upcoming" && booking.status === "confirmed",
+  ).map((booking) => booking.id),
+)
+
+function parseProviderBookingDate(date: string): { dateLabel: string; timeLabel: string } {
+  const [dateLabel, timeLabel] = date.split(" · ")
+  return { dateLabel: dateLabel?.trim() || date, timeLabel: timeLabel?.trim() || "" }
+}
+
+function providerBookingToSeed(booking: ProviderBooking): HageeBookingRequest {
+  const { dateLabel, timeLabel } = parseProviderBookingDate(booking.date)
+
+  return {
+    id: booking.id,
+    profileId: "sarah",
+    profileName: HAGU_PROVIDER_PROFILE.firstName,
+    profilePhoto: HAGU_PROVIDER_PROFILE.photo,
+    chatId: "sarah",
+    clientChatId: booking.chatId,
+    clientName: booking.name,
+    clientPhoto: booking.avatar,
+    serviceLabel: booking.activity,
+    dateLabel,
+    timeLabel,
+    durationLabel: booking.duration ?? null,
+    vibeLabel: booking.vibe ?? null,
+    message: booking.message ?? "",
+    amount: booking.price,
+    status: "confirmed",
+    createdAt: "2026-06-01T10:00:00.000Z",
+  }
+}
+
+const PROVIDER_SEED_BOOKINGS: HageeBookingRequest[] = PROVIDER_BOOKINGS.filter(
+  (booking) => booking.category === "upcoming" && booking.status === "confirmed",
+).map(providerBookingToSeed)
 
 const SEED_BOOKINGS: HageeBookingRequest[] = [
   {
@@ -120,9 +162,13 @@ function writeRequests(requests: HageeBookingRequest[]) {
   window.dispatchEvent(new CustomEvent(HAGEE_BOOKING_UPDATED_EVENT))
 }
 
+function findSeedBooking(id: string): HageeBookingRequest | undefined {
+  return SEED_BOOKINGS.find((request) => request.id === id) ?? PROVIDER_SEED_BOOKINGS.find((request) => request.id === id)
+}
+
 function mergeWithSeeds(requests: HageeBookingRequest[]): HageeBookingRequest[] {
   const byId = new Map(requests.map((request) => [request.id, request]))
-  for (const seed of SEED_BOOKINGS) {
+  for (const seed of [...SEED_BOOKINGS, ...PROVIDER_SEED_BOOKINGS]) {
     if (!byId.has(seed.id)) {
       byId.set(seed.id, seed)
     }
@@ -137,7 +183,7 @@ export function getBookingRequests(): HageeBookingRequest[] {
 }
 
 export function getClientBookings(): HageeBookingRequest[] {
-  return getBookingRequests()
+  return getBookingRequests().filter((request) => !HAGU_PROVIDER_BOOKING_IDS.has(request.id))
 }
 
 export function getBookingRequest(id: string): HageeBookingRequest | undefined {
@@ -206,19 +252,17 @@ export function saveBookingRequest(request: HageeBookingRequest) {
 }
 
 export function confirmBookingRequest(id: string) {
-  writeRequests(
-    readRequests().map((request) =>
-      request.id === id ? { ...request, status: "confirmed" as const } : request,
-    ),
-  )
+  updateBookingRequest(id, (request) => {
+    if (request.status !== "pending") return request
+    return { ...request, status: "confirmed" as const }
+  })
 }
 
 export function declineBookingRequest(id: string) {
-  writeRequests(
-    readRequests().map((request) =>
-      request.id === id ? { ...request, status: "declined" as const } : request,
-    ),
-  )
+  updateBookingRequest(id, (request) => {
+    if (request.status !== "pending") return request
+    return { ...request, status: "declined" as const }
+  })
 }
 
 export function cancelBookingRequest(id: string) {
@@ -233,7 +277,7 @@ export function cancelBookingRequest(id: string) {
     return
   }
 
-  const seed = SEED_BOOKINGS.find((request) => request.id === id)
+  const seed = findSeedBooking(id)
   if (seed) {
     writeRequests([{ ...seed, status: "cancelled" }, ...stored])
   }
@@ -250,7 +294,7 @@ function updateBookingRequest(
     return
   }
 
-  const seed = SEED_BOOKINGS.find((request) => request.id === id)
+  const seed = findSeedBooking(id)
   if (seed) {
     writeRequests([updater(seed), ...stored])
   }
@@ -324,8 +368,25 @@ export function bookingRequestToProviderBooking(request: HageeBookingRequest): P
 
 export function getStoredProviderBookings(): ProviderBooking[] {
   return getBookingRequests()
-    .filter((request) => request.status === "confirmed")
+    .filter(
+      (request) =>
+        request.status === "confirmed" &&
+        (HAGU_PROVIDER_BOOKING_IDS.has(request.id) || request.clientChatId === HAGEE_CLIENT_CHAT_ID),
+    )
     .map(bookingRequestToProviderBooking)
+}
+
+/** Overlay storage-backed fields (e.g. reschedule) onto static provider bookings. */
+export function mergeProviderBookings(
+  staticBookings: ProviderBooking[],
+  storedBookings: ProviderBooking[],
+): ProviderBooking[] {
+  const storedById = new Map(storedBookings.map((booking) => [booking.id, booking]))
+
+  return [
+    ...staticBookings.map((booking) => storedById.get(booking.id) ?? booking),
+    ...storedBookings.filter((stored) => !staticBookings.some((booking) => booking.id === stored.id)),
+  ]
 }
 
 export function bookingRequestToProviderRequest(request: HageeBookingRequest) {

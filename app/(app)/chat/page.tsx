@@ -1,5 +1,10 @@
-import { Suspense } from "react"
+"use client"
+
+import { Suspense, useEffect, useState } from "react"
+import { HaguMessagesScreen } from "@/components/hagu/hagu-messages-screen"
 import { HageeConnectionsScreen } from "@/components/hagee/hagee-connections-screen"
+import { isHaguProvider } from "@/lib/app-navigation"
+import { getSession, type UserRole } from "@/lib/session"
 
 function ConnectionsLoading() {
   return (
@@ -9,11 +14,28 @@ function ConnectionsLoading() {
   )
 }
 
-/** HAGEE connections list — HAGU sessions are redirected to a provider thread by the app layout. */
+function ChatPageContent() {
+  const [role, setRole] = useState<UserRole | null | undefined>(undefined)
+
+  useEffect(() => {
+    setRole(getSession().role)
+  }, [])
+
+  if (role === undefined) {
+    return <ConnectionsLoading />
+  }
+
+  if (isHaguProvider(role)) {
+    return <HaguMessagesScreen />
+  }
+
+  return <HageeConnectionsScreen />
+}
+
 export default function ChatPage() {
   return (
     <Suspense fallback={<ConnectionsLoading />}>
-      <HageeConnectionsScreen />
+      <ChatPageContent />
     </Suspense>
   )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { Calendar, CalendarCheck, Home, Search, User, Users } from "lucide-react"
+import { Calendar, CalendarCheck, Home, Search, Settings, User, Users } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { BottomGlassNavigation } from "@/components/ui/bottom-glass-navigation"
 import { getBottomNavConfig, type NavIconKey } from "@/lib/app-navigation"
@@ -11,6 +11,7 @@ const NAV_ICONS: Record<NavIconKey, React.ReactNode> = {
   search: <Search className="size-4" />,
   message: <Users className="size-4" />,
   user: <User className="size-4" />,
+  settings: <Settings className="size-4" />,
   bookings: <CalendarCheck className="size-4" />,
   calendar: <Calendar className="size-4" />,
 }

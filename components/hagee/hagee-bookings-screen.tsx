@@ -57,19 +57,6 @@ function BookingCard({
           <p className="text-[15px] font-semibold text-hagu-ink">{booking.companionName}</p>
           <p className="text-xs text-hagu-text-secondary">{booking.activity}</p>
         </div>
-        {booking.canMessage ? (
-          <button
-            type="button"
-            onClick={(event) => {
-              event.stopPropagation()
-              router.push(ROUTES.chatThread(booking.chatId))
-            }}
-            className="flex size-9 shrink-0 items-center justify-center rounded-full border border-hagu-border bg-hagu-canvas text-hagu-ink transition active:opacity-80"
-            aria-label={`Message ${booking.companionName}`}
-          >
-            <MessageCircle className="size-4" />
-          </button>
-        ) : null}
         <span className={cn("shrink-0 rounded-full px-3 py-1 text-[11px] font-semibold", STATUS_STYLES[booking.statusTone])}>
           {booking.statusLabel}
         </span>
@@ -83,6 +70,32 @@ function BookingCard({
         <span className="inline-flex items-center rounded-lg border border-hagu-border bg-hagu-canvas px-3 py-1.5 text-xs font-semibold text-hagu-ink">
           {booking.price}
         </span>
+      </div>
+
+      <div className="mt-4 flex gap-2">
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation()
+            onOpen()
+          }}
+          className="hagu-action-btn-muted"
+        >
+          View booking
+        </button>
+        {booking.canMessage ? (
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation()
+              router.push(ROUTES.chatThread(booking.chatId))
+            }}
+            className="hagu-action-btn-dark"
+          >
+            <MessageCircle className="size-3.5" />
+            Chat
+          </button>
+        ) : null}
       </div>
     </article>
   )

@@ -5,7 +5,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { HaguProfileStatusBadge } from "@/components/hagu/hagu-profile-status-badge"
 import { HaguPendingReviewsBanner } from "@/components/hagu/hagu-reviews-list-screen"
-import { HaguWordmark } from "@/components/hagu/hagu-wordmark"
+import { HaguWordmarkSummaryCard } from "@/components/shared/hagu-wordmark-summary-card"
 import {
   PROVIDER_BOOKINGS,
   PROVIDER_FEED_TAB_COUNTS,
@@ -13,7 +13,6 @@ import {
   PROVIDER_TODAY_AGENDA,
   PROVIDER_TODAY_LABEL,
   PROVIDER_UNREAD_CHATS,
-  PROVIDER_UNREAD_TOTAL,
   type ProviderAgendaItem,
 } from "@/lib/hagu-provider-feed"
 import { ROUTES } from "@/lib/routes"
@@ -50,7 +49,7 @@ export function HaguProviderHome() {
         </div>
         <button
           type="button"
-          onClick={() => router.push(ROUTES.profile)}
+          onClick={() => router.push(ROUTES.settings)}
           className="relative shrink-0"
           aria-label="Open profile settings"
         >
@@ -66,7 +65,7 @@ export function HaguProviderHome() {
           <span
             className={cn(
               "absolute bottom-0 right-0 size-3.5 rounded-[7px] border-2 border-white",
-              isActive ? "bg-[#5BBFB5]" : "bg-[#B8B8C2]",
+              isActive ? "bg-hagu-heading" : "bg-[#B8B8C2]",
             )}
           />
         </button>
@@ -74,25 +73,16 @@ export function HaguProviderHome() {
 
       <ProviderHomeTodos />
 
-      <button
-        type="button"
+      <HaguWordmarkSummaryCard
+        periodLabel="This month"
+        amount="€ 1.240"
         onClick={() => router.push(ROUTES.settingsTransactions)}
-        className="relative w-full overflow-hidden rounded-[24px] bg-[#2D1012] p-6 text-left transition active:opacity-95"
-      >
-        <div className="relative overflow-hidden rounded-[24px] bg-[#2D1012]/10 px-3.5 py-6 backdrop-blur-[20px]">
-          <p className="text-xs font-medium uppercase tracking-wide text-white/50">This month</p>
-          <p className="mt-1 text-[36px] font-bold tracking-tight text-white">€ 1.240</p>
-          <div className="mt-3 flex gap-5 border-t border-white/10 pt-3">
-            <Stat label="Sessions" value="14" />
-            <Divider />
-            <Stat label="Avg. rating" value="4.9 ⭐" />
-            <Divider />
-            <Stat label="Pending" value="€ 95" valueClassName="text-[#D0F1F0]" />
-          </div>
-          <HaguWordmark className="pointer-events-none absolute -right-3 -top-3 h-[118px] w-[114px] -rotate-[28deg]" />
-          <HaguWordmark className="pointer-events-none absolute bottom-1 right-3 h-11 w-11 rotate-[14deg]" />
-        </div>
-      </button>
+        stats={[
+          { label: "Sessions", value: "14" },
+          { label: "Avg. rating", value: "4.9 ⭐" },
+          { label: "Pending", value: "€ 95", valueClassName: "text-hagu-label" },
+        ]}
+      />
 
       <section className="space-y-3">
         <div className="flex items-center justify-between gap-3">
@@ -103,7 +93,7 @@ export function HaguProviderHome() {
           <button
             type="button"
             onClick={() => router.push(ROUTES.calendar)}
-            className="inline-flex items-center gap-1 text-[13px] font-medium text-[#3DA89E]"
+            className="inline-flex items-center gap-1 text-[13px] font-medium text-hagu-label"
           >
             Calendar
             <ChevronRight className="size-3.5" />
@@ -186,21 +176,22 @@ export function HaguProviderHome() {
       <section className="space-y-3">
         <div className="flex items-center justify-between gap-3">
           <p className="text-xs font-medium uppercase tracking-wide text-[#1A1A1E]">Messages</p>
-          <p className="text-[13px] font-medium text-[#3DA89E]">
-            {PROVIDER_UNREAD_TOTAL} unread
-          </p>
+          <button
+            type="button"
+            onClick={() => router.push(ROUTES.chat)}
+            className="text-[13px] font-medium text-hagu-label"
+          >
+            View all
+          </button>
         </div>
 
-        <div className="overflow-hidden rounded-[20px] border border-black/[0.06] bg-white shadow-[0px_2px_8px_rgba(26,26,30,0.04)]">
-          {PROVIDER_UNREAD_CHATS.map((chat, index) => (
+        <div className="space-y-3">
+          {PROVIDER_UNREAD_CHATS.map((chat) => (
             <button
               key={chat.chatId}
               type="button"
               onClick={() => router.push(ROUTES.chatThread(chat.chatId))}
-              className={cn(
-                "flex w-full items-center gap-3 px-4 py-3.5 text-left transition active:bg-black/[0.02]",
-                index < PROVIDER_UNREAD_CHATS.length - 1 && "border-b border-black/[0.05]",
-              )}
+              className="flex w-full items-center gap-3 rounded-[20px] border border-black/[0.06] bg-white px-4 py-3.5 text-left shadow-[0px_2px_8px_rgba(26,26,30,0.04)] transition active:opacity-95"
             >
               <div className="relative size-10 shrink-0 overflow-hidden rounded-[20px]">
                 <Image src={chat.avatar} alt={chat.name} fill className="object-cover" />
@@ -234,7 +225,7 @@ function ProviderHomeTodos() {
         <button
           type="button"
           onClick={() => router.push(ROUTES.requests)}
-          className="text-[13px] font-medium text-[#3DA89E]"
+          className="text-[13px] font-medium text-hagu-label"
         >
           View all
         </button>
@@ -258,7 +249,7 @@ function RequestsBanner({ onNavigate }: { onNavigate: () => void }) {
       className="flex w-full items-center justify-between rounded-2xl bg-[rgba(208,241,240,0.4)] px-5 py-4 text-left transition active:opacity-90"
     >
       <div className="flex items-center gap-3">
-        <div className="flex size-9 items-center justify-center rounded-[10px] bg-[#D0F1F0] text-[#2D1012]">
+        <div className="flex size-9 items-center justify-center rounded-[10px] border border-hagu-border bg-hagu-canvas text-hagu-ink">
           <Inbox className="size-4" />
         </div>
         <div>
@@ -298,7 +289,7 @@ function AgendaRow({
         <span
           className={cn(
             "mt-1 size-2 rounded-full",
-            isBooking ? "bg-[#5BBFB5]" : item.type === "open" ? "bg-[#D0F1F0]" : "bg-[#B8B8C2]",
+            isBooking ? "bg-hagu-heading" : item.type === "open" ? "bg-hagu-border" : "bg-[#B8B8C2]",
           )}
         />
       </div>
@@ -307,23 +298,10 @@ function AgendaRow({
         {item.subtitle ? <p className="text-xs text-[#8A8A96]">{item.subtitle}</p> : null}
       </div>
       {isBooking ? (
-        <Calendar className="size-4 shrink-0 text-[#3DA89E]" />
+        <Calendar className="size-4 shrink-0 text-hagu-label" />
       ) : (
         <ChevronRight className="size-4 shrink-0 text-[#B8B8C2]" />
       )}
     </button>
   )
-}
-
-function Stat({ label, value, valueClassName }: { label: string; value: string; valueClassName?: string }) {
-  return (
-    <div>
-      <p className="text-[11px] text-white/40">{label}</p>
-      <p className={valueClassName ?? "text-base text-white"}>{value}</p>
-    </div>
-  )
-}
-
-function Divider() {
-  return <div className="w-px self-stretch bg-white/10" />
 }

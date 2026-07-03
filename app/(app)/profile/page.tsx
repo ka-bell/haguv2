@@ -1,19 +1,27 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { HaguSettingsScreen } from "@/components/hagu/hagu-settings-screen"
-import { HaguProviderTabShell } from "@/components/hagu/hagu-provider-tab-shell"
+import { useRouter } from "next/navigation"
 import { HageeProfileScreen } from "@/components/hagee/hagee-profile-screen"
 import { HageeTabShell } from "@/components/hagee/hagee-tab-shell"
 import { isHaguProvider } from "@/lib/app-navigation"
+import { ROUTES } from "@/lib/routes"
 import { getSession, type UserRole } from "@/lib/session"
 
 export default function ProfilePage() {
+  const router = useRouter()
   const [role, setRole] = useState<UserRole | null | undefined>(undefined)
 
   useEffect(() => {
     setRole(getSession().role)
   }, [])
+
+  useEffect(() => {
+    if (role === undefined) return
+    if (isHaguProvider(role)) {
+      router.replace(ROUTES.settings)
+    }
+  }, [role, router])
 
   if (role === undefined) {
     return (
@@ -24,11 +32,7 @@ export default function ProfilePage() {
   }
 
   if (isHaguProvider(role)) {
-    return (
-      <HaguProviderTabShell>
-        <HaguSettingsScreen />
-      </HaguProviderTabShell>
-    )
+    return null
   }
 
   return (

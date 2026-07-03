@@ -4,6 +4,7 @@ export type HageeChatPreview = {
   avatar: string
   preview: string
   time: string
+  subtitle?: string
   unreadCount?: number
   online?: boolean
   unread?: boolean
@@ -128,4 +129,11 @@ export const HAGEE_CHAT_THREADS: Record<string, HageeChatThread> = {
 
 export function getHageeChatThread(id: string): HageeChatThread | undefined {
   return HAGEE_CHAT_THREADS[id]
+}
+
+/** Attach thread status line for Connections list rows. */
+export function withChatSubtitle(preview: HageeChatPreview): HageeChatPreview {
+  if (preview.subtitle) return preview
+  const status = HAGEE_CHAT_THREADS[preview.id]?.status
+  return status ? { ...preview, subtitle: status } : preview
 }

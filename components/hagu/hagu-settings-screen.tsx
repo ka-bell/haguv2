@@ -141,7 +141,7 @@ export function HaguSettingsScreen() {
           <button
             type="button"
             onClick={() => openOnboardingStep(SETTINGS_ONBOARDING_STEP["edit-profile"])}
-            className="flex h-[34px] shrink-0 items-center gap-1.5 rounded-full bg-hagu-accent-strong px-3.5 text-xs font-medium text-white"
+            className="flex h-[34px] shrink-0 items-center gap-1.5 rounded-full bg-hagu-heading px-3.5 text-xs font-medium text-white"
           >
             <Pencil className="size-3" />
             Edit
@@ -172,7 +172,7 @@ export function HaguSettingsScreen() {
               <span
                 className={cn(
                   "absolute -bottom-0.5 -right-0.5 size-3.5 rounded-full border-2 border-hagu-white",
-                  isActive ? "bg-hagu-accent-strong" : "bg-hagu-placeholder",
+                  isActive ? "bg-hagu-heading" : "bg-hagu-placeholder",
                 )}
               />
             </div>
@@ -251,7 +251,7 @@ export function HaguSettingsScreen() {
             "hagu-action-btn w-full border text-sm",
             isActive
               ? "border-hagu-error/25 text-hagu-error"
-              : "border-hagu-accent-strong bg-hagu-accent-selected text-hagu-accent-strong",
+              : "border-hagu-border bg-hagu-canvas text-hagu-ink",
           )}
         >
           {isActive ? "Pause my profile" : "Resume profile"}
@@ -350,19 +350,14 @@ function SettingsRow({
             S
           </div>
         ) : Icon ? (
-          <div
-            className={cn(
-              "flex size-9 shrink-0 items-center justify-center rounded-[10px]",
-              row.accent ? "bg-hagu-accent-selected text-hagu-accent-strong" : "border border-hagu-border bg-hagu-canvas text-hagu-ink",
-            )}
-          >
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-[10px] border border-hagu-border bg-hagu-canvas text-hagu-ink">
             <Icon className="size-4" />
           </div>
         ) : null}
         <div className="min-w-0">
           <p className="text-[15px] font-medium text-hagu-ink">{row.label}</p>
           {row.sublabel ? (
-            <p className="text-[11px] text-hagu-accent-strong">{row.sublabel}</p>
+            <p className="text-[11px] text-hagu-text-secondary">{row.sublabel}</p>
           ) : null}
         </div>
       </div>

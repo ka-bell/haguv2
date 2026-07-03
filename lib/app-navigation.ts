@@ -5,7 +5,7 @@ import { ROUTES } from "@/lib/routes"
  * HAGEE (client) and HAGU (provider) are separate apps that share only auth shell.
  *
  * HAGEE tabs: Home · Explore · Connections · Profile  →  /home, /explore, /chat, /profile
- * HAGU tabs:  Home · Bookings · Calendar · Settings  →  /discover, /bookings, /calendar, /settings
+ * HAGU tabs:  Home · Bookings · Chat · Calendar · Settings  →  /discover, /bookings, /chat, /calendar, /settings
  */
 
 /** HAGEE-only route prefixes — HAGU sessions are redirected away. */
@@ -25,6 +25,7 @@ export type NavIconKey =
   | "search"
   | "message"
   | "user"
+  | "settings"
   | "bookings"
   | "calendar"
 
@@ -36,7 +37,7 @@ export type BottomNavTab = {
 }
 
 export type HageeNavTab = "home" | "explore" | "chat" | "profile"
-export type HaguNavTab = "home" | "bookings" | "calendar" | "profile"
+export type HaguNavTab = "home" | "bookings" | "chat" | "calendar" | "settings"
 
 export const HAGEE_BOTTOM_NAV: readonly BottomNavTab[] = [
   { key: "home", label: "Home", href: ROUTES.home, icon: "home" },
@@ -48,8 +49,9 @@ export const HAGEE_BOTTOM_NAV: readonly BottomNavTab[] = [
 export const HAGU_BOTTOM_NAV: readonly BottomNavTab[] = [
   { key: "home", label: "Home", href: ROUTES.discover, icon: "home" },
   { key: "bookings", label: "Bookings", href: ROUTES.bookings, icon: "bookings" },
+  { key: "chat", label: "Chat", href: ROUTES.chat, icon: "message" },
   { key: "calendar", label: "Calendar", href: ROUTES.calendar, icon: "calendar" },
-  { key: "profile", label: "Profile", href: ROUTES.profile, icon: "user" },
+  { key: "settings", label: "Settings", href: ROUTES.settings, icon: "settings" },
 ] as const
 
 export function hageeNavTabFromPathname(pathname: string): HageeNavTab {
@@ -70,10 +72,14 @@ export function hageeNavTabFromPathname(pathname: string): HageeNavTab {
 
 export function haguNavTabFromPathname(pathname: string): HaguNavTab {
   if (pathname.startsWith(ROUTES.bookings)) return "bookings"
+  if (pathname.startsWith(ROUTES.chat)) return "chat"
   if (pathname.startsWith(ROUTES.calendar)) return "calendar"
-  if (pathname.startsWith(ROUTES.settingsTransactions)) return "profile"
-  if (pathname.startsWith(ROUTES.settings) || pathname.startsWith(ROUTES.profile)) {
-    return "profile"
+  if (
+    pathname.startsWith(ROUTES.settings) ||
+    pathname.startsWith(ROUTES.settingsAccount) ||
+    pathname.startsWith(ROUTES.settingsTransactions)
+  ) {
+    return "settings"
   }
   if (pathname.startsWith(ROUTES.requests) || pathname.startsWith(ROUTES.reviews)) {
     return "home"
@@ -101,10 +107,6 @@ function pathnameMatchesPrefix(pathname: string, prefix: string): boolean {
 export function roleGuardRedirect(pathname: string, role: UserRole | null): string | null {
   const hagu = isHaguProvider(role)
 
-  if (pathname === ROUTES.settings) {
-    return ROUTES.profile
-  }
-
   // Legacy HAGEE discover URLs → explore tree
   if (pathnameMatchesPrefix(pathname, ROUTES.discoverRefine)) {
     return hagu ? ROUTES.discover : ROUTES.exploreRefine
@@ -119,11 +121,15 @@ export function roleGuardRedirect(pathname: string, role: UserRole | null): stri
   if (hagu) {
     if (pathnameMatchesPrefix(pathname, ROUTES.home)) return ROUTES.discover
     if (pathnameMatchesPrefix(pathname, ROUTES.explore)) return ROUTES.discover
-    if (pathname === ROUTES.chat) return ROUTES.chatThread("luca")
+    if (pathname === ROUTES.profile) return ROUTES.settings
     if (pathnameMatchesPrefix(pathname, ROUTES.profileEdit)) {
       return `${ROUTES.onboardingHagu}?step=2&edit=1`
     }
     return null
+  }
+
+  if (pathname === ROUTES.settings) {
+    return ROUTES.profile
   }
 
   if (HAGU_ONLY_PATH_PREFIXES.some((prefix) => pathnameMatchesPrefix(pathname, prefix))) {

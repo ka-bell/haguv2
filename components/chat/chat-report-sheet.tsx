@@ -9,6 +9,7 @@ import {
   submitChatReport,
   type ChatReportReasonId,
 } from "@/lib/chat-report"
+import { selectionRowClass } from "@/lib/hagu-selection-styles"
 import { cn } from "@/lib/utils"
 
 type ChatReportSheetProps = {
@@ -55,7 +56,7 @@ export function ChatReportSheet({ open, onClose, threadId, personName }: ChatRep
     >
       {submitted ? (
         <div className="space-y-4 pb-4 text-center">
-          <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-[#EAF7F5] text-[#3DA89E]">
+          <div className="mx-auto flex size-14 items-center justify-center rounded-full border border-hagu-border bg-hagu-canvas text-hagu-ink">
             <Check className="size-7" strokeWidth={2.5} />
           </div>
           <p className="text-sm leading-relaxed text-[#8A8A96]">
@@ -85,10 +86,8 @@ export function ChatReportSheet({ open, onClose, threadId, personName }: ChatRep
                   type="button"
                   onClick={() => setReason(option.id)}
                   className={cn(
-                    "flex w-full flex-col rounded-[16px] border px-4 py-3.5 text-left transition",
-                    selected
-                      ? "border-[#5BBFB5] bg-[rgba(208,241,240,0.4)]"
-                      : "border-black/[0.06] bg-white",
+                    "flex w-full flex-col rounded-[16px] px-4 py-3.5 text-left transition",
+                    selectionRowClass(selected),
                   )}
                 >
                   <span className="text-sm font-medium text-[#1A1A1E]">{option.label}</span>
@@ -106,7 +105,7 @@ export function ChatReportSheet({ open, onClose, threadId, personName }: ChatRep
                 onChange={(event) => setDetails(event.target.value)}
                 rows={3}
                 placeholder="Share anything that helps us understand the situation."
-                className="w-full resize-none rounded-[16px] border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1E] outline-none placeholder:text-[#B8B8C2] focus:border-[#5BBFB5]"
+                className="w-full resize-none rounded-[16px] border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1E] outline-none placeholder:text-[#B8B8C2] focus:border-hagu-accent focus:ring-2 focus:ring-hagu-accent/50"
               />
             </label>
           ) : null}

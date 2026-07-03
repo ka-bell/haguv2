@@ -33,7 +33,7 @@ export function Avatar({ src, alt = "avatar", fallback = "?", size = "md", onlin
           <span className="flex size-full items-center justify-center font-semibold">{fallback}</span>
         )}
       </div>
-      {online ? <span className="absolute bottom-0 right-0 size-3 rounded-full border-2 border-[#FEFFFF] bg-[#D0F1F0]" /> : null}
+      {online ? <span className="absolute bottom-0 right-0 size-3 rounded-full border-2 border-[#FEFFFF] bg-hagu-heading" /> : null}
     </div>
   )
 }

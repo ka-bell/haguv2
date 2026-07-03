@@ -38,6 +38,7 @@ Active tab: `hageeNavTabFromPathname(pathname)`
 |-----|-------|-------|
 | home | Home | `/discover` (provider home) |
 | bookings | Bookings | `/bookings` |
+| chat | Chat | `/chat` |
 | calendar | Calendar | `/calendar` |
 | settings | Settings | `/settings` |
 
@@ -48,7 +49,7 @@ Active tab: `haguNavTabFromPathname(pathname)`
 HAGEE and HAGU are separate route trees. Never render both audiences from one page.
 
 - HAGEE: `/home`, `/explore`, `/chat`, `/profile`
-- HAGU: `/discover`, `/bookings`, `/calendar`, `/settings`
+- HAGU: `/discover`, `/bookings`, `/chat`, `/calendar`, `/settings`
 
 `roleGuardRedirect()` in `lib/app-navigation.ts` enforces this in `app/(app)/layout.tsx`.
 

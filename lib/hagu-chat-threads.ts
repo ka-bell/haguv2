@@ -1,3 +1,6 @@
+import { PROVIDER_UNREAD_CHATS } from "@/lib/hagu-provider-feed"
+import { bookingRequestToHaguChatThread, getBookingRequests } from "@/lib/hagee-booking-storage"
+
 export type ChatMessage =
   | { type: "incoming"; text: string; time: string }
   | { type: "outgoing"; text: string; time: string }
@@ -97,4 +100,67 @@ export const CHAT_THREADS: Record<string, ChatThread> = {
 
 export function getChatThread(id: string): ChatThread | undefined {
   return CHAT_THREADS[id]
+}
+
+export type ProviderMessagePreview = {
+  id: string
+  name: string
+  avatar: string
+  preview: string
+  time: string
+  unreadCount: number
+  subtitle?: string
+}
+
+function lastMessagePreview(thread: ChatThread): { preview: string; time: string } {
+  const last = thread.messages[thread.messages.length - 1]
+  if (!last) return { preview: thread.status, time: "" }
+  return { preview: last.text, time: last.time }
+}
+
+/** All provider chat rows for the HAGU messages inbox. */
+export function getProviderMessagePreviews(): ProviderMessagePreview[] {
+  const unreadById = new Map(PROVIDER_UNREAD_CHATS.map((chat) => [chat.chatId, chat]))
+  const seen = new Set<string>()
+  const previews: ProviderMessagePreview[] = []
+
+  for (const thread of Object.values(CHAT_THREADS)) {
+    seen.add(thread.id)
+    const unread = unreadById.get(thread.id)
+    const { preview, time } = unread
+      ? { preview: unread.preview, time: "" }
+      : lastMessagePreview(thread)
+
+    previews.push({
+      id: thread.id,
+      name: thread.name,
+      avatar: thread.avatar,
+      preview,
+      time,
+      unreadCount: unread?.count ?? 0,
+      subtitle: thread.status,
+    })
+  }
+
+  for (const request of getBookingRequests()) {
+    const chatId = request.clientChatId
+    if (!chatId || seen.has(chatId)) continue
+    if (request.status === "declined" || request.status === "cancelled") continue
+
+    seen.add(chatId)
+    const thread = bookingRequestToHaguChatThread(request)
+    const last = thread.messages[thread.messages.length - 1]
+
+    previews.unshift({
+      id: chatId,
+      name: thread.name,
+      avatar: thread.avatar,
+      preview: last?.text ?? thread.status,
+      time: last?.time ?? "",
+      unreadCount: request.status === "pending" ? 1 : 0,
+      subtitle: thread.status,
+    })
+  }
+
+  return previews.sort((a, b) => b.unreadCount - a.unreadCount)
 }

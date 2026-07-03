@@ -8,7 +8,7 @@ function GlassChrome({ children, className }: { children: React.ReactNode; class
   return (
     <div
       className={cn(
-        "flex h-[45px] items-center justify-center rounded-[32px] border border-[#D0F1F0]/30 bg-white/20 px-[15px] backdrop-blur-[20px]",
+        "flex h-[45px] items-center justify-center rounded-[32px] border border-white/20 bg-white/20 px-[15px] backdrop-blur-[20px]",
         className,
       )}
     >

@@ -26,13 +26,24 @@ export function BottomGlassNavigation({ items, activeKey, fixed = true, classNam
       )}
       style={fixed ? { bottom: "var(--hagu-tab-nav-bottom)" } : undefined}
     >
-      <div className="relative flex h-16 items-center justify-between rounded-[32px] border border-[#D0F1F0]/50 bg-white/80 px-8 backdrop-blur-2xl shadow-[0px_20px_40px_-10px_rgba(45,16,18,0.1)]">
+      <div
+        className={cn(
+          "relative flex h-16 items-center rounded-[32px] border border-black/[0.06] bg-white/80 backdrop-blur-2xl shadow-[0px_20px_40px_-10px_rgba(26,26,30,0.08)]",
+          items.length > 4 ? "justify-around px-4" : "justify-between px-8",
+        )}
+      >
         {items.map((item) => {
           const active = item.key === activeKey
           return (
-            <Link key={item.key} href={item.href} className="flex min-w-0 flex-col items-center gap-1">
+            <Link key={item.key} href={item.href} className="flex min-w-0 flex-1 flex-col items-center gap-1 px-0.5">
               <span className={cn("text-[#2D1012]", !active && "opacity-35")}>{item.icon}</span>
-              <span className={cn("text-[10px] font-medium", active ? "text-[#2D1012]" : "text-[#8a8a96]")}>
+              <span
+                className={cn(
+                  "max-w-full truncate text-center font-medium",
+                  items.length > 4 ? "text-[9px]" : "text-[10px]",
+                  active ? "text-[#2D1012]" : "text-[#8a8a96]",
+                )}
+              >
                 {item.label}
               </span>
             </Link>

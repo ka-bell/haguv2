@@ -9,7 +9,7 @@ export default function SettingsAccountPage() {
   const router = useRouter()
 
   return (
-    <HaguFlowPageShell onBack={() => router.back()} closeHref={ROUTES.profile}>
+    <HaguFlowPageShell onBack={() => router.back()} closeHref={ROUTES.settings}>
       <AccountSettingsScreen />
     </HaguFlowPageShell>
   )

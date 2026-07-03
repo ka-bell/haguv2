@@ -46,3 +46,16 @@ export function selectionDateChipClass(selected: boolean) {
       : "border border-hagu-border bg-hagu-white text-hagu-label",
   )
 }
+
+/** Segmented control track — white pill with soft shadow. */
+export function selectionSegmentTrackClass() {
+  return "flex rounded-full bg-hagu-white p-1 shadow-[0px_2px_12px_rgba(26,26,30,0.08)]"
+}
+
+/** Segmented control segment — black active pill, grey inactive label. */
+export function selectionSegmentClass(selected: boolean) {
+  return cn(
+    "flex-1 rounded-full py-2.5 text-[13px] font-medium transition",
+    selected ? "bg-hagu-heading text-hagu-white" : "text-hagu-text-secondary",
+  )
+}

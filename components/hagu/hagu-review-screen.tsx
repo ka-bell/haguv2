@@ -56,12 +56,12 @@ export function HaguReviewScreen({ review }: HaguReviewScreenProps) {
       </div>
 
       <div className="flex-1 space-y-6 overflow-y-auto px-6 pb-36 pt-2">
-        <div className="flex items-center gap-3.5 rounded-[20px] bg-[#EAF7F5] p-5">
+        <div className="flex items-center gap-3.5 rounded-[20px] border border-hagu-border bg-hagu-canvas p-5">
           <div className="relative size-14 shrink-0 overflow-hidden rounded-[28px] border-2 border-white">
             <Image src={review.avatar} alt={review.name} fill className="object-cover" />
           </div>
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[#5BBFB5]">Session completed</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-hagu-text-secondary">Session completed</p>
             <p className="text-base font-semibold text-[#1A1A1E]">{review.title}</p>
             <p className="text-[13px] text-[#8A8A96]">{review.date}</p>
           </div>
@@ -99,7 +99,7 @@ export function HaguReviewScreen({ review }: HaguReviewScreenProps) {
             onChange={(event) => setNote(event.target.value)}
             placeholder={`${firstName} was warm and easy to talk to. Great evening!`}
             rows={4}
-            className="w-full resize-none rounded-[14px] border border-black/10 bg-white px-4 py-3.5 text-sm leading-relaxed text-[#4A4A52] outline-none placeholder:text-[#B8B8C2] focus:border-[#D0F1F0] focus:ring-2 focus:ring-[#D0F1F0]/50"
+            className="w-full resize-none rounded-[14px] border border-black/10 bg-white px-4 py-3.5 text-sm leading-relaxed text-[#4A4A52] outline-none placeholder:text-[#B8B8C2] focus:border-hagu-accent focus:ring-2 focus:ring-hagu-accent/50"
           />
         </div>
 

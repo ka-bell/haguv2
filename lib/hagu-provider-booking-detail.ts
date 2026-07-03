@@ -1,3 +1,4 @@
+import { getBookingRequest, type HageeBookingRequest } from "@/lib/hagee-booking-storage"
 import {
   PROVIDER_BOOKINGS,
   PROVIDER_REQUESTS,
@@ -5,7 +6,6 @@ import {
   type ProviderBooking,
   type ProviderRequest,
 } from "@/lib/hagu-provider-feed"
-import { getBookingRequest, type HageeBookingRequest } from "@/lib/hagee-booking-storage"
 import {
   bookingDateLine,
   canProposeReschedule,
@@ -181,9 +181,37 @@ function fromStoredRequest(request: HageeBookingRequest): BookingOverview {
   }
 }
 
+function mergeProviderBookingWithStorage(booking: ProviderBooking): BookingOverview {
+  const base = fromProviderBooking(booking)
+  const stored = getBookingRequest(booking.id)
+
+  if (!stored) {
+    return {
+      ...base,
+      storageId: booking.id,
+      canReschedule: booking.category === "upcoming" && booking.status === "confirmed",
+    }
+  }
+
+  const reschedule = rescheduleFieldsForStored(stored)
+
+  return {
+    ...base,
+    storageId: stored.id,
+    date: bookingDateLine(stored),
+    rescheduleRequest: reschedule.rescheduleRequest,
+    rescheduleDiff: reschedule.rescheduleDiff,
+    canReschedule: reschedule.canReschedule,
+    canRespondToReschedule: reschedule.canRespondToReschedule,
+    canWithdrawReschedule: reschedule.canWithdrawReschedule,
+    statusLabel: reschedule.statusLabelOverride ?? base.statusLabel,
+    statusTone: stored.rescheduleRequest ? "pending" : base.statusTone,
+  }
+}
+
 export function getBookingOverview(id: string): BookingOverview | null {
   const booking = PROVIDER_BOOKINGS.find((item) => item.id === id)
-  if (booking) return fromProviderBooking(booking)
+  if (booking) return mergeProviderBookingWithStorage(booking)
 
   const request = PROVIDER_REQUESTS.find((item) => item.id === id)
   if (request) return fromProviderRequest(request)

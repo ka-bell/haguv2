@@ -7,14 +7,25 @@ import { PROVIDER_REQUESTS } from "@/lib/hagu-provider-feed"
 import {
   bookingRequestToProviderRequest,
   confirmBookingRequest,
+  declineBookingRequest,
   getBookingRequests,
   HAGEE_BOOKING_UPDATED_EVENT,
 } from "@/lib/hagee-booking-storage"
+import { dismissDemoRequestId, readDismissedDemoRequestIds } from "@/lib/hagu-demo-request-dismiss"
 import { ROUTES } from "@/lib/routes"
 
 export function HaguRequestsScreen() {
   const router = useRouter()
   const [storedRequests, setStoredRequests] = useState<ReturnType<typeof getBookingRequests>>([])
+  const [dismissedDemoIds, setDismissedDemoIds] = useState<string[]>([])
+
+  useEffect(() => {
+    setDismissedDemoIds(readDismissedDemoRequestIds())
+  }, [])
+
+  const dismissDemo = (id: string) => {
+    setDismissedDemoIds(dismissDemoRequestId(id))
+  }
 
   useEffect(() => {
     const refresh = () => {
@@ -32,9 +43,9 @@ export function HaguRequestsScreen() {
   const requests = useMemo(
     () => [
       ...storedRequests.map(bookingRequestToProviderRequest),
-      ...PROVIDER_REQUESTS,
+      ...PROVIDER_REQUESTS.filter((request) => !dismissedDemoIds.includes(request.id)),
     ],
-    [storedRequests],
+    [storedRequests, dismissedDemoIds],
   )
 
   return (
@@ -53,10 +64,18 @@ export function HaguRequestsScreen() {
             request={request}
             onOpen={() => router.push(ROUTES.booking(request.id))}
             onAccept={() => {
-              if ("fromStorage" in request) {
+              if ("fromStorage" in request && request.fromStorage) {
                 confirmBookingRequest(request.id)
+              } else {
+                dismissDemo(request.id)
               }
-              router.push(ROUTES.chatThread(request.chatId))
+            }}
+            onDecline={() => {
+              if ("fromStorage" in request && request.fromStorage) {
+                declineBookingRequest(request.id)
+                return
+              }
+              dismissDemo(request.id)
             }}
           />
         ))}

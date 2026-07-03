@@ -155,9 +155,10 @@ export const HAGEE_DISCOVERY_FLOW: FigmaFlow = {
     {
       id: "connections",
       name: "Connections",
-      figmaNodeId: "2467:18166",
+      figmaNodeId: "909:53825",
       route: ROUTES.chat,
       codePath: "components/hagee/hagee-connections-screen.tsx",
+      notes: "ONE-PERSON-NEWSROOM file PDnRVLnXYoCCIcR2ZwG9Ne — header + search, segmented tabs, chat cards with status subtitle.",
     },
     {
       id: "matches",
@@ -200,7 +201,7 @@ export const HAGEE_CLIENT_FLOW: FigmaFlow = {
     { id: "success", name: "You're in", figmaNodeId: "2467:15615", route: ROUTES.onboardingHagee },
     { id: "profile", name: "My profile", figmaNodeId: "2467:15693", route: ROUTES.profile, codePath: "components/hagee/hagee-profile-screen.tsx" },
     { id: "profile-edit", name: "Edit profile", figmaNodeId: "2467:17363", route: ROUTES.profileEdit, codePath: "components/hagee/hagee-profile-edit-screen.tsx" },
-    { id: "connections", name: "Connections", figmaNodeId: "2467:18166", route: ROUTES.chat, codePath: "components/hagee/hagee-connections-screen.tsx" },
+    { id: "connections", name: "Connections", figmaNodeId: "909:53825", route: ROUTES.chat, codePath: "components/hagee/hagee-connections-screen.tsx" },
   ],
 }
 

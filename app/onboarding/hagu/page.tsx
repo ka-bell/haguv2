@@ -3,19 +3,21 @@
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Camera, ChevronRight, Plus, X } from "lucide-react"
+import { Camera, ChevronRight, Plus } from "lucide-react"
 import { HaguFlowScreen } from "@/components/hagu/hagu-flow-screen"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { SegmentedPillGroup } from "@/components/ui/segmented-pill-group"
 import { ROUTES } from "@/lib/routes"
+import { selectionCardClass, selectionRowClass } from "@/lib/hagu-selection-styles"
 import { cn } from "@/lib/utils"
 import { completeOnboarding } from "@/lib/session"
 import { isPrototypeMode } from "@/lib/prototype"
 import {
-  ACTIVITY_ITEMS,
+  ACTIVITY_CATALOG,
   CHARACTER_OPTIONS,
   CONTINUE_LABELS,
+  DEFAULT_ACTIVITY_IDS,
   HOSTING_OPTIONS,
   LANGUAGE_OPTIONS,
   TIME_PREFERENCES,
@@ -26,7 +28,7 @@ import { CharacterCard, SectionLabel } from "./onboarding-chrome"
 
 type ActivityPricing = "included" | "extra"
 type ActivityState = { enabled: boolean; pricing: ActivityPricing; extraCost: string }
-type ActivityMenuItem = { id: string; label: string; custom?: boolean }
+type ActivityMenuItem = { id: string; label: string }
 type PaymentMethod = "stripe" | "paypal" | null
 
 export default function HaguOnboardingPage() {
@@ -56,9 +58,10 @@ export default function HaguOnboardingPage() {
   const [characters, setCharacters] = useState<string[]>(["night-owl", "deep-diver"])
   const [hosting, setHosting] = useState<string[]>(["hosting", "visiting"])
   const [rates, setRates] = useState({ one: "60", two: "95", three: "130", four: "160" })
-  const [activityItems, setActivityItems] = useState<ActivityMenuItem[]>(
-    ACTIVITY_ITEMS.map((item) => ({ ...item, custom: false })),
+  const [activityItems, setActivityItems] = useState<ActivityMenuItem[]>(() =>
+    ACTIVITY_CATALOG.filter((item) => DEFAULT_ACTIVITY_IDS.includes(item.id as (typeof DEFAULT_ACTIVITY_IDS)[number])),
   )
+  const [showActivityPicker, setShowActivityPicker] = useState(false)
   const [activities, setActivities] = useState<Record<string, ActivityState>>({
     cuddling: { enabled: true, pricing: "included", extraCost: "" },
     "back-scratching": { enabled: true, pricing: "extra", extraCost: "10" },
@@ -87,26 +90,20 @@ export default function HaguOnboardingPage() {
     setActivities((prev) => ({ ...prev, [id]: { ...prev[id], ...patch } }))
   }
 
-  const addActivity = () => {
-    const id = `custom-${Date.now()}`
-    setActivityItems((prev) => [...prev, { id, label: "", custom: true }])
+  const availableActivities = ACTIVITY_CATALOG.filter(
+    (item) => !activityItems.some((activity) => activity.id === item.id),
+  )
+
+  const addActivityFromCatalog = (id: string) => {
+    const option = ACTIVITY_CATALOG.find((item) => item.id === id)
+    if (!option) return
+
+    setActivityItems((prev) => [...prev, { id: option.id, label: option.label }])
     setActivities((prev) => ({
       ...prev,
-      [id]: { enabled: true, pricing: "included", extraCost: "" },
+      [id]: prev[id] ?? { enabled: true, pricing: "included", extraCost: "" },
     }))
-  }
-
-  const updateActivityLabel = (id: string, label: string) => {
-    setActivityItems((prev) => prev.map((item) => (item.id === id ? { ...item, label } : item)))
-  }
-
-  const removeActivity = (id: string) => {
-    setActivityItems((prev) => prev.filter((item) => item.id !== id))
-    setActivities((prev) => {
-      const next = { ...prev }
-      delete next[id]
-      return next
-    })
+    setShowActivityPicker(false)
   }
 
   const canContinue = (() => {
@@ -115,8 +112,7 @@ export default function HaguOnboardingPage() {
     if (step === 4) return hosting.length > 0 && rates.one.trim() !== ""
     if (step === 5) {
       const enabledItems = activityItems.filter((item) => activities[item.id]?.enabled)
-      if (enabledItems.length === 0) return false
-      return enabledItems.every((item) => !item.custom || item.label.trim() !== "")
+      return enabledItems.length > 0
     }
     if (step === 6) return selectedDays.length > 0 && timePreferences.length > 0
     if (step === 7) return true
@@ -127,7 +123,7 @@ export default function HaguOnboardingPage() {
 
   const handleBack = () => {
     if (editMode) {
-      router.push(ROUTES.profile)
+      router.push(ROUTES.settings)
       return
     }
     if (step === 1) {
@@ -139,7 +135,7 @@ export default function HaguOnboardingPage() {
 
   const handleContinue = () => {
     if (editMode) {
-      router.push(ROUTES.profile)
+      router.push(ROUTES.settings)
       return
     }
 
@@ -171,10 +167,10 @@ export default function HaguOnboardingPage() {
   const renderIntro = () => (
     <>
       <div className="relative -mx-6 -mt-2 h-[min(52vh,420px)] overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#b8e8e3] via-[#d0f1f0] to-[#FEFFFF]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-hagu-canvas via-white to-[#FEFFFF]" />
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#FEFFFF] to-transparent" />
         <div className="absolute bottom-10 left-8 flex items-center gap-3 rounded-2xl border border-white/40 bg-white/30 px-4 py-2.5 backdrop-blur-xl">
-          <div className="flex size-8 items-center justify-center rounded-xl bg-[#D0F1F0]">
+          <div className="flex size-8 items-center justify-center rounded-xl bg-hagu-canvas">
             <span className="text-sm">📍</span>
           </div>
           <div>
@@ -286,7 +282,7 @@ export default function HaguOnboardingPage() {
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold text-[#1A1A1E]">{item.label}</p>
               {item.hint ? (
-                <span className="rounded bg-[#EAF7F5] px-1.5 py-0.5 text-xs text-[#5BBFB5]">{item.hint}</span>
+                <span className="rounded border border-hagu-border bg-hagu-canvas px-1.5 py-0.5 text-xs text-hagu-ink">{item.hint}</span>
               ) : null}
             </div>
             <div className="flex h-11 items-center rounded-xl border border-black/10 bg-white px-3">
@@ -319,33 +315,11 @@ export default function HaguOnboardingPage() {
           return (
             <div
               key={activity.id}
-              className={cn(
-                "rounded-2xl border p-4 transition",
-                state.enabled ? "border-[#5BBFB5] bg-[rgba(208,241,240,0.4)]" : "border-black/[0.08] bg-white",
-              )}
+              className={cn("rounded-2xl p-4 transition", selectionCardClass(state.enabled))}
             >
               <div className="flex items-center justify-between gap-3">
-                {activity.custom ? (
-                  <input
-                    value={activity.label}
-                    onChange={(e) => updateActivityLabel(activity.id, e.target.value)}
-                    placeholder="Activity name"
-                    className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-[#2D1012] outline-none placeholder:text-[#B8B8C2]"
-                  />
-                ) : (
-                  <p className="text-[15px] font-medium text-[#2D1012]">{activity.label}</p>
-                )}
+                <p className="text-[15px] font-medium text-[#2D1012]">{activity.label}</p>
                 <div className="flex shrink-0 items-center gap-2">
-                  {activity.custom ? (
-                    <button
-                      type="button"
-                      onClick={() => removeActivity(activity.id)}
-                      className="flex size-8 items-center justify-center rounded-full text-[#8A8A96]"
-                      aria-label="Remove activity"
-                    >
-                      <X className="size-4" />
-                    </button>
-                  ) : null}
                   <button
                     type="button"
                     onClick={() => updateActivity(activity.id, { enabled: !state.enabled })}
@@ -394,14 +368,34 @@ export default function HaguOnboardingPage() {
           )
         })}
 
-        <button
-          type="button"
-          onClick={addActivity}
-          className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-black/[0.12] bg-white py-3.5 text-sm font-medium text-[#4A4A52] transition active:bg-hagu-canvas"
-        >
-          <Plus className="size-4" />
-          Add activity
-        </button>
+        {availableActivities.length > 0 ? (
+          <div className="space-y-2">
+            <button
+              type="button"
+              onClick={() => setShowActivityPicker((open) => !open)}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-black/[0.12] bg-white py-3.5 text-sm font-medium text-[#4A4A52] transition active:bg-hagu-canvas"
+            >
+              <Plus className="size-4" />
+              Add activity
+            </button>
+
+            {showActivityPicker ? (
+              <div className="overflow-hidden rounded-2xl border border-hagu-border bg-white">
+                {availableActivities.map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => addActivityFromCatalog(option.id)}
+                    className="flex w-full items-center justify-between border-b border-hagu-border px-4 py-3.5 text-left text-[15px] font-medium text-[#2D1012] transition last:border-b-0 active:bg-hagu-canvas"
+                  >
+                    {option.label}
+                    <Plus className="size-4 text-hagu-text-secondary" aria-hidden />
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </div>
   )
@@ -446,8 +440,8 @@ export default function HaguOnboardingPage() {
                 type="button"
                 onClick={() => toggleTimePreference(pref)}
                 className={cn(
-                  "flex w-full items-center justify-between rounded-2xl border px-4 py-4 text-left transition",
-                  selected ? "border-[#5BBFB5] bg-[rgba(208,241,240,0.4)]" : "border-black/[0.08] bg-white",
+                  "flex w-full items-center justify-between rounded-2xl px-4 py-4 text-left transition",
+                  selectionRowClass(selected),
                 )}
               >
                 <span className="text-sm font-medium text-[#2D1012]">{pref}</span>
@@ -468,10 +462,10 @@ export default function HaguOnboardingPage() {
       </div>
 
       <Card className="flex flex-col items-center rounded-[20px] border-black/[0.06] py-10 text-center">
-        <div className="flex size-24 items-center justify-center rounded-2xl bg-[rgba(208,241,240,0.5)] text-4xl">🪪</div>
+        <div className="flex size-24 items-center justify-center rounded-2xl border border-hagu-border bg-hagu-canvas text-4xl">🪪</div>
         <p className="mt-4 text-sm font-medium text-[#1A1A1E]">Scan ID / Passport</p>
         <p className="mt-1 max-w-[240px] text-xs text-[#8A8A96]">Use a valid government-issued ID. This won&apos;t be shown on your profile.</p>
-        {idScanned ? <p className="mt-4 text-sm font-medium text-[#5BBFB5]">ID scanned successfully</p> : null}
+        {idScanned ? <p className="mt-4 text-sm font-medium text-hagu-ink">ID scanned successfully</p> : null}
       </Card>
     </div>
   )
@@ -501,10 +495,7 @@ export default function HaguOnboardingPage() {
         <button
           type="button"
           onClick={() => setPaymentMethod("stripe")}
-          className={cn(
-            "w-full rounded-2xl border p-4 text-left transition",
-            paymentMethod === "stripe" ? "border-[#5BBFB5] bg-[rgba(208,241,240,0.4)]" : "border-black/[0.08] bg-white",
-          )}
+          className={cn("w-full rounded-2xl p-4 text-left transition", selectionCardClass(paymentMethod === "stripe"))}
         >
           <div className="flex items-center justify-between">
             <div>
@@ -523,10 +514,7 @@ export default function HaguOnboardingPage() {
         <button
           type="button"
           onClick={() => setPaymentMethod("paypal")}
-          className={cn(
-            "w-full rounded-2xl border p-4 text-left transition",
-            paymentMethod === "paypal" ? "border-[#5BBFB5] bg-[rgba(208,241,240,0.4)]" : "border-black/[0.08] bg-white",
-          )}
+          className={cn("w-full rounded-2xl p-4 text-left transition", selectionCardClass(paymentMethod === "paypal"))}
         >
           <p className="text-sm font-semibold text-[#1A1A1E]">PayPal</p>
           <p className="text-xs text-[#8A8A96]">Alternative payout option</p>
