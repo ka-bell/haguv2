@@ -10,8 +10,24 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "HAGU",
-  description: "Paid companionship platform - calm, safe, premium",
+  metadataBase: new URL("https://www.hagutheapp.com"),
+  title: "HAGU | The app for unconventional companionship.",
+  description:
+    "With society becoming more individualistic, people are longing for other physical connections. A hug, back-scratching session, a movie night, and more.",
+  openGraph: {
+    title: "HAGU | The app for unconventional companionship.",
+    description:
+      "With society becoming more individualistic, people are longing for other physical connections. A hug, back-scratching session, a movie night, and more.",
+    siteName: "HAGU",
+    type: "website",
+    url: "https://www.hagutheapp.com",
+  },
+  twitter: {
+    card: "summary",
+    title: "HAGU | The app for unconventional companionship.",
+    description:
+      "With society becoming more individualistic, people are longing for other physical connections. A hug, back-scratching session, a movie night, and more.",
+  },
 }
 
 export const viewport: Viewport = {
