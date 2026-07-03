@@ -134,8 +134,6 @@ export default function HageeOnboardingPage() {
     router.push(ROUTES.home)
   }
 
-  const handleSkipIntro = () => setStep(2)
-
   const progressSegments = (() => {
     if (step === 1) return { active: 1, total: 3 }
     if (step === 6) return { active: 5, total: 5 }
@@ -341,7 +339,6 @@ export default function HageeOnboardingPage() {
     return (
       <HageeFlowScreen
         progressSegments={progressSegments}
-        secondaryAction={{ label: "Skip", onClick: handleSkipIntro }}
         ctaLabel={ctaLabel}
         onCta={handleContinue}
         ctaDisabled={!isPrototypeMode() && !canContinue}
