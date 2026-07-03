@@ -128,7 +128,7 @@ export default function ExploreRefinePage() {
       <div className="flex-1 pb-6">
         <div className="mb-5 h-[3px] w-full rounded-full bg-hagu-border">
           <div
-            className="h-[3px] rounded-full bg-hagu-accent-strong transition-all duration-300"
+            className="h-[3px] rounded-full bg-hagu-heading transition-all duration-300"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -136,7 +136,7 @@ export default function ExploreRefinePage() {
         {step === 1 ? (
           <div className="space-y-5">
             <div className="space-y-2">
-              <p className="hagu-section-label text-hagu-accent-strong">
+              <p className="hagu-section-label text-hagu-text-secondary">
                 What you&apos;re looking for
               </p>
               <h1 className="hagu-page-title text-hagu-heading">
@@ -165,7 +165,7 @@ export default function ExploreRefinePage() {
         ) : (
           <div className="space-y-5">
             <div className="space-y-2">
-              <p className="hagu-section-label text-hagu-accent-strong">
+              <p className="hagu-section-label text-hagu-text-secondary">
                 Your interests
               </p>
               <h1 className="hagu-page-title text-hagu-heading">

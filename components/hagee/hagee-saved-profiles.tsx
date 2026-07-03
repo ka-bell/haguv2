@@ -18,13 +18,13 @@ export const HageeSavedProfiles = forwardRef<HTMLElement, HageeSavedProfilesProp
       <div className="flex items-center justify-between">
         <h2 className="text-base font-semibold text-hagu-heading">Bewaarde profielen</h2>
         {profiles.length > 0 ? (
-          <span className="text-xs font-medium text-hagu-accent-strong">{profiles.length}</span>
+          <span className="text-xs font-medium text-hagu-ink">{profiles.length}</span>
         ) : null}
       </div>
 
       {profiles.length === 0 ? (
         <div className="flex items-center gap-3 rounded-[20px] border border-dashed border-hagu-border bg-hagu-white px-4 py-5">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-hagu-surface-muted">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-hagu-border bg-hagu-canvas">
             <Heart className="size-4 text-hagu-placeholder" />
           </div>
           <p className="text-sm leading-relaxed text-hagu-text-secondary">

@@ -43,8 +43,8 @@ export function HaguReviewScreen({ review }: HaguReviewScreenProps) {
   }
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col bg-[#F7F6F3]">
-      <div className={cn("sticky top-0 z-20 flex justify-end bg-[#F7F6F3] px-6 pb-2", PAGE_HEADER_TOP_PADDING)}>
+    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col bg-hagu-canvas">
+      <div className={cn("sticky top-0 z-20 flex justify-end bg-hagu-canvas px-6 pb-2", PAGE_HEADER_TOP_PADDING)}>
         <button
           type="button"
           onClick={() => router.push(ROUTES.discover)}
@@ -103,13 +103,13 @@ export function HaguReviewScreen({ review }: HaguReviewScreenProps) {
           />
         </div>
 
-        <div className="flex items-center justify-between rounded-[14px] bg-[#F7F6F3] px-4 py-4">
+        <div className="flex items-center justify-between rounded-[14px] border border-black/[0.06] bg-hagu-canvas px-4 py-4">
           <p className="text-sm font-medium text-[#1A1A1E]">Would accept again</p>
           <HaguToggle checked={acceptAgain} onChange={setAcceptAgain} label="Would accept again" />
         </div>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-20 mx-auto w-full max-w-md bg-gradient-to-t from-[#F7F6F3] via-[#F7F6F3] to-transparent px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-4">
+      <div className="fixed inset-x-0 bottom-0 z-20 mx-auto w-full max-w-md bg-gradient-to-t from-hagu-canvas via-hagu-canvas to-transparent px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-4">
         <button
           type="button"
           onClick={handleSubmit}

@@ -5,6 +5,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 import { HaguPrototypeSheet } from "@/components/hagu/hagu-prototype-sheet"
+import { RescheduleRequestBanner } from "@/components/shared/reschedule-request-banner"
 import {
   SCREEN_FOOTER_SCROLL_PAD_TALL,
   ScreenDestructiveButton,
@@ -28,7 +29,7 @@ type HaguBookingDetailScreenProps = {
 const STATUS_STYLES: Record<BookingOverviewTone, string> = {
   confirmed: "bg-[#EAF7F5] text-[#3DA89E]",
   pending: "bg-[#FFF8E7] text-[#D4900A]",
-  completed: "bg-[#F7F6F3] text-[#8A8A96]",
+  completed: "border border-black/[0.06] bg-hagu-canvas text-[#8A8A96]",
   cancelled: "bg-[#FCEAEA] text-[#DC3232]",
   new: "bg-[#FFF8E7] text-[#D4900A]",
 }
@@ -96,6 +97,7 @@ export function HaguBookingDetailScreen({ bookingId }: HaguBookingDetailScreenPr
   ].filter(Boolean) as { label: string; value: string; bold?: boolean }[]
 
   const openChat = () => router.push(ROUTES.chatThread(overview.chatId))
+  const reschedule = () => router.push(ROUTES.bookingReschedule(bookingId))
 
   const handleAccept = () => {
     if (overview.storageId) {
@@ -126,6 +128,18 @@ export function HaguBookingDetailScreen({ bookingId }: HaguBookingDetailScreenPr
           <p className="mt-1 text-sm text-[#8A8A96]">Manage this session with {firstName}</p>
         </div>
 
+        {overview.rescheduleRequest && overview.rescheduleDiff ? (
+          <RescheduleRequestBanner
+            bookingId={bookingId}
+            counterpartyName={overview.clientName}
+            rescheduleRequest={overview.rescheduleRequest}
+            rescheduleDiff={overview.rescheduleDiff}
+            canRespond={overview.canRespondToReschedule}
+            canWithdraw={overview.canWithdrawReschedule}
+            onUpdated={refresh}
+          />
+        ) : null}
+
         <div className="rounded-[20px] border border-black/[0.06] bg-white px-5 pb-5 pt-4 shadow-[0px_2px_8px_rgba(26,26,30,0.04)]">
           <div className="flex items-center gap-3">
             <div className="relative size-14 shrink-0 overflow-hidden rounded-[28px]">
@@ -143,12 +157,12 @@ export function HaguBookingDetailScreen({ bookingId }: HaguBookingDetailScreenPr
           </div>
 
           <div className="mt-4 flex flex-wrap gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#F7F6F3] px-3 py-1.5 text-xs text-[#4A4A52]">
+            <span className="inline-flex items-center gap-1.5 rounded-lg border border-black/[0.06] bg-hagu-canvas px-3 py-1.5 text-xs text-[#4A4A52]">
               <Calendar className="size-3 shrink-0" />
               {overview.date}
             </span>
             {overview.location ? (
-              <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#F7F6F3] px-3 py-1.5 text-xs text-[#4A4A52]">
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-black/[0.06] bg-hagu-canvas px-3 py-1.5 text-xs text-[#4A4A52]">
                 <MapPin className="size-3 shrink-0" />
                 {overview.location}
               </span>
@@ -222,6 +236,9 @@ export function HaguBookingDetailScreen({ bookingId }: HaguBookingDetailScreenPr
                 Message {firstName}
               </span>
             </ScreenPrimaryButton>
+            {overview.canReschedule ? (
+              <ScreenSecondaryButton onClick={reschedule}>Reschedule</ScreenSecondaryButton>
+            ) : null}
             <ScreenDestructiveButton onClick={() => setShowCancelSheet(true)}>
               Cancel booking
             </ScreenDestructiveButton>

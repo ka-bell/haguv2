@@ -21,6 +21,7 @@ import { getSavedExploreMatches } from "@/lib/hagee-saved-storage"
 import { useClientReady } from "@/hooks/use-client-ready"
 import type { HageeExploreMatch } from "@/lib/hagee-explore"
 import { ROUTES } from "@/lib/routes"
+import { selectionPillClass } from "@/lib/hagu-selection-styles"
 import { cn } from "@/lib/utils"
 
 type ConnectionsTab = "chats" | "bookings" | "liked"
@@ -44,22 +45,23 @@ function ConnectionsTabs({
   ]
 
   return (
-    <div className="flex rounded-2xl bg-hagu-surface-muted p-1">
-      {tabs.map((tab) => (
-        <button
-          key={tab.id}
-          type="button"
-          onClick={() => onChange(tab.id)}
-          className={cn(
-            "flex-1 rounded-xl py-2 text-[13px] transition",
-            active === tab.id
-              ? "bg-hagu-white font-semibold text-hagu-ink shadow-[0px_1px_3px_rgba(26,26,30,0.06)]"
-              : "font-medium text-hagu-text-secondary",
-          )}
-        >
-          {tab.label}
-        </button>
-      ))}
+    <div className="flex gap-2">
+      {tabs.map((tab) => {
+        const selected = active === tab.id
+        return (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => onChange(tab.id)}
+            className={cn(
+              selectionPillClass(selected, "sm"),
+              "flex flex-1 items-center justify-center",
+            )}
+          >
+            {tab.label}
+          </button>
+        )
+      })}
     </div>
   )
 }
@@ -75,7 +77,7 @@ function ChatRow({ chat }: { chat: HageeChatPreview }) {
           <Image src={chat.avatar} alt={chat.name} fill className="object-cover" sizes="52px" />
         </div>
         {chat.online ? (
-          <span className="absolute bottom-0 right-0 size-3 rounded-full border-2 border-hagu-canvas bg-hagu-accent-strong" />
+          <span className="absolute bottom-0 right-0 size-3 rounded-full border-2 border-hagu-canvas bg-hagu-heading" />
         ) : null}
       </div>
 
@@ -111,7 +113,7 @@ function BookingsTab({ requests }: { requests: HageeBookingRequest[] }) {
     return (
       <div className="hagu-surface-card border-dashed px-4 py-10 text-center">
         <p className="text-sm text-hagu-text-secondary">No bookings yet. Book someone from Explore to get started.</p>
-        <Link href={ROUTES.explore} className="mt-3 inline-block text-[13px] font-medium text-hagu-accent-strong">
+        <Link href={ROUTES.explore} className="mt-3 inline-block text-[13px] font-medium text-hagu-label">
           Naar Explore
         </Link>
       </div>
@@ -149,7 +151,7 @@ function BookingsTab({ requests }: { requests: HageeBookingRequest[] }) {
               className={cn(
                 "shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold",
                 booking.status === "confirmed"
-                  ? "bg-hagu-accent-selected text-hagu-accent-strong"
+                  ? "border border-hagu-border bg-hagu-canvas text-hagu-ink"
                   : "bg-[#FFF8E7] text-[#D4900A]",
               )}
             >
@@ -169,7 +171,7 @@ function LikedTab({ saved }: { saved: HageeExploreMatch[] }) {
         <p className="text-sm text-hagu-text-secondary">
           Nog geen bewaarde profielen. Swipe naar rechts in Explore om iemand te bewaren.
         </p>
-        <Link href={ROUTES.explore} className="mt-3 inline-block text-[13px] font-medium text-hagu-accent-strong">
+        <Link href={ROUTES.explore} className="mt-3 inline-block text-[13px] font-medium text-hagu-label">
           Naar Explore
         </Link>
       </div>

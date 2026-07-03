@@ -79,7 +79,7 @@ const DAY_STYLES: Record<DayState, string> = {
   outside: "text-[#B8B8C2]",
   available: "bg-[#EAF7F5] text-[#3DA89E] hover:bg-[#D0F1F0]",
   selected: "border-2 border-[#5BBFB5] text-[#1A1A1E]",
-  closed: "text-[#B8B8C2] hover:bg-[#F7F6F3]",
+  closed: "text-[#B8B8C2] hover:bg-hagu-canvas",
   booked: "bg-[#1A1A1E] text-white hover:opacity-90",
 }
 
@@ -145,7 +145,7 @@ export function HaguCalendarScreen() {
         <div className="flex items-center justify-between pt-1">
           <button
             type="button"
-            className="flex size-8 items-center justify-center rounded-2xl bg-[#F7F6F3] text-[#1A1A1E] active:scale-95"
+            className="flex size-8 items-center justify-center rounded-2xl border border-black/[0.06] bg-hagu-canvas text-[#1A1A1E] active:scale-95"
             aria-label="Previous month"
             onClick={() => setMonthIndex((i) => Math.max(0, i - 1))}
           >
@@ -154,7 +154,7 @@ export function HaguCalendarScreen() {
           <p className="text-base font-semibold text-[#1A1A1E]">{month}</p>
           <button
             type="button"
-            className="flex size-8 items-center justify-center rounded-2xl bg-[#F7F6F3] text-[#1A1A1E] active:scale-95"
+            className="flex size-8 items-center justify-center rounded-2xl border border-black/[0.06] bg-hagu-canvas text-[#1A1A1E] active:scale-95"
             aria-label="Next month"
             onClick={() => setMonthIndex((i) => Math.min(MONTHS.length - 1, i + 1))}
           >
@@ -195,7 +195,7 @@ export function HaguCalendarScreen() {
             <div className="flex flex-wrap gap-4 pt-1">
               <LegendItem color="border border-[#5BBFB5] bg-[#EAF7F5]" label="Available" />
               <LegendItem color="bg-[#1A1A1E]" label="Booked" />
-              <LegendItem color="border border-black/10 bg-[#F7F6F3]" label="Closed" />
+              <LegendItem color="border border-black/10 bg-hagu-canvas" label="Closed" />
             </div>
           </>
         ) : (
@@ -269,7 +269,7 @@ export function HaguCalendarScreen() {
         <p className="text-sm text-[#8A8A96]">Override default slots for this day only.</p>
         <div className="mt-4 space-y-3">
           {TIME_SLOTS.map((slot) => (
-            <div key={slot.id} className="flex items-center justify-between rounded-xl bg-[#F7F6F3] px-4 py-3">
+            <div key={slot.id} className="flex items-center justify-between rounded-xl border border-black/[0.06] bg-hagu-canvas px-4 py-3">
               <span className="text-sm text-[#1A1A1E]">{slot.label}</span>
               <HaguToggle label={slot.label} checked={slots[slot.id]} onChange={() => undefined} />
             </div>
@@ -377,7 +377,7 @@ function formatSelectedDay(day: number) {
 
 function PrototypeField({ label, value }: { label: string; value: string }) {
   return (
-    <div className="mt-3 rounded-xl border border-black/[0.08] bg-[#F7F6F3] px-4 py-3">
+    <div className="mt-3 rounded-xl border border-black/[0.08] bg-hagu-canvas px-4 py-3">
       <p className="text-[11px] font-medium uppercase tracking-wide text-[#8A8A96]">{label}</p>
       <p className="mt-0.5 text-sm text-[#1A1A1E]">{value}</p>
     </div>

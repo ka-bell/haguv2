@@ -11,6 +11,9 @@ interface HaguFlowCtaProps {
   className?: string
   pinned?: boolean
   variant?: "primary" | "compact"
+  /** Extra actions below the primary CTA (e.g. OAuth on login). */
+  extras?: ReactNode
+  extrasSize?: "auth" | "link"
 }
 
 export function HaguFlowCta({
@@ -20,10 +23,17 @@ export function HaguFlowCta({
   className,
   pinned = true,
   variant = "primary",
+  extras,
+  extrasSize = "auth",
 }: HaguFlowCtaProps) {
   return (
     <ScreenFooter
-      className={cn(variant === "compact" && "hagu-screen-footer-compact", className)}
+      className={cn(
+        variant === "compact" && "hagu-screen-footer-compact",
+        extras && extrasSize === "auth" && "hagu-screen-footer-auth",
+        extras && extrasSize === "link" && "hagu-screen-footer-link",
+        className,
+      )}
       pinned={pinned}
     >
       {variant === "compact" ? (
@@ -40,6 +50,7 @@ export function HaguFlowCta({
           {label}
         </ScreenPrimaryButton>
       )}
+      {extras}
     </ScreenFooter>
   )
 }

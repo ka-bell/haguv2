@@ -3,14 +3,13 @@
 import Image from "next/image"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Check, Lock, ShieldCheck, Sparkles, Sun, Moon } from "lucide-react"
+import { Check, Lock, ShieldCheck } from "lucide-react"
 import {
   BookingStepHeading,
   bookingBannerClass,
   bookingCardClass,
-  bookingDateClass,
-  bookingPillClass,
 } from "@/components/hagee/hagee-booking-chrome"
+import { BookingSchedulePicker } from "@/components/hagee/booking-schedule-picker"
 import { HaguFlowCta } from "@/components/hagu/hagu-flow-cta"
 import { HaguFlowHeader } from "@/components/hagu/hagu-flow-header"
 import { HaguFlowScreen } from "@/components/hagu/hagu-flow-screen"
@@ -21,17 +20,13 @@ import {
 } from "@/lib/hagee-booking-storage"
 import {
   BOOKING_CONTINUE_LABELS,
-  BOOKING_DATE_OPTIONS,
-  BOOKING_DURATIONS,
   BOOKING_FLOW_STEPS,
   BOOKING_TIPS,
-  BOOKING_TIME_SLOTS,
   BOOKING_VIBES,
   ESCROW_STEPS,
   PAYMENT_METHODS,
   canContinueBooking,
   createBookingDraft,
-  formatBookingDateLabel,
   formatEscrowAmount,
   formatRequestLine,
   getBookingDuration,
@@ -48,8 +43,6 @@ import { cn } from "@/lib/utils"
 type HageeBookingFlowProps = {
   profile: HageeCompanionProfile
 }
-
-const TIME_ICONS = { sun: Sun, moon: Moon, sparkles: Sparkles } as const
 
 const STEP_META: Record<BookingStep, { label: string; title: string; subtitle?: string }> = {
   2: {
@@ -91,7 +84,7 @@ export function HageeBookingFlow({ profile }: HageeBookingFlowProps) {
   const vibe = getBookingVibe(draft.vibeId)
   const escrowAmount = formatEscrowAmount(service?.price ?? "€75")
   const canContinue = canContinueBooking(step, draft)
-  const progress = step <= 4 ? ((step - 1) / BOOKING_FLOW_STEPS) * 100 : undefined
+  const progressSegments = step <= 4 ? { active: step - 1, total: BOOKING_FLOW_STEPS } : undefined
 
   const handleBack = () => {
     if (step === 2) {
@@ -125,7 +118,7 @@ export function HageeBookingFlow({ profile }: HageeBookingFlowProps) {
     <div className="space-y-5">
       {service ? (
         <div className="hagu-surface-card flex items-center gap-3 px-4 py-3.5">
-          <span className="flex size-10 items-center justify-center rounded-[12px] bg-hagu-accent-soft text-base">🍽</span>
+          <span className="flex size-10 items-center justify-center rounded-[12px] border border-hagu-border bg-hagu-canvas text-base">🍽</span>
           <div className="min-w-0 flex-1">
             <p className="text-[15px] font-medium text-hagu-ink">{service.label}</p>
             <p className="text-[13px] text-hagu-text-secondary">{service.duration}</p>
@@ -134,80 +127,28 @@ export function HageeBookingFlow({ profile }: HageeBookingFlowProps) {
         </div>
       ) : null}
 
-      <section>
-        <p className="hagu-section-label">Pick a date</p>
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-          {BOOKING_DATE_OPTIONS.map((option) => {
-            const selected = draft.day === option.day
-            return (
-              <button
-                key={option.day}
-                type="button"
-                onClick={() =>
-                  setDraft((prev) => ({
-                    ...prev,
-                    day: option.day,
-                    dateLabel: formatBookingDateLabel(option.day),
-                  }))
-                }
-                className={bookingDateClass(selected)}
-              >
-                <span className="text-[11px] font-medium">{option.weekday}</span>
-                <span className="mt-0.5 text-xl font-semibold leading-none">{option.day}</span>
-                <span className="mt-1 text-[11px]">{option.month}</span>
-              </button>
-            )
-          })}
-        </div>
-      </section>
-
-      <section>
-        <p className="hagu-section-label">Preferred time</p>
-        <div className="mt-3 grid grid-cols-3 gap-2">
-          {BOOKING_TIME_SLOTS.map((timeSlot) => {
-            const selected = draft.timeSlotId === timeSlot.id
-            const Icon = timeSlot.icon ? TIME_ICONS[timeSlot.icon] : Sparkles
-            return (
-              <button
-                key={timeSlot.id}
-                type="button"
-                onClick={() => setDraft((prev) => ({ ...prev, timeSlotId: timeSlot.id }))}
-                className={cn(bookingCardClass(selected), "px-3 py-3 text-center")}
-              >
-                <Icon className="mx-auto size-4 text-hagu-label" />
-                <p className="mt-2 text-[13px] font-medium text-hagu-ink">{timeSlot.label}</p>
-                <p className="mt-0.5 text-[11px] text-hagu-text-secondary">{timeSlot.subtitle}</p>
-              </button>
-            )
-          })}
-        </div>
-      </section>
-
-      <div className={cn(bookingBannerClass(), "flex items-start gap-3")}>
-        <div className="relative size-7 shrink-0 overflow-hidden rounded-full border-2 border-white">
-          <Image src={profile.photo} alt="" fill className="object-cover" sizes="28px" />
-        </div>
-        <p className="text-[13px] leading-relaxed text-hagu-label">
-          {profile.name} is usually free {profile.availabilityLabel.toLowerCase()}. They&apos;ll confirm the exact time
-          in chat.
-        </p>
-      </div>
-
-      <section>
-        <p className="hagu-section-label">How long?</p>
-        <div className="mt-3 flex gap-2">
-          {BOOKING_DURATIONS.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => setDraft((prev) => ({ ...prev, durationId: item.id }))}
-              className={cn(bookingPillClass(draft.durationId === item.id), "flex-1 text-center")}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-      </section>
+      <BookingSchedulePicker
+        value={{
+          day: draft.day,
+          dateLabel: draft.dateLabel,
+          timeSlotId: draft.timeSlotId,
+          durationId: draft.durationId,
+        }}
+        onChange={(next) =>
+          setDraft((prev) => ({
+            ...prev,
+            day: next.day,
+            dateLabel: next.dateLabel,
+            timeSlotId: next.timeSlotId,
+            durationId: next.durationId ?? prev.durationId,
+          }))
+        }
+        availabilityHint={{
+          photo: profile.photo,
+          name: profile.name,
+          availabilityLabel: profile.availabilityLabel,
+        }}
+      />
     </div>
   )
 
@@ -217,11 +158,11 @@ export function HageeBookingFlow({ profile }: HageeBookingFlowProps) {
         <p className="hagu-section-label">Your request so far</p>
         <div className="mt-3 space-y-3">
           <div className="flex items-center gap-3">
-            <span className="flex size-8 items-center justify-center rounded-full bg-hagu-accent-soft text-sm">🍽</span>
+            <span className="flex size-8 items-center justify-center rounded-full border border-hagu-border bg-hagu-canvas text-sm">🍽</span>
             <p className="text-sm text-hagu-ink">{service?.label ?? "Activity"}</p>
           </div>
           <div className="flex items-center gap-3">
-            <span className="flex size-8 items-center justify-center rounded-full bg-hagu-accent-soft text-sm">📅</span>
+            <span className="flex size-8 items-center justify-center rounded-full border border-hagu-border bg-hagu-canvas text-sm">📅</span>
             <p className="text-sm text-hagu-ink">
               {draft.dateLabel ?? "Date"} · {slot?.label ?? "Time"}
             </p>
@@ -263,16 +204,16 @@ export function HageeBookingFlow({ profile }: HageeBookingFlowProps) {
           value={draft.message}
           onChange={(e) => setDraft((prev) => ({ ...prev, message: e.target.value }))}
           placeholder={`Hi ${profile.name}, I'd love to keep it low-key...`}
-          className="min-h-32 w-full rounded-[20px] border border-black/[0.06] bg-hagu-white px-4 py-3 text-[15px] text-hagu-ink outline-none transition placeholder:text-hagu-text-secondary focus:border-hagu-accent-strong focus:ring-2 focus:ring-hagu-accent/50"
+          className="min-h-32 w-full rounded-[20px] border border-black/[0.06] bg-hagu-white px-4 py-3 text-[15px] text-hagu-ink outline-none transition placeholder:text-hagu-text-secondary focus:border-hagu-accent focus:ring-2 focus:ring-hagu-accent/50"
         />
       </label>
 
       <section className={bookingBannerClass()}>
-        <p className="hagu-section-label text-hagu-accent-strong">What works well</p>
+        <p className="hagu-section-label text-hagu-text-secondary">What works well</p>
         <ul className="mt-2 space-y-1.5">
           {BOOKING_TIPS.map((tip) => (
             <li key={tip} className="flex items-start gap-2 text-[13px] text-hagu-label">
-              <Check className="mt-0.5 size-3.5 shrink-0 text-hagu-accent-strong" />
+              <Check className="mt-0.5 size-3.5 shrink-0 text-hagu-ink" />
               {tip}
             </li>
           ))}
@@ -283,7 +224,7 @@ export function HageeBookingFlow({ profile }: HageeBookingFlowProps) {
 
   const renderConfirmStep = () => (
     <div className="space-y-5">
-      <span className="inline-flex rounded-full border border-hagu-accent-strong/30 bg-hagu-accent-selected px-3 py-1 text-[11px] font-semibold text-hagu-accent-strong">
+      <span className="inline-flex rounded-full border border-hagu-border bg-hagu-canvas px-3 py-1 text-[11px] font-semibold text-hagu-ink">
         {escrowAmount} held in escrow
       </span>
 
@@ -299,9 +240,9 @@ export function HageeBookingFlow({ profile }: HageeBookingFlowProps) {
             <p className="text-[15px] font-semibold text-hagu-ink">{profile.name}</p>
             <p className="mt-0.5 text-[13px] leading-snug text-hagu-text-secondary">{formatRequestLine(profile, draft)}</p>
           </div>
-          <span className="rounded-full bg-hagu-surface-muted px-2.5 py-1 text-[11px] font-semibold text-hagu-ink">88%</span>
+          <span className="rounded-full border border-hagu-border bg-hagu-canvas px-2.5 py-1 text-[11px] font-semibold text-hagu-ink">88%</span>
         </div>
-        <div className="mx-4 mb-4 rounded-[16px] bg-hagu-surface-muted px-4 py-3">
+        <div className="mx-4 mb-4 rounded-[16px] border border-hagu-border bg-hagu-canvas px-4 py-3">
           <div className="flex items-center justify-between">
             <p className="text-sm text-hagu-label">Amount reserved</p>
             <p className="text-xl font-semibold text-hagu-ink">{escrowAmount}</p>
@@ -340,7 +281,7 @@ export function HageeBookingFlow({ profile }: HageeBookingFlowProps) {
       </section>
 
       <section className="hagu-surface-card flex gap-3 p-4">
-        <ShieldCheck className="size-4 shrink-0 text-hagu-accent-strong" />
+        <ShieldCheck className="size-4 shrink-0 text-hagu-ink" />
         <div>
           <p className="text-sm font-medium text-hagu-ink">Free cancellation</p>
           <p className="mt-0.5 text-[13px] text-hagu-text-secondary">
@@ -361,7 +302,7 @@ export function HageeBookingFlow({ profile }: HageeBookingFlowProps) {
                 onClick={() => setDraft((prev) => ({ ...prev, paymentMethod: method.id }))}
                 className={cn(bookingCardClass(selected), "flex w-full items-center gap-3 px-4 py-3")}
               >
-                <span className="flex h-8 min-w-12 items-center justify-center rounded-lg bg-hagu-surface-muted px-2 text-[11px] font-semibold text-hagu-ink">
+                <span className="flex h-8 min-w-12 items-center justify-center rounded-lg border border-hagu-border bg-hagu-canvas px-2 text-[11px] font-semibold text-hagu-ink">
                   {method.id === "apple-pay" ? "Pay" : method.id === "ideal" ? "iDEAL" : "Card"}
                 </span>
                 <span className="min-w-0 flex-1 text-left">
@@ -391,8 +332,8 @@ export function HageeBookingFlow({ profile }: HageeBookingFlowProps) {
 
   const renderSuccessStep = () => (
     <div className="flex flex-col items-center px-2 pt-8 text-center">
-      <div className="flex size-20 items-center justify-center rounded-full bg-hagu-accent-soft">
-        <Check className="size-9 text-hagu-accent-strong" strokeWidth={2.5} />
+      <div className="flex size-20 items-center justify-center rounded-full border border-hagu-border bg-hagu-canvas">
+        <Check className="size-9 text-hagu-ink" strokeWidth={2.5} />
       </div>
       <h1 className="mt-6 hagu-page-title text-hagu-heading">Request sent</h1>
       <p className="mt-2 max-w-[300px] text-sm font-light leading-relaxed text-hagu-text-secondary">
@@ -402,8 +343,8 @@ export function HageeBookingFlow({ profile }: HageeBookingFlowProps) {
 
       <div className="mt-6 w-full hagu-surface-card px-4 py-4 text-left">
         <div className="flex items-center gap-3">
-          <span className="flex size-9 items-center justify-center rounded-full bg-hagu-accent-selected">
-            <Lock className="size-4 text-hagu-accent-strong" />
+          <span className="flex size-9 items-center justify-center rounded-full border border-hagu-border bg-hagu-canvas">
+            <Lock className="size-4 text-hagu-ink" />
           </span>
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold text-hagu-ink">{escrowAmount} reserved</p>
@@ -411,7 +352,7 @@ export function HageeBookingFlow({ profile }: HageeBookingFlowProps) {
               Auto-released to {profile.name} 2 hrs after your meetup
             </p>
           </div>
-          <span className="rounded-full bg-hagu-accent-selected px-2.5 py-1 text-[10px] font-semibold text-hagu-accent-strong">
+          <span className="rounded-full border border-hagu-border bg-hagu-canvas px-2.5 py-1 text-[10px] font-semibold text-hagu-ink">
             Held
           </span>
         </div>
@@ -429,7 +370,7 @@ export function HageeBookingFlow({ profile }: HageeBookingFlowProps) {
               Awaiting response
             </p>
           </div>
-          <span className="rounded-full bg-hagu-surface-muted px-2.5 py-1 text-[11px] font-medium text-hagu-ink">Pending</span>
+          <span className="rounded-full border border-hagu-border bg-hagu-canvas px-2.5 py-1 text-[11px] font-medium text-hagu-ink">Pending</span>
         </div>
         <div className="mt-4 space-y-2 text-sm text-hagu-label">
           <p>· {service?.label}</p>
@@ -463,7 +404,7 @@ export function HageeBookingFlow({ profile }: HageeBookingFlowProps) {
       className="bg-hagu-canvas"
       onBack={handleBack}
       closeHref={ROUTES.exploreProfile(profile.id)}
-      progress={progress}
+      progressSegments={progressSegments}
       ctaLabel={ctaLabel}
       onCta={handleContinue}
       ctaDisabled={!isPrototypeMode() && !canContinue}

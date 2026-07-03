@@ -98,7 +98,7 @@ export function HageeExploreCard({
               <p className="text-sm leading-relaxed text-white">{match.tagline}</p>
               {sharedInterests.length > 0 ? (
                 <div className="space-y-1">
-                  <span className="inline-flex items-center rounded-full border border-hagu-glass-border bg-hagu-accent-selected/90 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-hagu-accent-strong">
+                  <span className="inline-flex items-center rounded-full border border-hagu-border bg-hagu-canvas/90 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-hagu-ink">
                     {sharedInterests.length} shared interest{sharedInterests.length === 1 ? "" : "s"}
                   </span>
                   <p className="text-[11px] text-white/75">

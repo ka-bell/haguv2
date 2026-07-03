@@ -28,7 +28,7 @@ export function bookingDateClass(selected: boolean) {
 
 /** Accent banner — matches provider home requests banner */
 export function bookingBannerClass() {
-  return "rounded-[16px] bg-hagu-accent-soft px-4 py-3.5"
+  return "rounded-[16px] border border-hagu-border bg-hagu-canvas px-4 py-3.5"
 }
 
 export function BookingStepHeading({
@@ -42,7 +42,7 @@ export function BookingStepHeading({
 }) {
   return (
     <div className="space-y-1.5">
-      {stepLabel ? <p className="text-[11px] font-semibold uppercase tracking-wide text-hagu-accent-strong">{stepLabel}</p> : null}
+      {stepLabel ? <p className="text-[11px] font-semibold uppercase tracking-wide text-hagu-text-secondary">{stepLabel}</p> : null}
       <h1 className="hagu-page-title">{title}</h1>
       {subtitle ? <p className="text-sm font-light text-hagu-text-secondary">{subtitle}</p> : null}
     </div>

@@ -25,8 +25,8 @@ export function HageeOnboardingSuccess({
 }: HageeOnboardingSuccessProps) {
   return (
     <div className="flex flex-col items-center pt-6 text-center">
-      <div className="flex size-20 items-center justify-center rounded-full bg-hagu-accent-soft">
-        <Check className="size-9 text-hagu-accent-strong" strokeWidth={2.5} />
+      <div className="flex size-20 items-center justify-center rounded-full border border-hagu-border bg-hagu-canvas">
+        <Check className="size-9 text-hagu-ink" strokeWidth={2.5} />
       </div>
 
       <h1 className="mt-6 hagu-page-title text-hagu-heading">
@@ -46,8 +46,8 @@ export function HageeOnboardingSuccess({
                 className="hagu-stagger-in hagu-surface-card flex flex-row items-center gap-3 p-4"
                 style={{ animationDelay: `${index * 140}ms` }}
               >
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-hagu-accent-soft">
-                  <Icon className="size-[18px] text-hagu-accent-strong" />
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-2xl border border-hagu-border bg-hagu-canvas">
+                  <Icon className="size-[18px] text-hagu-ink" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <CardTitle className="text-[15px]">{item.title}</CardTitle>

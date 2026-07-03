@@ -22,7 +22,7 @@ export default function ForgotPasswordPage() {
       >
         <div className="flex flex-col items-center space-y-6 pt-8 text-center">
           <div className="flex size-20 items-center justify-center rounded-[24px] bg-[rgba(208,241,240,0.4)]">
-            <Mail className="size-9 text-[#5BBFB5]" />
+            <Mail className="size-9 text-hagu-ink" />
           </div>
           <div>
             <h1 className="text-[26px] font-semibold tracking-tight text-[#1A1A1E]">Check your inbox</h1>

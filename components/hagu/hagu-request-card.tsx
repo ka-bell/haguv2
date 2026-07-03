@@ -62,7 +62,7 @@ export function HaguRequestCard({ request, onAccept, onMessage, onOpen }: HaguRe
                   event.stopPropagation()
                   openChat()
                 }}
-                className="flex size-9 items-center justify-center rounded-full bg-[#F7F6F3] text-[#1A1A1E] transition active:opacity-80"
+                className="flex size-9 items-center justify-center rounded-full border border-black/[0.06] bg-hagu-canvas text-[#1A1A1E] transition active:opacity-80"
                 aria-label={`Message ${request.name}`}
               >
                 <MessageCircle className="size-4" />
@@ -76,7 +76,7 @@ export function HaguRequestCard({ request, onAccept, onMessage, onOpen }: HaguRe
       </div>
 
       {request.details ? (
-        <div className="mt-4 space-y-2 rounded-[14px] bg-[#F7F6F3] p-3.5">
+        <div className="mt-4 space-y-2 rounded-[14px] border border-black/[0.06] bg-hagu-canvas p-3.5">
           {request.details.map((row) => (
             <div key={row.label} className="flex items-center justify-between gap-3 text-xs">
               <span className="text-[#8A8A96]">{row.label}</span>

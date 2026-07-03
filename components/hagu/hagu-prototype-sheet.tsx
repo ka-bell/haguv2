@@ -157,7 +157,7 @@ export function HaguPrototypeSheet({
           <button
             type="button"
             onClick={dismiss}
-            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#F7F6F3] text-[#1A1A1E]"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full border border-black/[0.06] bg-hagu-canvas text-[#1A1A1E]"
             aria-label="Close sheet"
           >
             <X className="size-4" />

@@ -100,7 +100,7 @@
   --hagu-text-secondary: #8a8a96;
   --hagu-placeholder: #b8b8c2;
   --hagu-canvas: #fcffff;
-  --hagu-surface-muted: #f7f6f3;
+  --hagu-surface-muted: #fcffff;
   --hagu-border: rgba(0, 0, 0, 0.06);
   --hagu-glass-border: rgba(208, 241, 240, 0.3);
   --hagu-bg-light: #f2f2f2;
@@ -259,6 +259,18 @@
     min-height: calc(5.75rem + var(--hagu-inset-bottom));
   }
 
+  .hagu-screen-footer-auth {
+    min-height: calc(9.25rem + var(--hagu-inset-bottom));
+  }
+
+  .hagu-screen-footer-link {
+    min-height: calc(6.25rem + var(--hagu-inset-bottom));
+  }
+
+  .hagu-screen-footer-progress-note {
+    min-height: calc(8.75rem + var(--hagu-inset-bottom));
+  }
+
   .hagu-brand-transition {
     view-transition-name: hagu-brand;
   }
@@ -331,7 +343,11 @@
   }
 
   .hagu-action-btn-muted {
-    @apply flex h-12 flex-1 items-center justify-center gap-1.5 rounded-[20px] bg-hagu-surface-muted text-sm font-medium text-hagu-ink transition;
+    @apply flex h-12 flex-1 items-center justify-center gap-1.5 rounded-[20px] border border-hagu-border bg-hagu-canvas text-sm font-medium text-hagu-ink transition;
+  }
+
+  .hagu-chrome {
+    @apply border border-hagu-border bg-hagu-canvas;
   }
 
   .hagu-action-btn-dark {

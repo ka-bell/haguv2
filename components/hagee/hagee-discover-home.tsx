@@ -36,7 +36,7 @@ export function HageeDiscoverHome() {
             <p
               className={cn(
                 "text-[22px] font-semibold tracking-tight",
-                stat.highlight ? "text-hagu-accent-strong" : "text-hagu-ink",
+                stat.highlight ? "text-hagu-ink" : "text-hagu-ink",
               )}
             >
               {stat.value}

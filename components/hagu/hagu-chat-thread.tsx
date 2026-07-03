@@ -82,7 +82,7 @@ export function HaguChatThread({ threadId }: HaguChatThreadProps) {
           <button
             type="button"
             onClick={() => router.push(thread.pending ? ROUTES.requests : ROUTES.bookings)}
-            className="flex size-8 shrink-0 items-center justify-center rounded-2xl bg-[#F7F6F3] text-[#1A1A1E]"
+            className="flex size-8 shrink-0 items-center justify-center rounded-2xl border border-black/[0.06] bg-hagu-canvas text-[#1A1A1E]"
             aria-label="Back"
           >
             <ArrowLeft className="size-3.5" />
@@ -149,7 +149,7 @@ export function HaguChatThread({ threadId }: HaguChatThreadProps) {
         {thread.messages.length > 0 ? (
           <>
             <div className="flex justify-center pb-1 pt-1">
-              <span className="rounded-full bg-[#F7F6F3] px-3 py-0.5 text-[11px] text-[#B8B8C2]">Today</span>
+              <span className="rounded-full border border-black/[0.06] bg-hagu-canvas px-3 py-0.5 text-[11px] text-[#B8B8C2]">Today</span>
             </div>
 
             {thread.messages.map((message, index) =>
@@ -186,7 +186,7 @@ export function HaguChatThread({ threadId }: HaguChatThreadProps) {
 
       <footer className="shrink-0 border-t border-black/[0.06] bg-white px-4 pb-[max(1.75rem,env(safe-area-inset-bottom))] pt-3">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-11 flex-1 items-center rounded-[22px] bg-[#F7F6F3] px-4">
+          <div className="flex h-11 flex-1 items-center rounded-[22px] border border-black/[0.06] bg-hagu-canvas px-4">
             <span className="text-sm text-[#B8B8C2]">Message {firstName}...</span>
           </div>
           <button

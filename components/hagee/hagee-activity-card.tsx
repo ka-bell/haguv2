@@ -43,7 +43,7 @@ export function HageeActivityCard({
         <div
           className={cn(
             "flex size-9 items-center justify-center rounded-[10px]",
-            isNav || !selected ? "bg-hagu-surface-muted" : "bg-hagu-white/80",
+            isNav || !selected ? "border border-hagu-border bg-hagu-canvas" : "bg-hagu-white/80",
           )}
         >
           <Icon className="size-[18px] text-hagu-label" />

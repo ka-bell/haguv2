@@ -1,4 +1,14 @@
 import { getBookingRequest, type HageeBookingRequest } from "@/lib/hagee-booking-storage"
+import {
+  bookingDateLine,
+  canProposeReschedule,
+  canRespondToReschedule,
+  canWithdrawReschedule,
+  formatRescheduleDiff,
+  type RescheduleRequest,
+} from "@/lib/hagee-reschedule"
+
+export type { RescheduleRequest } from "@/lib/hagee-reschedule"
 
 export type HageeClientBookingTab = "upcoming" | "pending" | "past"
 
@@ -23,6 +33,10 @@ export type HageeClientBookingOverview = {
   canCancel: boolean
   canReschedule: boolean
   canMessage: boolean
+  rescheduleRequest?: RescheduleRequest
+  rescheduleDiff?: string
+  canRespondToReschedule: boolean
+  canWithdrawReschedule: boolean
 }
 
 function tabForStatus(status: HageeBookingRequest["status"]): HageeClientBookingTab {
@@ -71,8 +85,9 @@ export function activeConnectionBookings(bookings: HageeBookingRequest[]): Hagee
 }
 
 export function toClientBookingOverview(request: HageeBookingRequest): HageeClientBookingOverview {
-  const dateLine = [request.dateLabel, request.timeLabel].filter(Boolean).join(" · ")
+  const dateLine = bookingDateLine(request)
   const isActive = request.status === "confirmed" || request.status === "pending"
+  const hasReschedule = Boolean(request.rescheduleRequest)
 
   return {
     id: request.id,
@@ -81,7 +96,7 @@ export function toClientBookingOverview(request: HageeBookingRequest): HageeClie
     companionPhoto: request.profilePhoto,
     chatId: request.chatId,
     activity: request.serviceLabel,
-    date: dateLine || "TBD",
+    date: dateLine,
     duration: request.durationLabel ?? undefined,
     vibe: request.vibeLabel ?? undefined,
     message: request.message || undefined,
@@ -89,12 +104,16 @@ export function toClientBookingOverview(request: HageeBookingRequest): HageeClie
     escrowLabel: isActive
       ? `${request.amount.replace(".00", "")} held in escrow until your session ends`
       : undefined,
-    statusLabel: labelForStatus(request.status),
+    statusLabel: hasReschedule ? "Reschedule pending" : labelForStatus(request.status),
     statusTone: toneForStatus(request.status),
     tab: tabForStatus(request.status),
     canCancel: request.status === "pending" || request.status === "confirmed",
-    canReschedule: request.status === "confirmed",
+    canReschedule: canProposeReschedule(request, "HAGEE"),
     canMessage: request.status !== "declined",
+    rescheduleRequest: request.rescheduleRequest ?? undefined,
+    rescheduleDiff: formatRescheduleDiff(request) ?? undefined,
+    canRespondToReschedule: canRespondToReschedule(request, "HAGEE"),
+    canWithdrawReschedule: canWithdrawReschedule(request, "HAGEE"),
   }
 }
 

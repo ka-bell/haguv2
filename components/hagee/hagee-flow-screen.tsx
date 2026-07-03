@@ -6,6 +6,7 @@ import { ScreenLayout } from "@/components/ui/screen-layout"
 import {
   SCREEN_FOOTER_SCROLL_PAD_COMPACT,
   SCREEN_FOOTER_SCROLL_PAD_PROGRESS,
+  SCREEN_FOOTER_SCROLL_PAD_PROGRESS_NOTE,
   SCREEN_FOOTER_SCROLL_PAD_PROGRESS_TALL,
 } from "@/components/ui/screen-footer"
 import { HaguFlowCta } from "@/components/hagu/hagu-flow-cta"
@@ -26,6 +27,8 @@ interface HageeFlowScreenProps {
   progressSegments?: FlowProgressSegments
   /** Optional text action below the CTA (e.g. Skip on intro). */
   secondaryAction?: { label: string; onClick: () => void }
+  /** Static note below secondary action in progress footer (e.g. login link). */
+  footerNote?: React.ReactNode
   ctaLabel: string
   onCta: () => void
   ctaDisabled?: boolean
@@ -39,6 +42,7 @@ export function HageeFlowScreen({
   onBack,
   progressSegments,
   secondaryAction,
+  footerNote,
   ctaLabel,
   onCta,
   ctaDisabled,
@@ -51,9 +55,11 @@ export function HageeFlowScreen({
   const isCompactCta = ctaVariant === "compact"
 
   const footerScrollPad = usesProgressFooter
-    ? secondaryAction
-      ? SCREEN_FOOTER_SCROLL_PAD_PROGRESS_TALL
-      : SCREEN_FOOTER_SCROLL_PAD_PROGRESS
+    ? footerNote
+      ? SCREEN_FOOTER_SCROLL_PAD_PROGRESS_NOTE
+      : secondaryAction
+        ? SCREEN_FOOTER_SCROLL_PAD_PROGRESS_TALL
+        : SCREEN_FOOTER_SCROLL_PAD_PROGRESS
     : isCompactCta
       ? SCREEN_FOOTER_SCROLL_PAD_COMPACT
       : undefined
@@ -65,6 +71,7 @@ export function HageeFlowScreen({
       disabled={ctaDisabled}
       segments={progressSegments!}
       secondaryAction={secondaryAction}
+      footerNote={footerNote}
     />
   ) : (
     <HaguFlowCta label={ctaLabel} onClick={onCta} disabled={ctaDisabled} variant={ctaVariant} />

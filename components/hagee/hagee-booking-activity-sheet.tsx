@@ -108,7 +108,7 @@ export function HageeBookingActivitySheet({ open, onClose, profile }: HageeBooki
 
         <div className="flex shrink-0 items-start justify-between gap-3 px-6">
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-hagu-accent-strong">01 — What kind of time?</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-hagu-text-secondary">01 — What kind of time?</p>
             <h2 className="mt-1 hagu-page-title">Request time with {profile.name}</h2>
           </div>
           <button
@@ -129,7 +129,7 @@ export function HageeBookingActivitySheet({ open, onClose, profile }: HageeBooki
             <div className="min-w-0">
               <p className="text-[15px] font-medium text-hagu-ink">{profile.name}</p>
               <p className="flex items-center gap-1.5 text-[13px] text-hagu-text-secondary">
-                <span className="size-1.5 rounded-full bg-hagu-accent-strong" />
+                <span className="size-1.5 rounded-full bg-hagu-heading" />
                 {profile.availabilityLabel}
               </p>
             </div>
@@ -147,7 +147,7 @@ export function HageeBookingActivitySheet({ open, onClose, profile }: HageeBooki
                   onClick={() => setSelectedId(activity.id)}
                   className={cn(bookingCardClass(isSelected), "flex w-full items-center gap-3 px-4 py-3.5")}
                 >
-                  <span className="flex size-11 shrink-0 items-center justify-center rounded-[14px] bg-hagu-surface-muted text-lg">
+                  <span className="flex size-11 shrink-0 items-center justify-center rounded-[14px] border border-hagu-border bg-hagu-canvas text-lg">
                     {activity.emoji}
                   </span>
                   <span className="min-w-0 flex-1">

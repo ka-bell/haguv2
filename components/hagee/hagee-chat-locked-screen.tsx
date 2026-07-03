@@ -22,7 +22,7 @@ export function HageeChatLockedScreen({ request }: HageeChatLockedScreenProps) {
           <button
             type="button"
             onClick={() => router.push(ROUTES.chat)}
-            className="text-sm font-medium text-hagu-accent-strong"
+            className="text-sm font-medium text-hagu-ink"
           >
             Back
           </button>
@@ -39,8 +39,8 @@ export function HageeChatLockedScreen({ request }: HageeChatLockedScreenProps) {
       </header>
 
       <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
-        <div className="flex size-16 items-center justify-center rounded-full bg-hagu-accent-soft">
-          <Lock className="size-7 text-hagu-accent-strong" />
+        <div className="flex size-16 items-center justify-center rounded-full border border-hagu-border bg-hagu-canvas">
+          <Lock className="size-7 text-hagu-ink" />
         </div>
         <h1 className="mt-5 hagu-page-title text-hagu-heading">Chat not open yet</h1>
         <p className="mt-2 max-w-[280px] text-sm font-light leading-relaxed text-hagu-text-secondary">
@@ -62,7 +62,7 @@ export function HageeChatLockedScreen({ request }: HageeChatLockedScreenProps) {
               </p>
             ) : null}
           </div>
-          <span className="mt-3 inline-flex rounded-full bg-hagu-surface-muted px-2.5 py-1 text-[10px] font-semibold text-hagu-ink">
+          <span className="mt-3 inline-flex rounded-full border border-hagu-border bg-hagu-canvas px-2.5 py-1 text-[10px] font-semibold text-hagu-ink">
             Pending
           </span>
         </article>
@@ -70,7 +70,7 @@ export function HageeChatLockedScreen({ request }: HageeChatLockedScreenProps) {
         <button
           type="button"
           onClick={() => router.push(ROUTES.connectionsTab("bookings"))}
-          className="mt-6 text-sm font-medium text-hagu-accent-strong"
+          className="mt-6 text-sm font-medium text-hagu-ink"
         >
           View booking status
         </button>

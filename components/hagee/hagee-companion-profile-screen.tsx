@@ -24,7 +24,7 @@ export function HageeCompanionProfileScreen({ profile, onBookService }: HageeCom
                   {profile.name}, {profile.age}
                 </h1>
                 {profile.verified ? (
-                  <span className="rounded-full bg-hagu-accent-selected px-2.5 py-1 text-[10px] font-semibold text-hagu-accent-strong">
+                  <span className="rounded-full border border-hagu-border bg-hagu-canvas px-2.5 py-1 text-[10px] font-semibold text-hagu-ink">
                     Verified
                   </span>
                 ) : null}
@@ -64,7 +64,7 @@ export function HageeCompanionProfileScreen({ profile, onBookService }: HageeCom
           {profile.responseTime}
         </p>
         <p className="mt-1 flex items-center gap-1.5 text-[13px] text-hagu-text-secondary">
-          <Star className="size-3.5 shrink-0 fill-hagu-accent-strong text-hagu-accent-strong" />
+          <Star className="size-3.5 shrink-0 fill-hagu-ink text-hagu-ink" />
           {profile.availabilityLabel}
         </p>
       </section>
@@ -76,7 +76,7 @@ export function HageeCompanionProfileScreen({ profile, onBookService }: HageeCom
             {profile.interests.map((interest) => (
               <span
                 key={interest}
-                className="rounded-full bg-hagu-accent-selected px-3 py-1.5 text-xs font-medium text-hagu-accent-strong"
+                className="rounded-full border border-hagu-border bg-hagu-white px-3 py-1.5 text-xs font-medium text-hagu-label"
               >
                 {interest}
               </span>
@@ -92,7 +92,7 @@ export function HageeCompanionProfileScreen({ profile, onBookService }: HageeCom
             {profile.vibeTags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-full border border-hagu-border bg-hagu-surface-muted px-3 py-1.5 text-xs text-hagu-label"
+                className="rounded-full border border-hagu-border bg-hagu-white px-3 py-1.5 text-xs text-hagu-label"
               >
                 {tag}
               </span>

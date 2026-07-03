@@ -15,6 +15,7 @@ type HageeFlowProgressFooterProps = {
   disabled?: boolean
   segments: FlowProgressSegments
   secondaryAction?: { label: string; onClick: () => void }
+  footerNote?: ReactNode
   className?: string
 }
 
@@ -25,6 +26,7 @@ export function HageeFlowProgressFooter({
   disabled,
   segments,
   secondaryAction,
+  footerNote,
   className,
 }: HageeFlowProgressFooterProps) {
   const active = Math.min(Math.max(segments.active, 0), segments.total)
@@ -32,7 +34,8 @@ export function HageeFlowProgressFooter({
   return (
     <ScreenFooter className={cn(
       "hagu-screen-footer-progress border-black/[0.05] bg-hagu-canvas/95 backdrop-blur-sm",
-      secondaryAction && "hagu-screen-footer-progress-tall",
+      secondaryAction && !footerNote && "hagu-screen-footer-progress-tall",
+      footerNote && "hagu-screen-footer-progress-note",
       className,
     )}>
       <div className="flex gap-1.5" aria-hidden>
@@ -65,6 +68,8 @@ export function HageeFlowProgressFooter({
           {secondaryAction.label}
         </button>
       ) : null}
+
+      {footerNote ? <div className="mt-2">{footerNote}</div> : null}
     </ScreenFooter>
   )
 }

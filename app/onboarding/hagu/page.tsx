@@ -159,7 +159,7 @@ export default function HaguOnboardingPage() {
     router.push(ROUTES.discover)
   }
 
-  const progress = editMode || step <= 1 ? undefined : ((step - 1) / 8) * 100
+  const progressSegments = !editMode && step >= 1 && step <= 9 ? { active: step, total: 9 } : undefined
   const ctaLabel = editMode
     ? "Save changes"
     : step === 7 && !idScanned
@@ -193,11 +193,9 @@ export default function HaguOnboardingPage() {
         <p className="text-sm leading-relaxed text-[#8a8a96]">
           Become a Hagu in Amsterdam. Get paid to attend events, share meals, or simply provide great conversation.
         </p>
-        <div className="flex gap-2 pt-1">
-          <span className="h-1 w-5 rounded-full bg-[#5bbfb5]" />
-          <span className="h-1 w-1.5 rounded-full bg-black/15" />
-          <span className="h-1 w-1.5 rounded-full bg-black/15" />
-        </div>
+        <span className="inline-flex rounded-full border border-hagu-border bg-hagu-canvas px-3 py-0.5 text-[11px] font-semibold tracking-wide text-hagu-ink">
+          1 of 9
+        </span>
       </div>
     </>
   )
@@ -210,9 +208,9 @@ export default function HaguOnboardingPage() {
       </div>
 
       <div className="flex flex-col items-center pt-2">
-        <div className="relative flex size-[120px] items-center justify-center rounded-[60px] border-2 border-dashed border-[#D0F1F0] bg-[rgba(208,241,240,0.4)] p-0.5">
+        <div className="relative flex size-[120px] items-center justify-center rounded-[60px] border-2 border-dashed border-hagu-border bg-hagu-canvas p-0.5">
           <Camera className="size-8 text-[#8A8A96]" />
-          <button type="button" className="absolute bottom-0 right-0 flex size-9 items-center justify-center rounded-[18px] border-[3px] border-[#F7F6F3] bg-[#2D1012] text-white">
+          <button type="button" className="absolute bottom-0 right-0 flex size-9 items-center justify-center rounded-[18px] border-[3px] border-hagu-canvas bg-[#2D1012] text-white">
             +
           </button>
         </div>
@@ -399,7 +397,7 @@ export default function HaguOnboardingPage() {
         <button
           type="button"
           onClick={addActivity}
-          className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-black/[0.12] bg-white py-3.5 text-sm font-medium text-[#4A4A52] transition active:bg-[#F7F6F3]"
+          className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-black/[0.12] bg-white py-3.5 text-sm font-medium text-[#4A4A52] transition active:bg-hagu-canvas"
         >
           <Plus className="size-4" />
           Add activity
@@ -557,12 +555,13 @@ export default function HaguOnboardingPage() {
     return (
       <HaguFlowScreen
         showHeader={false}
+        progressSegments={progressSegments}
         ctaLabel={ctaLabel}
         onCta={handleContinue}
         ctaDisabled={!isPrototypeMode() && !canContinue}
         className="bg-[#FEFFFF]"
-        footer={
-          <p className="mt-6 text-center text-sm text-[#8A8A96]">
+        footerNote={
+          <p className="text-center text-sm text-[#8A8A96]">
             Already have an account?{" "}
             <Link href={ROUTES.login} className="font-medium text-[#2D1012]">
               Log in
@@ -578,8 +577,8 @@ export default function HaguOnboardingPage() {
   return (
     <HaguFlowScreen
       onBack={handleBack}
-      closeHref={editMode ? ROUTES.profile : ROUTES.selectRole}
-      progress={progress}
+      headerVariant="minimal"
+      progressSegments={progressSegments}
       ctaLabel={ctaLabel}
       onCta={handleContinue}
       ctaDisabled={!editMode && !isPrototypeMode() && !canContinue}

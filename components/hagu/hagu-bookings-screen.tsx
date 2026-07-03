@@ -3,16 +3,21 @@
 import { Calendar, MessageCircle } from "lucide-react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { HaguRequestCard } from "@/components/hagu/hagu-request-card"
 import {
-  PROVIDER_ALL_FEED,
   PROVIDER_BOOKINGS,
   PROVIDER_FEED_TAB_COUNTS,
   PROVIDER_REQUESTS,
   type FeedItem,
   type ProviderBooking,
 } from "@/lib/hagu-provider-feed"
+import {
+  bookingRequestToProviderRequest,
+  getBookingRequests,
+  getStoredProviderBookings,
+  HAGEE_BOOKING_UPDATED_EVENT,
+} from "@/lib/hagee-booking-storage"
 import { ROUTES } from "@/lib/routes"
 import { cn } from "@/lib/utils"
 
@@ -28,13 +33,13 @@ const TABS: { value: BookingTab; label: string }[] = [
 
 function bookingBadge(booking: ProviderBooking) {
   if (booking.category === "completed") {
-    return { label: "Completed", className: "bg-[#F7F6F3] text-[#8A8A96]" }
+    return { label: "Completed", className: "border border-black/[0.06] bg-hagu-canvas text-[#8A8A96]" }
   }
   if (booking.category === "cancelled") {
     return { label: "Cancelled", className: "bg-[#FCEAEA] text-[#DC3232]" }
   }
   if (booking.status === "pending") {
-    return { label: "Pending", className: "bg-[#FFF8E7] text-[#D4900A]" }
+    return { label: "Reschedule pending", className: "bg-[#FFF8E7] text-[#D4900A]" }
   }
   return { label: "Confirmed", className: "bg-[#EAF7F5] text-[#3DA89E]" }
 }
@@ -75,7 +80,7 @@ function BookingCard({
             event.stopPropagation()
             onNavigate(ROUTES.chatThread(booking.chatId))
           }}
-          className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#F7F6F3] text-[#1A1A1E] transition active:opacity-80"
+          className="flex size-9 shrink-0 items-center justify-center rounded-full border border-black/[0.06] bg-hagu-canvas text-[#1A1A1E] transition active:opacity-80"
           aria-label={`Message ${booking.name}`}
         >
           <MessageCircle className="size-4" />
@@ -86,11 +91,11 @@ function BookingCard({
       </div>
 
       <div className="mt-3.5 flex flex-wrap gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#F7F6F3] px-3 py-1.5 text-xs text-[#4A4A52]">
+        <span className="inline-flex items-center gap-1.5 rounded-lg border border-black/[0.06] bg-hagu-canvas px-3 py-1.5 text-xs text-[#4A4A52]">
           {booking.showCalendarIcon ? <Calendar className="size-3 shrink-0" /> : null}
           {booking.date}
         </span>
-        <span className="inline-flex items-center rounded-lg bg-[#F7F6F3] px-3 py-1.5 text-xs font-semibold text-[#1A1A1E]">
+        <span className="inline-flex items-center rounded-lg border border-black/[0.06] bg-hagu-canvas px-3 py-1.5 text-xs font-semibold text-[#1A1A1E]">
           {booking.price}
         </span>
       </div>
@@ -98,21 +103,76 @@ function BookingCard({
   )
 }
 
-function visibleFeed(activeTab: BookingTab): FeedItem[] {
-  if (activeTab === "all") return PROVIDER_ALL_FEED
-  if (activeTab === "requests") {
-    return PROVIDER_REQUESTS.map((request) => ({ kind: "request" as const, data: request }))
+function visibleFeed(activeTab: BookingTab, storedBookings: ProviderBooking[], storedRequests: ReturnType<typeof bookingRequestToProviderRequest>[]): FeedItem[] {
+  const staticIds = new Set(PROVIDER_BOOKINGS.map((booking) => booking.id))
+  const mergedBookings = [
+    ...storedBookings.filter((booking) => !staticIds.has(booking.id)),
+    ...PROVIDER_BOOKINGS,
+  ]
+
+  if (activeTab === "all") {
+    const storedRequestItems = storedRequests.map((request) => ({ kind: "request" as const, data: request }))
+    const staticRequestItems = PROVIDER_REQUESTS.map((request) => ({ kind: "request" as const, data: request }))
+    const bookingItems = mergedBookings.map((booking) => ({ kind: "booking" as const, data: booking }))
+    return [...storedRequestItems, ...staticRequestItems, ...bookingItems]
   }
-  return PROVIDER_BOOKINGS.filter((booking) => booking.category === activeTab).map((booking) => ({
-    kind: "booking" as const,
-    data: booking,
-  }))
+
+  if (activeTab === "requests") {
+    return [
+      ...storedRequests.map((request) => ({ kind: "request" as const, data: request })),
+      ...PROVIDER_REQUESTS.map((request) => ({ kind: "request" as const, data: request })),
+    ]
+  }
+
+  return mergedBookings
+    .filter((booking) => booking.category === activeTab)
+    .map((booking) => ({ kind: "booking" as const, data: booking }))
 }
 
 export function HaguBookingsScreen() {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<BookingTab>("all")
-  const items = visibleFeed(activeTab)
+  const [storedBookings, setStoredBookings] = useState<ProviderBooking[]>([])
+  const [storedRequests, setStoredRequests] = useState<ReturnType<typeof bookingRequestToProviderRequest>[]>([])
+
+  useEffect(() => {
+    const refresh = () => {
+      setStoredBookings(getStoredProviderBookings())
+      setStoredRequests(
+        getBookingRequests()
+          .filter((request) => request.status === "pending")
+          .map(bookingRequestToProviderRequest),
+      )
+    }
+    refresh()
+    window.addEventListener(HAGEE_BOOKING_UPDATED_EVENT, refresh)
+    window.addEventListener("storage", refresh)
+    return () => {
+      window.removeEventListener(HAGEE_BOOKING_UPDATED_EVENT, refresh)
+      window.removeEventListener("storage", refresh)
+    }
+  }, [])
+
+  const items = useMemo(
+    () => visibleFeed(activeTab, storedBookings, storedRequests),
+    [activeTab, storedBookings, storedRequests],
+  )
+
+  const tabCounts = useMemo(() => {
+    const staticIds = new Set(PROVIDER_BOOKINGS.map((booking) => booking.id))
+    const mergedBookings = [
+      ...storedBookings.filter((booking) => !staticIds.has(booking.id)),
+      ...PROVIDER_BOOKINGS,
+    ]
+
+    return {
+      all: storedRequests.length + PROVIDER_REQUESTS.length + mergedBookings.length,
+      requests: storedRequests.length + PROVIDER_REQUESTS.length,
+      upcoming: mergedBookings.filter((booking) => booking.category === "upcoming").length,
+      completed: mergedBookings.filter((booking) => booking.category === "completed").length,
+      cancelled: mergedBookings.filter((booking) => booking.category === "cancelled").length,
+    }
+  }, [storedBookings, storedRequests])
 
   return (
     <div className="space-y-5">
@@ -143,7 +203,7 @@ export function HaguBookingsScreen() {
                     : null,
                 )}
               >
-                {PROVIDER_FEED_TAB_COUNTS[tab.value]}
+                {tabCounts[tab.value]}
               </span>
             </button>
           )

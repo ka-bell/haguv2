@@ -81,3 +81,15 @@ export const SCREEN_FOOTER_SCROLL_PAD_PROGRESS_TALL =
 /** Stacked footer with up to 3 actions (booking detail). */
 export const SCREEN_FOOTER_SCROLL_PAD_TALL =
   "pb-[calc(10.5rem+var(--hagu-inset-bottom))]" as const
+
+/** Primary CTA + divider + OAuth provider button (login). */
+export const SCREEN_FOOTER_SCROLL_PAD_AUTH =
+  "pb-[calc(9.25rem+var(--hagu-inset-bottom))]" as const
+
+/** Primary CTA + text link below (onboarding intro). */
+export const SCREEN_FOOTER_SCROLL_PAD_LINK =
+  "pb-[calc(6.25rem+var(--hagu-inset-bottom))]" as const
+
+/** Progress footer + Skip + text link (HAGEE onboarding intro). */
+export const SCREEN_FOOTER_SCROLL_PAD_PROGRESS_NOTE =
+  "pb-[calc(8.75rem+var(--hagu-inset-bottom))]" as const

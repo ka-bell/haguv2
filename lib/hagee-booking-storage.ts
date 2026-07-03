@@ -7,8 +7,16 @@ import {
   getBookingVibe,
   resolveBookingService,
 } from "@/lib/hagee-booking"
+import type { ProviderBooking } from "@/lib/hagu-provider-feed"
+import {
+  bookingDateLine,
+  type RescheduleProposedBy,
+  type RescheduleRequest,
+} from "@/lib/hagee-reschedule"
 import type { HageeCompanionProfile } from "@/lib/hagee-companion-profiles"
 import { HAGEE_CLIENT_CHAT_ID, HAGEE_CLIENT_NAME, HAGEE_CLIENT_PHOTO } from "@/lib/hagee-client"
+
+export type { RescheduleProposedBy, RescheduleRequest } from "@/lib/hagee-reschedule"
 
 /** Demo booking shown on home — Dinner with Sarah. */
 export const HAGEE_DEMO_BOOKING_ID = "demo-sara-dinner"
@@ -80,6 +88,7 @@ export type HageeBookingRequest = {
   amount: string
   status: HageeBookingRequestStatus
   createdAt: string
+  rescheduleRequest?: RescheduleRequest | null
 }
 
 const STORAGE_KEY = "hagee-booking-requests"
@@ -228,6 +237,95 @@ export function cancelBookingRequest(id: string) {
   if (seed) {
     writeRequests([{ ...seed, status: "cancelled" }, ...stored])
   }
+}
+
+function updateBookingRequest(
+  id: string,
+  updater: (request: HageeBookingRequest) => HageeBookingRequest,
+) {
+  const stored = readRequests()
+  const exists = stored.some((request) => request.id === id)
+  if (exists) {
+    writeRequests(stored.map((request) => (request.id === id ? updater(request) : request)))
+    return
+  }
+
+  const seed = SEED_BOOKINGS.find((request) => request.id === id)
+  if (seed) {
+    writeRequests([updater(seed), ...stored])
+  }
+}
+
+export function requestReschedule(
+  id: string,
+  proposedBy: RescheduleProposedBy,
+  payload: { dateLabel: string; timeLabel: string; message?: string },
+) {
+  updateBookingRequest(id, (request) => {
+    if (request.status !== "confirmed" || request.rescheduleRequest) return request
+    return {
+      ...request,
+      rescheduleRequest: {
+        proposedBy,
+        dateLabel: payload.dateLabel,
+        timeLabel: payload.timeLabel,
+        message: payload.message?.trim() || undefined,
+        requestedAt: new Date().toISOString(),
+      },
+    }
+  })
+}
+
+export function acceptReschedule(id: string) {
+  updateBookingRequest(id, (request) => {
+    const pending = request.rescheduleRequest
+    if (!pending || request.status !== "confirmed") return request
+    return {
+      ...request,
+      dateLabel: pending.dateLabel,
+      timeLabel: pending.timeLabel,
+      rescheduleRequest: null,
+    }
+  })
+}
+
+export function declineReschedule(id: string) {
+  updateBookingRequest(id, (request) => {
+    if (!request.rescheduleRequest || request.status !== "confirmed") return request
+    return { ...request, rescheduleRequest: null }
+  })
+}
+
+export function withdrawReschedule(id: string) {
+  declineReschedule(id)
+}
+
+export function bookingRequestToProviderBooking(request: HageeBookingRequest): ProviderBooking {
+  const dateLine = bookingDateLine(request)
+  const hasReschedule = Boolean(request.rescheduleRequest)
+
+  return {
+    id: request.id,
+    chatId: request.clientChatId,
+    name: request.clientName,
+    activity: request.serviceLabel,
+    status: hasReschedule ? "pending" : "confirmed",
+    category: request.status === "cancelled" ? "cancelled" : "upcoming",
+    date: dateLine,
+    price: request.amount.replace(".00", ""),
+    avatar: request.clientPhoto,
+    showCalendarIcon: true,
+    duration: request.durationLabel ?? undefined,
+    clientSubtitle: `Booking · ${request.serviceLabel}`,
+    message: request.message,
+    vibe: request.vibeLabel ?? undefined,
+  }
+}
+
+export function getStoredProviderBookings(): ProviderBooking[] {
+  return getBookingRequests()
+    .filter((request) => request.status === "confirmed")
+    .map(bookingRequestToProviderBooking)
 }
 
 export function bookingRequestToProviderRequest(request: HageeBookingRequest) {

@@ -25,10 +25,8 @@ export function ChatThreadHeaderActions({
         onClick={() => setReportOpen(true)}
         aria-label={`Options for chat with ${personName}`}
         className={cn(
-          "flex size-8 shrink-0 items-center justify-center rounded-2xl",
-          variant === "hagu"
-            ? "bg-[#F7F6F3] text-[#1A1A1E]"
-            : "bg-hagu-surface-muted text-hagu-heading",
+          "flex size-8 shrink-0 items-center justify-center rounded-2xl border border-hagu-border bg-hagu-canvas",
+          variant === "hagu" ? "text-[#1A1A1E]" : "text-hagu-heading",
         )}
       >
         <MoreVertical className="size-4" />

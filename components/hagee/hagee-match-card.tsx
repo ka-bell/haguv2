@@ -18,7 +18,7 @@ export function HageeMatchCard({ match, featured = false, onRequest }: HageeMatc
         <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
 
         {match.availableToday ? (
-          <span className="absolute left-2 top-2 flex items-center gap-1.5 rounded-full bg-hagu-accent-strong px-3 py-1.5 text-[11px] font-medium text-white">
+          <span className="absolute left-2 top-2 flex items-center gap-1.5 rounded-full bg-hagu-heading px-3 py-1.5 text-[11px] font-medium text-white">
             <span className="size-1.5 rounded-sm bg-white/90" />
             Available today
           </span>
@@ -56,7 +56,7 @@ export function HageeMatchCard({ match, featured = false, onRequest }: HageeMatc
             {match.sharedTraits.map((trait) => (
               <span
                 key={trait}
-                className="rounded-full bg-hagu-accent-selected px-3 py-1 text-[11px] font-medium text-hagu-accent-strong"
+                className="rounded-full border border-hagu-border bg-hagu-white px-3 py-1 text-[11px] font-medium text-hagu-label"
               >
                 {trait}
               </span>
@@ -70,7 +70,7 @@ export function HageeMatchCard({ match, featured = false, onRequest }: HageeMatc
             {match.sharedInterests.map((interest) => (
               <span
                 key={interest}
-                className="rounded-full bg-hagu-accent-selected px-3 py-1 text-[11px] font-medium text-hagu-accent-strong"
+                className="rounded-full border border-hagu-border bg-hagu-white px-3 py-1 text-[11px] font-medium text-hagu-label"
               >
                 {interest}
               </span>

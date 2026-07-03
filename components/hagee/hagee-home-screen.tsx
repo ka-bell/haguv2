@@ -3,11 +3,10 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Clock, MessageCircle, Star, Timer } from "lucide-react"
+import { Clock, MessageCircle, Timer } from "lucide-react"
 import { HageeActivityCard } from "@/components/hagee/hagee-activity-card"
 import {
   HAGEE_ACTIVE_BOOKING,
-  HAGEE_DAILY_SPOTLIGHT,
   HAGEE_MOOD_OPTIONS,
   HAGEE_NEW_ARRIVALS,
 } from "@/lib/hagee-home"
@@ -26,7 +25,6 @@ function timeGreeting() {
 export function HageeHomeScreen() {
   const router = useRouter()
   const booking = HAGEE_ACTIVE_BOOKING
-  const spotlight = HAGEE_DAILY_SPOTLIGHT
 
   return (
     <div className="space-y-5 pb-4">
@@ -38,7 +36,7 @@ export function HageeHomeScreen() {
       <section className="space-y-3">
         <div className="flex items-center justify-between gap-3">
           <p className="hagu-section-label">Upcoming meetup</p>
-          <span className="rounded-full bg-hagu-surface-muted px-2.5 py-1 text-[10px] font-medium text-hagu-label">
+          <span className="rounded-full border border-hagu-border bg-hagu-canvas px-2.5 py-1 text-[10px] font-medium text-hagu-label">
             {booking.status}
           </span>
         </div>
@@ -105,44 +103,9 @@ export function HageeHomeScreen() {
       </section>
 
       <section className="space-y-3">
-        <p className="hagu-section-label">Daily spotlight</p>
-        <button
-          type="button"
-          onClick={() => router.push(ROUTES.exploreProfile("sophie"))}
-          className="hagu-surface-card w-full p-4 text-left"
-        >
-          <div className="flex items-center gap-4">
-            <div className="relative size-20 shrink-0 overflow-hidden rounded-[20px]">
-              <Image src={spotlight.photo} alt={spotlight.name} fill className="object-cover" sizes="80px" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-start justify-between gap-2">
-                <h3 className="text-[15px] font-medium text-hagu-ink">{spotlight.name}</h3>
-                <span className="flex items-center gap-1 rounded-full bg-hagu-accent-selected px-2 py-0.5 text-[10px] font-semibold text-hagu-accent-strong">
-                  <Star className="size-2.5 fill-current" />
-                  {spotlight.rating.toFixed(1)}
-                </span>
-              </div>
-              <p className="mt-0.5 text-[13px] text-hagu-text-secondary">{spotlight.role}</p>
-              <div className="mt-2.5 flex flex-wrap gap-2">
-                {spotlight.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-[10px] bg-hagu-surface-muted px-2 py-1 text-[10px] font-medium text-hagu-label"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </button>
-      </section>
-
-      <section className="space-y-3">
         <div className="flex items-center justify-between gap-3">
           <p className="hagu-section-label">New arrivals</p>
-          <Link href={ROUTES.explore} className="text-[13px] font-medium text-hagu-accent-strong">
+          <Link href={ROUTES.explore} className="text-[13px] font-medium text-hagu-label">
             View all
           </Link>
         </div>

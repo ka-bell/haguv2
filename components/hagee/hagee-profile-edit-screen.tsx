@@ -163,7 +163,7 @@ export function HageeProfileEditScreen() {
               <input
                 value={profile.firstName}
                 onChange={(event) => update("firstName", event.target.value)}
-                className="w-full rounded-xl border border-hagu-accent-strong bg-hagu-white px-[15px] py-3 text-sm text-hagu-heading outline-none"
+                className="w-full rounded-xl border border-hagu-border bg-hagu-white px-[15px] py-3 text-sm text-hagu-heading outline-none focus:border-hagu-accent focus:ring-2 focus:ring-hagu-accent/50"
               />
             </label>
             <label className="block space-y-1">
@@ -174,7 +174,7 @@ export function HageeProfileEditScreen() {
                 max={99}
                 value={profile.age}
                 onChange={(event) => update("age", Number(event.target.value))}
-                className="w-full rounded-xl border border-hagu-border bg-hagu-surface-muted px-[15px] py-3 text-sm text-hagu-heading outline-none"
+                className="w-full rounded-xl border border-hagu-border bg-hagu-canvas px-[15px] py-3 text-sm text-hagu-heading outline-none"
               />
             </label>
           </div>
@@ -193,7 +193,7 @@ export function HageeProfileEditScreen() {
               maxLength={BIO_MAX}
               rows={4}
               onChange={(event) => update("bio", event.target.value)}
-              className="w-full resize-none rounded-xl border border-hagu-border bg-hagu-surface-muted px-[15px] py-3 text-sm leading-relaxed text-hagu-heading outline-none"
+              className="w-full resize-none rounded-xl border border-hagu-border bg-hagu-canvas px-[15px] py-3 text-sm leading-relaxed text-hagu-heading outline-none"
             />
             <p className="text-[11px] leading-relaxed text-hagu-text-secondary">
               This is the first thing people read. Keep it honest and specific — generic bios get fewer

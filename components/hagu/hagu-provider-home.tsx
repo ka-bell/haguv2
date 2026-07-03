@@ -158,7 +158,7 @@ export function HaguProviderHome() {
           <div className="mt-4 flex gap-2">
             <button
               type="button"
-              className="flex h-9 flex-1 items-center justify-center gap-1.5 rounded-[10px] bg-[#F7F6F3] text-xs font-medium text-[#2D1012]"
+              className="flex h-9 flex-1 items-center justify-center gap-1.5 rounded-[10px] border border-black/[0.06] bg-hagu-canvas text-xs font-medium text-[#2D1012]"
             >
               <MapPin className="size-3.5" />
               De Pijp

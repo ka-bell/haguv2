@@ -25,15 +25,15 @@ export default function LoginPage() {
       closeHref={ROUTES.entry}
       ctaLabel="Sign in"
       onCta={handleSignIn}
-      footer={
-        <div className="mt-8 space-y-6">
+      pinnedFooterExtras={
+        <>
           <div className="flex items-center gap-3">
             <div className="h-px flex-1 bg-black/[0.08]" />
             <span className="text-xs text-[#8A8A96]">Or continue with</span>
             <div className="h-px flex-1 bg-black/[0.08]" />
           </div>
           <GoogleSignInButton onClick={handleSignIn} />
-        </div>
+        </>
       }
     >
       <div className="space-y-6">

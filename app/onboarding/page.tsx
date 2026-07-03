@@ -11,7 +11,7 @@ import { HageeActivityCard } from "@/components/hagee/hagee-activity-card"
 import { HageeFlowScreen } from "@/components/hagee/hagee-flow-screen"
 import { HageeOnboardingSuccess } from "@/components/hagee/hagee-onboarding-success"
 import { Input } from "@/components/ui/input"
-import { SegmentedPillGroup } from "@/components/ui/segmented-pill-group"
+import { Select } from "@/components/ui/select"
 import { ROUTES } from "@/lib/routes"
 import { completeOnboarding } from "@/lib/session"
 import { isPrototypeMode } from "@/lib/prototype"
@@ -156,7 +156,7 @@ export default function HageeOnboardingPage() {
       </div>
 
       <div className="mt-7 space-y-4">
-        <span className="inline-flex rounded-full bg-hagu-accent-selected px-3 py-0.5 text-[11px] font-semibold tracking-wide text-hagu-accent-strong">
+        <span className="inline-flex rounded-full border border-hagu-border bg-hagu-canvas px-3 py-0.5 text-[11px] font-semibold tracking-wide text-hagu-ink">
           1 of 3
         </span>
         <h1 className="hagu-page-title leading-tight">
@@ -261,7 +261,7 @@ export default function HageeOnboardingPage() {
       </div>
 
       <div className="flex flex-col items-center pt-2">
-        <div className="relative flex size-[120px] items-center justify-center rounded-full border-2 border-dashed border-hagu-accent bg-hagu-accent-soft">
+        <div className="relative flex size-[120px] items-center justify-center rounded-full border-2 border-dashed border-hagu-border bg-hagu-canvas">
           <Camera className="size-8 text-hagu-text-secondary" />
           <button
             type="button"
@@ -275,16 +275,13 @@ export default function HageeOnboardingPage() {
 
       <div className="space-y-4">
         <Input label="Age" value={age} onChange={(e) => setAge(e.target.value)} placeholder="28" />
-        <div className="flex w-full flex-col gap-1.5">
-          <span className="text-xs text-hagu-label">Gender</span>
-          <SegmentedPillGroup
-            options={GENDER_OPTIONS.map((option) => ({ value: option.value, label: option.label }))}
-            value={gender ? [gender] : []}
-            onChange={(value) => setGender(value[0] ?? "")}
-            multiSelect={false}
-            size="sm"
-          />
-        </div>
+        <Select
+          label="Gender"
+          placeholder="Select gender"
+          value={gender}
+          onChange={setGender}
+          options={GENDER_OPTIONS}
+        />
         <Input label="City" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Amsterdam" />
         <label className="flex w-full flex-col gap-1.5">
           <span className="text-xs text-hagu-label">One line about you (optional)</span>
@@ -348,8 +345,8 @@ export default function HageeOnboardingPage() {
         ctaLabel={ctaLabel}
         onCta={handleContinue}
         ctaDisabled={!isPrototypeMode() && !canContinue}
-        footer={
-          <p className="mt-4 text-center text-[13px] text-hagu-text-secondary">
+        footerNote={
+          <p className="text-center text-[13px] text-hagu-text-secondary">
             Already have an account?{" "}
             <Link href={ROUTES.login} className="font-medium text-hagu-ink">
               Log in

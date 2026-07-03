@@ -5,6 +5,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 import { HaguPrototypeSheet } from "@/components/hagu/hagu-prototype-sheet"
+import { RescheduleRequestBanner } from "@/components/shared/reschedule-request-banner"
 import {
   SCREEN_FOOTER_SCROLL_PAD_TALL,
   ScreenDestructiveButton,
@@ -26,10 +27,10 @@ type HageeBookingDetailScreenProps = {
 }
 
 const STATUS_STYLES: Record<HageeClientBookingTone, string> = {
-  confirmed: "bg-hagu-accent-selected text-hagu-accent-strong",
+  confirmed: "border border-hagu-border bg-hagu-canvas text-hagu-ink",
   pending: "bg-[#FFF8E7] text-[#D4900A]",
   cancelled: "bg-[#FCEAEA] text-[#DC3232]",
-  declined: "bg-hagu-surface-muted text-hagu-text-secondary",
+  declined: "border border-hagu-border bg-hagu-canvas text-hagu-text-secondary",
 }
 
 export function HageeBookingDetailScreen({ bookingId }: HageeBookingDetailScreenProps) {
@@ -58,7 +59,7 @@ export function HageeBookingDetailScreen({ bookingId }: HageeBookingDetailScreen
         <button
           type="button"
           onClick={() => router.push(ROUTES.connectionsTab("bookings"))}
-          className="mt-4 text-sm font-medium text-hagu-accent-strong"
+          className="mt-4 text-sm font-medium text-hagu-ink"
         >
           Back to bookings
         </button>
@@ -82,7 +83,7 @@ export function HageeBookingDetailScreen({ bookingId }: HageeBookingDetailScreen
   }
 
   const openChat = () => router.push(ROUTES.chatThread(overview.chatId))
-  const reschedule = () => router.push(ROUTES.exploreBook(overview.profileId))
+  const reschedule = () => router.push(ROUTES.bookingReschedule(bookingId))
 
   const footerPad = SCREEN_FOOTER_SCROLL_PAD_TALL
 
@@ -93,6 +94,18 @@ export function HageeBookingDetailScreen({ bookingId }: HageeBookingDetailScreen
           <h1 className="hagu-page-title">Your booking</h1>
           <p className="mt-1 text-sm text-hagu-text-secondary">With {overview.companionName}</p>
         </div>
+
+        {overview.rescheduleRequest && overview.rescheduleDiff ? (
+          <RescheduleRequestBanner
+            bookingId={bookingId}
+            counterpartyName={overview.companionName}
+            rescheduleRequest={overview.rescheduleRequest}
+            rescheduleDiff={overview.rescheduleDiff}
+            canRespond={overview.canRespondToReschedule}
+            canWithdraw={overview.canWithdrawReschedule}
+            onUpdated={refresh}
+          />
+        ) : null}
 
         <div className="hagu-surface-card px-5 pb-5 pt-4">
           <div className="flex items-center gap-3">
@@ -113,7 +126,7 @@ export function HageeBookingDetailScreen({ bookingId }: HageeBookingDetailScreen
           </div>
 
           <div className="mt-4 flex flex-wrap gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-lg bg-hagu-surface-muted px-3 py-1.5 text-xs text-hagu-label">
+            <span className="inline-flex items-center gap-1.5 rounded-lg border border-hagu-border bg-hagu-canvas px-3 py-1.5 text-xs text-hagu-label">
               <Calendar className="size-3 shrink-0" />
               {overview.date}
             </span>
@@ -147,7 +160,7 @@ export function HageeBookingDetailScreen({ bookingId }: HageeBookingDetailScreen
         ) : null}
 
         {overview.escrowLabel && overview.statusTone !== "cancelled" && overview.statusTone !== "declined" ? (
-          <section className="rounded-[16px] bg-hagu-accent-soft px-4 py-3.5">
+          <section className="rounded-[16px] border border-hagu-border bg-hagu-canvas px-4 py-3.5">
             <p className="text-[13px] font-medium text-hagu-ink">Payment</p>
             <p className="mt-1 text-xs leading-relaxed text-hagu-label">{overview.escrowLabel}</p>
           </section>
@@ -170,7 +183,7 @@ export function HageeBookingDetailScreen({ bookingId }: HageeBookingDetailScreen
               </ScreenDestructiveButton>
             ) : null}
           </>
-        ) : overview.canReschedule ? (
+        ) : overview.canReschedule || overview.canRespondToReschedule ? (
           <>
             <ScreenPrimaryButton onClick={openChat}>
               <span className="inline-flex items-center gap-2">
@@ -178,7 +191,9 @@ export function HageeBookingDetailScreen({ bookingId }: HageeBookingDetailScreen
                 Message {firstName}
               </span>
             </ScreenPrimaryButton>
-            <ScreenSecondaryButton onClick={reschedule}>Reschedule</ScreenSecondaryButton>
+            {overview.canReschedule ? (
+              <ScreenSecondaryButton onClick={reschedule}>Reschedule</ScreenSecondaryButton>
+            ) : null}
             {overview.canCancel ? (
               <ScreenDestructiveButton onClick={() => setShowCancelSheet(true)}>
                 Cancel booking

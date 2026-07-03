@@ -353,7 +353,7 @@ function SettingsRow({
           <div
             className={cn(
               "flex size-9 shrink-0 items-center justify-center rounded-[10px]",
-              row.accent ? "bg-hagu-accent-selected text-hagu-accent-strong" : "bg-hagu-surface-muted text-hagu-ink",
+              row.accent ? "bg-hagu-accent-selected text-hagu-accent-strong" : "border border-hagu-border bg-hagu-canvas text-hagu-ink",
             )}
           >
             <Icon className="size-4" />

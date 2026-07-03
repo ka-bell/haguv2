@@ -27,7 +27,7 @@ export function HageeSelectableRow({ icon: Icon, label, subtitle, selected, onCl
         selectionRowClass(selected),
       )}
     >
-      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-hagu-surface-muted">
+      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-hagu-border bg-hagu-canvas">
         <Icon className="size-[18px] text-hagu-label" />
       </div>
       <div className="min-w-0 flex-1">

@@ -8,7 +8,7 @@ export const haguColors = {
   canvas: "#FCFFFF",
   canvasAlt: "#FEFFFF",
   surface: "#FFFFFF",
-  surfaceMuted: "#F7F6F3",
+  surfaceMuted: "#FCFFFF",
   ink: "#1A1A1E",
   heading: "#2D1012",
   label: "#4A4A52",

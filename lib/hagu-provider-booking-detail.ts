@@ -6,6 +6,14 @@ import {
   type ProviderRequest,
 } from "@/lib/hagu-provider-feed"
 import { getBookingRequest, type HageeBookingRequest } from "@/lib/hagee-booking-storage"
+import {
+  bookingDateLine,
+  canProposeReschedule,
+  canRespondToReschedule,
+  canWithdrawReschedule,
+  formatRescheduleDiff,
+  type RescheduleRequest,
+} from "@/lib/hagee-reschedule"
 
 export type BookingOverviewTone = "confirmed" | "pending" | "completed" | "cancelled" | "new"
 
@@ -29,6 +37,11 @@ export type BookingOverview = {
   statusLabel: string
   statusTone: BookingOverviewTone
   category: BookingCategory | "request"
+  rescheduleRequest?: RescheduleRequest
+  rescheduleDiff?: string
+  canReschedule: boolean
+  canRespondToReschedule: boolean
+  canWithdrawReschedule: boolean
 }
 
 export const CALENDAR_DAY_TO_BOOKING_ID: Record<number, string> = {
@@ -52,6 +65,26 @@ function labelFromBooking(booking: ProviderBooking): string {
   return "Confirmed"
 }
 
+function rescheduleFieldsForStored(request: HageeBookingRequest) {
+  const hasReschedule = Boolean(request.rescheduleRequest)
+  return {
+    rescheduleRequest: request.rescheduleRequest ?? undefined,
+    rescheduleDiff: formatRescheduleDiff(request) ?? undefined,
+    canReschedule: canProposeReschedule(request, "HAGU"),
+    canRespondToReschedule: canRespondToReschedule(request, "HAGU"),
+    canWithdrawReschedule: canWithdrawReschedule(request, "HAGU"),
+    statusLabelOverride: hasReschedule ? "Reschedule pending" : undefined,
+  }
+}
+
+function emptyRescheduleFields() {
+  return {
+    canReschedule: false,
+    canRespondToReschedule: false,
+    canWithdrawReschedule: false,
+  }
+}
+
 function fromProviderBooking(booking: ProviderBooking): BookingOverview {
   return {
     id: booking.id,
@@ -72,6 +105,7 @@ function fromProviderBooking(booking: ProviderBooking): BookingOverview {
     statusLabel: labelFromBooking(booking),
     statusTone: toneFromBooking(booking),
     category: booking.category,
+    ...emptyRescheduleFields(),
   }
 }
 
@@ -95,11 +129,13 @@ function fromProviderRequest(request: ProviderRequest): BookingOverview {
     statusLabel: "New request",
     statusTone: "new",
     category: "request",
+    ...emptyRescheduleFields(),
   }
 }
 
 function fromStoredRequest(request: HageeBookingRequest): BookingOverview {
-  const dateLine = [request.dateLabel, request.timeLabel].filter(Boolean).join(" · ")
+  const dateLine = bookingDateLine(request)
+  const reschedule = rescheduleFieldsForStored(request)
 
   return {
     id: request.id,
@@ -110,20 +146,21 @@ function fromStoredRequest(request: HageeBookingRequest): BookingOverview {
     clientSubtitle: `Booking request · ${request.serviceLabel}`,
     clientAvatar: request.clientPhoto,
     activity: request.serviceLabel,
-    date: dateLine || "TBD",
+    date: dateLine,
     duration: request.durationLabel ?? undefined,
     price: request.amount.replace(".00", ""),
     vibe: request.vibeLabel ?? undefined,
     message: request.message || undefined,
     escrowLabel: `€${request.amount.replace(/[^\d]/g, "")} held in escrow until session ends`,
     statusLabel:
-      request.status === "pending"
+      reschedule.statusLabelOverride ??
+      (request.status === "pending"
         ? "New request"
         : request.status === "confirmed"
           ? "Confirmed"
           : request.status === "cancelled"
             ? "Cancelled"
-            : "Declined",
+            : "Declined"),
     statusTone:
       request.status === "pending"
         ? "new"
@@ -136,6 +173,11 @@ function fromStoredRequest(request: HageeBookingRequest): BookingOverview {
         : request.status === "confirmed"
           ? "upcoming"
           : "cancelled",
+    rescheduleRequest: reschedule.rescheduleRequest,
+    rescheduleDiff: reschedule.rescheduleDiff,
+    canReschedule: reschedule.canReschedule,
+    canRespondToReschedule: reschedule.canRespondToReschedule,
+    canWithdrawReschedule: reschedule.canWithdrawReschedule,
   }
 }
 

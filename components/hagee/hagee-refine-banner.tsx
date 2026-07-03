@@ -12,12 +12,12 @@ export function HageeRefineBanner({ className }: HageeRefineBannerProps) {
     <Link
       href={ROUTES.exploreRefine}
       className={cn(
-        "flex items-center gap-3.5 rounded-[20px] border border-hagu-glass-border bg-hagu-accent-selected px-5 py-4 transition",
+        "flex items-center gap-3.5 rounded-[20px] border border-hagu-border bg-hagu-canvas px-5 py-4 transition",
         className,
       )}
     >
-      <div className="flex size-11 shrink-0 items-center justify-center rounded-[14px] bg-hagu-accent-soft">
-        <Search className="size-5 text-hagu-accent-strong" />
+      <div className="flex size-11 shrink-0 items-center justify-center rounded-[14px] border border-hagu-border bg-hagu-white">
+        <Search className="size-5 text-hagu-ink" />
       </div>
       <div className="min-w-0 flex-1">
         <p className="text-[13px] font-medium text-hagu-ink">Refine your matches</p>

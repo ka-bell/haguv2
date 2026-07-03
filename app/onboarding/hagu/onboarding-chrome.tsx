@@ -2,6 +2,7 @@
 
 import { ChevronLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { selectionCardClass } from "@/lib/hagu-selection-styles"
 import type { HaguStep } from "./data"
 
 export function OnboardingChrome({
@@ -56,8 +57,8 @@ export function CharacterCard({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex flex-col gap-1 rounded-2xl border p-4 text-left transition",
-        selected ? "border-[#5BBFB5] bg-[rgba(208,241,240,0.4)] shadow-[0_0_0_1px_#5BBFB5]" : "border-black/[0.08] bg-white",
+        "flex flex-col gap-1 rounded-2xl p-4 text-left transition",
+        selectionCardClass(selected),
       )}
     >
       <span className="text-2xl">{emoji}</span>

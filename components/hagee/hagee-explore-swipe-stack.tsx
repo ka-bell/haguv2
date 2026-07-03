@@ -140,7 +140,7 @@ export function HageeExploreSwipeStack({
         <button
           type="button"
           onClick={() => setDeck(matches)}
-          className="mt-2 flex h-9 items-center gap-2 rounded-[10px] bg-hagu-surface-muted px-4 text-xs font-medium text-hagu-ink"
+          className="mt-2 flex h-9 items-center gap-2 rounded-[10px] border border-hagu-border bg-hagu-canvas px-4 text-xs font-medium text-hagu-ink"
         >
           <RotateCcw className="size-4" />
           Opnieuw bekijken

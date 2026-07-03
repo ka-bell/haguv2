@@ -21,10 +21,10 @@ const TABS: { value: HageeClientBookingTab; label: string }[] = [
 ]
 
 const STATUS_STYLES: Record<HageeClientBookingOverview["statusTone"], string> = {
-  confirmed: "bg-hagu-accent-selected text-hagu-accent-strong",
+  confirmed: "border border-hagu-border bg-hagu-canvas text-hagu-ink",
   pending: "bg-[#FFF8E7] text-[#D4900A]",
   cancelled: "bg-[#FCEAEA] text-[#DC3232]",
-  declined: "bg-hagu-surface-muted text-hagu-text-secondary",
+  declined: "border border-hagu-border bg-hagu-canvas text-hagu-text-secondary",
 }
 
 function BookingCard({
@@ -64,7 +64,7 @@ function BookingCard({
               event.stopPropagation()
               router.push(ROUTES.chatThread(booking.chatId))
             }}
-            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-hagu-surface-muted text-hagu-ink transition active:opacity-80"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full border border-hagu-border bg-hagu-canvas text-hagu-ink transition active:opacity-80"
             aria-label={`Message ${booking.companionName}`}
           >
             <MessageCircle className="size-4" />
@@ -76,11 +76,11 @@ function BookingCard({
       </div>
 
       <div className="mt-3.5 flex flex-wrap gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-lg bg-hagu-surface-muted px-3 py-1.5 text-xs text-hagu-label">
+        <span className="inline-flex items-center gap-1.5 rounded-lg border border-hagu-border bg-hagu-canvas px-3 py-1.5 text-xs text-hagu-label">
           <Calendar className="size-3 shrink-0" />
           {booking.date}
         </span>
-        <span className="inline-flex items-center rounded-lg bg-hagu-surface-muted px-3 py-1.5 text-xs font-semibold text-hagu-ink">
+        <span className="inline-flex items-center rounded-lg border border-hagu-border bg-hagu-canvas px-3 py-1.5 text-xs font-semibold text-hagu-ink">
           {booking.price}
         </span>
       </div>
@@ -146,7 +146,7 @@ export function HageeBookingsScreen() {
             <button
               type="button"
               onClick={() => router.push(ROUTES.explore)}
-              className="mt-4 text-sm font-medium text-hagu-accent-strong"
+              className="mt-4 text-sm font-medium text-hagu-ink"
             >
               Find someone to meet
             </button>

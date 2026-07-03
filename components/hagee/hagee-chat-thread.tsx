@@ -87,7 +87,7 @@ export function HageeChatThread({ threadId }: HageeChatThreadProps) {
         <button
           type="button"
           onClick={() => router.push(ROUTES.chat)}
-          className="mt-4 text-sm font-medium text-hagu-accent-strong"
+          className="mt-4 text-sm font-medium text-hagu-ink"
         >
           Back to Connections
         </button>
@@ -102,7 +102,7 @@ export function HageeChatThread({ threadId }: HageeChatThreadProps) {
           <button
             type="button"
             onClick={() => router.push(ROUTES.chat)}
-            className="flex size-8 shrink-0 items-center justify-center rounded-2xl bg-hagu-surface-muted text-hagu-heading"
+            className="flex size-8 shrink-0 items-center justify-center rounded-2xl border border-hagu-border bg-hagu-canvas text-hagu-heading"
             aria-label="Back"
           >
             <ArrowLeft className="size-3.5" />
@@ -118,12 +118,12 @@ export function HageeChatThread({ threadId }: HageeChatThreadProps) {
                 className="size-full object-cover"
               />
             </div>
-            <span className="absolute bottom-0 right-0 size-2.5 rounded-full border-2 border-white bg-hagu-accent-strong" />
+            <span className="absolute bottom-0 right-0 size-2.5 rounded-full border-2 border-white bg-hagu-heading" />
           </div>
 
           <div className="min-w-0 flex-1">
             <p className="text-[15px] font-semibold text-hagu-heading">{thread.name}</p>
-            <p className="text-[11px] text-hagu-accent-strong">{thread.status}</p>
+            <p className="text-[11px] text-hagu-text-secondary">{thread.status}</p>
           </div>
 
           <ChatThreadHeaderActions threadId={threadId} personName={thread.name} variant="hagee" />
@@ -156,7 +156,7 @@ export function HageeChatThread({ threadId }: HageeChatThreadProps) {
             placeholder="Message…"
             className="min-w-0 flex-1 bg-transparent text-sm text-hagu-heading outline-none placeholder:text-hagu-placeholder"
           />
-          <button type="button" aria-label="Send" className="text-hagu-accent-strong">
+          <button type="button" aria-label="Send" className="text-hagu-ink">
             <Send className="size-4" />
           </button>
         </div>

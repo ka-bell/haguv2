@@ -64,7 +64,7 @@ export function HageeProfileScreen() {
         </div>
         <Link
           href={ROUTES.profileEdit}
-          className="flex h-[34px] shrink-0 items-center gap-1.5 rounded-full bg-hagu-accent-strong px-3.5 text-xs font-medium text-white"
+          className="flex h-[34px] shrink-0 items-center gap-1.5 rounded-full bg-hagu-heading px-3.5 text-xs font-medium text-white"
         >
           <Pencil className="size-3" />
           Edit
@@ -80,7 +80,7 @@ export function HageeProfileScreen() {
               <h2 className="text-[22px] font-semibold tracking-tight text-white">{profile.firstName}</h2>
               <span className="text-sm text-white/80">{profile.age}</span>
               {profile.visible && !profile.paused ? (
-                <span className="rounded-full bg-hagu-accent-selected px-2.5 py-1 text-[10px] font-semibold text-hagu-accent-strong">
+                <span className="rounded-full bg-white/20 px-2.5 py-1 text-[10px] font-semibold text-white backdrop-blur-sm">
                   Visible
                 </span>
               ) : null}
@@ -108,7 +108,7 @@ export function HageeProfileScreen() {
             {visibleTraits.map((trait) => (
               <span
                 key={trait.label}
-                className="rounded-full border border-hagu-border bg-hagu-surface-muted px-3 py-1.5 text-xs text-hagu-label"
+                className="rounded-full border border-hagu-border bg-hagu-white px-3 py-1.5 text-xs text-hagu-label"
               >
                 {trait.emoji} {trait.label}
               </span>
@@ -121,7 +121,7 @@ export function HageeProfileScreen() {
         <ProfileSection
           title="Interests"
           action={
-            <Link href={ROUTES.profileEdit} className="text-[13px] font-medium text-hagu-accent-strong">
+            <Link href={ROUTES.profileEdit} className="text-[13px] font-medium text-hagu-label">
               Edit
             </Link>
           }
@@ -130,7 +130,7 @@ export function HageeProfileScreen() {
             {visibleInterests.map((interest) => (
               <span
                 key={interest.label}
-                className="rounded-full bg-hagu-accent-selected px-3 py-1.5 text-xs font-medium text-hagu-accent-strong"
+                className="rounded-full border border-hagu-border bg-hagu-white px-3 py-1.5 text-xs font-medium text-hagu-label"
               >
                 {interest.emoji} {interest.label}
               </span>
@@ -142,7 +142,7 @@ export function HageeProfileScreen() {
       <ProfileSection
         title="Photos"
         action={
-          <Link href={ROUTES.profileEdit} className="text-[13px] font-medium text-hagu-accent-strong">
+          <Link href={ROUTES.profileEdit} className="text-[13px] font-medium text-hagu-label">
             Manage
           </Link>
         }
@@ -155,7 +155,7 @@ export function HageeProfileScreen() {
           ))}
           <Link
             href={ROUTES.profileEdit}
-            className="flex size-16 shrink-0 flex-col items-center justify-center gap-1 rounded-[20px] bg-hagu-surface-muted text-[10px] font-medium text-hagu-label"
+            className="flex size-16 shrink-0 flex-col items-center justify-center gap-1 rounded-[20px] border border-dashed border-hagu-border bg-hagu-white text-[10px] font-medium text-hagu-label"
           >
             <Plus className="size-4" />
             Add
