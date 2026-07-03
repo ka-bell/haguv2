@@ -4,11 +4,10 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Clock, MessageCircle, Timer } from "lucide-react"
+import { HaguWordmark } from "@/components/hagu/hagu-wordmark"
 import { HageeActivityCard } from "@/components/hagee/hagee-activity-card"
-import { HaguWordmarkSummaryCard } from "@/components/shared/hagu-wordmark-summary-card"
 import {
   HAGEE_ACTIVE_BOOKING,
-  HAGEE_MONTHLY_SUMMARY,
   HAGEE_MOOD_OPTIONS,
   HAGEE_NEW_ARRIVALS,
 } from "@/lib/hagee-home"
@@ -35,61 +34,55 @@ export function HageeHomeScreen() {
         <h1 className="hagu-page-title">{HAGEE_CLIENT_NAME}</h1>
       </div>
 
-      <HaguWordmarkSummaryCard
-        periodLabel={HAGEE_MONTHLY_SUMMARY.periodLabel}
-        amount={HAGEE_MONTHLY_SUMMARY.amount}
-        onClick={() => router.push(ROUTES.connectionsTab("bookings"))}
-        stats={[...HAGEE_MONTHLY_SUMMARY.stats]}
-      />
-
-      <section className="space-y-3">
-        <div className="flex items-center justify-between gap-3">
-          <p className="hagu-section-label">Upcoming meetup</p>
-          <span className="rounded-full border border-hagu-border bg-hagu-canvas px-2.5 py-1 text-[10px] font-medium text-hagu-label">
+      <section className="relative overflow-hidden rounded-[24px] bg-[#2D1012] p-5">
+        <div className="relative z-10 flex items-center justify-between gap-3">
+          <p className="text-[11px] font-medium uppercase tracking-wide text-white/50">Active request</p>
+          <span className="rounded-full bg-[#1E3D32] px-2.5 py-1 text-[10px] font-semibold uppercase text-[#8FD4B4]">
             {booking.status}
           </span>
         </div>
 
-        <div className="hagu-surface-card px-5 pb-5 pt-4">
+        <button
+          type="button"
+          onClick={() => router.push(ROUTES.exploreProfile(HAGEE_BOOKING_COMPANION_ID))}
+          className="relative z-10 mt-4 flex w-full items-center gap-3.5 text-left"
+        >
+          <div className="relative size-[52px] shrink-0 overflow-hidden rounded-[20px]">
+            <Image src={booking.companionPhoto} alt="" fill className="object-cover" sizes="52px" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[15px] font-medium text-white">{booking.title}</p>
+            <p className="mt-0.5 flex items-center gap-1.5 text-[13px] text-white/60">
+              <Clock className="size-3.5 shrink-0" />
+              {booking.time}
+            </p>
+            <p className="mt-0.5 flex items-center gap-1.5 text-[13px] text-white/60">
+              <Timer className="size-3.5 shrink-0" />
+              {booking.duration}
+            </p>
+          </div>
+        </button>
+
+        <div className="relative z-10 mt-4 flex gap-2">
           <button
             type="button"
-            onClick={() => router.push(ROUTES.exploreProfile(HAGEE_BOOKING_COMPANION_ID))}
-            className="flex w-full items-center gap-3.5 text-left"
+            onClick={() => router.push(ROUTES.booking(booking.id))}
+            className="flex h-12 flex-1 items-center justify-center rounded-[20px] bg-white/10 text-sm font-medium text-white transition active:opacity-95"
           >
-            <div className="relative size-[52px] shrink-0 overflow-hidden rounded-[20px]">
-              <Image src={booking.companionPhoto} alt="" fill className="object-cover" sizes="52px" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-[15px] font-medium text-hagu-ink">{booking.title}</p>
-              <p className="mt-0.5 flex items-center gap-1.5 text-[13px] text-hagu-text-secondary">
-                <Clock className="size-3.5 shrink-0" />
-                {booking.time}
-              </p>
-              <p className="mt-0.5 flex items-center gap-1.5 text-[13px] text-hagu-text-secondary">
-                <Timer className="size-3.5 shrink-0" />
-                {booking.duration}
-              </p>
-            </div>
+            View booking
           </button>
-
-          <div className="mt-4 flex gap-2">
-            <button
-              type="button"
-              onClick={() => router.push(ROUTES.booking(booking.id))}
-              className="hagu-action-btn-muted"
-            >
-              View booking
-            </button>
-            <button
-              type="button"
-              onClick={() => router.push(ROUTES.chatThread(booking.chatId))}
-              className="hagu-action-btn-dark"
-            >
-              <MessageCircle className="size-3.5" />
-              Chat
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => router.push(ROUTES.chatThread(booking.chatId))}
+            className="flex h-12 flex-1 items-center justify-center gap-1.5 rounded-[20px] bg-white text-sm font-medium text-hagu-ink transition active:opacity-95"
+          >
+            <MessageCircle className="size-3.5" />
+            Chat
+          </button>
         </div>
+
+        <HaguWordmark className="pointer-events-none absolute -right-3 -top-3 z-0 h-[118px] w-[114px] -rotate-[28deg]" />
+        <HaguWordmark className="pointer-events-none absolute bottom-1 right-3 z-0 h-11 w-11 rotate-[14deg]" />
       </section>
 
       <section className="space-y-3">

@@ -17,7 +17,7 @@ type HaguWordmarkSummaryCardProps = {
   className?: string
 }
 
-/** Dark summary card with decorative HAGU wordmark — shared by provider and client home. */
+/** Dark earnings summary card with decorative HAGU wordmark — HAGU provider home only. */
 export function HaguWordmarkSummaryCard({
   periodLabel,
   amount,

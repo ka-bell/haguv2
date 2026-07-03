@@ -4,7 +4,7 @@ import { ROUTES } from "@/lib/routes"
 /**
  * HAGEE (client) and HAGU (provider) are separate apps that share only auth shell.
  *
- * HAGEE tabs: Home · Explore · Connections · Profile  →  /home, /explore, /chat, /profile
+ * HAGEE tabs: Explore · Home · Connections · Profile  →  /explore, /home, /chat, /profile
  * HAGU tabs:  Home · Bookings · Chat · Calendar · Settings  →  /discover, /bookings, /chat, /calendar, /settings
  */
 
@@ -40,8 +40,8 @@ export type HageeNavTab = "home" | "explore" | "chat" | "profile"
 export type HaguNavTab = "home" | "bookings" | "chat" | "calendar" | "settings"
 
 export const HAGEE_BOTTOM_NAV: readonly BottomNavTab[] = [
-  { key: "home", label: "Home", href: ROUTES.home, icon: "home" },
   { key: "explore", label: "Explore", href: ROUTES.explore, icon: "search" },
+  { key: "home", label: "Home", href: ROUTES.home, icon: "home" },
   { key: "chat", label: "Connections", href: ROUTES.chat, icon: "message" },
   { key: "profile", label: "Profile", href: ROUTES.profile, icon: "user" },
 ] as const

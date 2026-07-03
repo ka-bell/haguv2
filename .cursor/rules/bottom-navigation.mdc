@@ -25,8 +25,8 @@ All tab definitions live in `lib/app-navigation.ts`:
 
 | Key | Label | Route |
 |-----|-------|-------|
-| home | Home | `/home` |
 | explore | Explore | `/explore` |
+| home | Home | `/home` |
 | chat | Chat | `/chat` |
 | profile | Profile | `/profile` |
 
