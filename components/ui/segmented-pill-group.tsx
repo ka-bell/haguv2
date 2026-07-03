@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { selectionPillClass } from "@/lib/hagu-selection-styles"
 import { cn } from "@/lib/utils"
 
 export interface SegmentedOption {
@@ -45,11 +46,7 @@ export function SegmentedPillGroup({
             key={option.value}
             type="button"
             onClick={() => toggle(option.value)}
-            className={cn(
-              "rounded-full font-medium transition",
-              size === "sm" ? "h-9 px-3.5 text-[12px]" : "h-11 px-5 text-[13px]",
-              isActive ? "bg-[#1A1A1E] text-white" : "border border-black/[0.08] bg-white text-[#4A4A52] hover:bg-black/[0.03]",
-            )}
+            className={cn(selectionPillClass(isActive, size === "sm" ? "sm" : "default"))}
           >
             {option.label}
           </button>

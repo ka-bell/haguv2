@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { ChevronRight, Pencil, Plus } from "lucide-react"
 import {
@@ -10,6 +11,7 @@ import {
   type HageeProfileData,
 } from "@/lib/hagee-profile-storage"
 import { ROUTES } from "@/lib/routes"
+import { logout } from "@/lib/session"
 import { cn } from "@/lib/utils"
 
 function ProfileSection({
@@ -35,11 +37,17 @@ function ProfileSection({
 }
 
 export function HageeProfileScreen() {
+  const router = useRouter()
   const [profile, setProfile] = useState<HageeProfileData>(DEFAULT_HAGEE_PROFILE_DATA)
 
   useEffect(() => {
     setProfile(getHageeProfileData())
   }, [])
+
+  const handleLogout = () => {
+    logout()
+    router.push(ROUTES.entry)
+  }
 
   const visibleInterests = profile.visibility.showInterestsPublicly
     ? profile.interests.filter((interest) => interest.selected)
@@ -176,6 +184,14 @@ export function HageeProfileScreen() {
         </div>
         <ChevronRight className="size-4 text-hagu-placeholder" />
       </Link>
+
+      <button
+        type="button"
+        onClick={handleLogout}
+        className="w-full py-3 text-center text-sm text-hagu-text-secondary underline"
+      >
+        Log out
+      </button>
     </div>
   )
 }

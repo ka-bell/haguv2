@@ -5,7 +5,13 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 import { HaguPrototypeSheet } from "@/components/hagu/hagu-prototype-sheet"
-import { SCREEN_FOOTER_SCROLL_PAD, ScreenFooter, ScreenPrimaryButton, ScreenSecondaryButton } from "@/components/ui/screen-footer"
+import {
+  SCREEN_FOOTER_SCROLL_PAD_TALL,
+  ScreenDestructiveButton,
+  ScreenFooter,
+  ScreenPrimaryButton,
+  ScreenSecondaryButton,
+} from "@/components/ui/screen-footer"
 import {
   getClientBookingOverview,
   type HageeClientBookingOverview,
@@ -78,9 +84,11 @@ export function HageeBookingDetailScreen({ bookingId }: HageeBookingDetailScreen
   const openChat = () => router.push(ROUTES.chatThread(overview.chatId))
   const reschedule = () => router.push(ROUTES.exploreBook(overview.profileId))
 
+  const footerPad = SCREEN_FOOTER_SCROLL_PAD_TALL
+
   return (
     <>
-      <div className={cn("space-y-5", SCREEN_FOOTER_SCROLL_PAD)}>
+      <div className={cn("space-y-5", footerPad)}>
         <div>
           <h1 className="hagu-page-title">Your booking</h1>
           <p className="mt-1 text-sm text-hagu-text-secondary">With {overview.companionName}</p>
@@ -155,46 +163,32 @@ export function HageeBookingDetailScreen({ bookingId }: HageeBookingDetailScreen
       <ScreenFooter>
         {overview.statusTone === "pending" ? (
           <>
-            <ScreenPrimaryButton disabled className="h-14 rounded-full text-[15px] opacity-50">
-              Waiting for {firstName}
-            </ScreenPrimaryButton>
+            <ScreenPrimaryButton disabled>Waiting for {firstName}</ScreenPrimaryButton>
             {overview.canCancel ? (
-              <ScreenSecondaryButton
-                onClick={() => setShowCancelSheet(true)}
-                className="h-12 rounded-full border-[#F0D4D4] text-[13px] text-[#DC3232]"
-              >
+              <ScreenDestructiveButton onClick={() => setShowCancelSheet(true)}>
                 Cancel request
-              </ScreenSecondaryButton>
+              </ScreenDestructiveButton>
             ) : null}
           </>
         ) : overview.canReschedule ? (
           <>
-            <ScreenPrimaryButton onClick={openChat} className="h-14 rounded-full text-[15px]">
+            <ScreenPrimaryButton onClick={openChat}>
               <span className="inline-flex items-center gap-2">
                 <MessageCircle className="size-4" />
                 Message {firstName}
               </span>
             </ScreenPrimaryButton>
-            <ScreenSecondaryButton onClick={reschedule} className="h-12 rounded-full text-[13px]">
-              Reschedule
-            </ScreenSecondaryButton>
+            <ScreenSecondaryButton onClick={reschedule}>Reschedule</ScreenSecondaryButton>
             {overview.canCancel ? (
-              <ScreenSecondaryButton
-                onClick={() => setShowCancelSheet(true)}
-                className="h-12 rounded-full border-[#F0D4D4] text-[13px] text-[#DC3232]"
-              >
+              <ScreenDestructiveButton onClick={() => setShowCancelSheet(true)}>
                 Cancel booking
-              </ScreenSecondaryButton>
+              </ScreenDestructiveButton>
             ) : null}
           </>
         ) : overview.canMessage ? (
-          <ScreenPrimaryButton onClick={openChat} className="h-14 rounded-full text-[15px]">
-            Message {firstName}
-          </ScreenPrimaryButton>
+          <ScreenPrimaryButton onClick={openChat}>Message {firstName}</ScreenPrimaryButton>
         ) : (
-          <ScreenPrimaryButton onClick={() => router.push(ROUTES.explore)} className="h-14 rounded-full text-[15px]">
-            Book someone new
-          </ScreenPrimaryButton>
+          <ScreenPrimaryButton onClick={() => router.push(ROUTES.explore)}>Book someone new</ScreenPrimaryButton>
         )}
       </ScreenFooter>
 
@@ -208,10 +202,10 @@ export function HageeBookingDetailScreen({ bookingId }: HageeBookingDetailScreen
           {firstName} will be notified. Escrow is refunded automatically for cancellations more than 24 hours before
           your session.
         </p>
-        <ScreenPrimaryButton onClick={handleCancel} className="mt-4 h-12 rounded-full text-[13px]">
+        <ScreenDestructiveButton onClick={handleCancel} className="mt-4">
           Yes, cancel
-        </ScreenPrimaryButton>
-        <ScreenSecondaryButton onClick={() => setShowCancelSheet(false)} className="mt-2 h-12 rounded-full text-[13px]">
+        </ScreenDestructiveButton>
+        <ScreenSecondaryButton onClick={() => setShowCancelSheet(false)} className="mt-2">
           Keep booking
         </ScreenSecondaryButton>
       </HaguPrototypeSheet>

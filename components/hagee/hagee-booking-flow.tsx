@@ -371,7 +371,7 @@ export function HageeBookingFlow({ profile }: HageeBookingFlowProps) {
                 <span
                   className={cn(
                     "flex size-5 items-center justify-center rounded-full border",
-                    selected ? "border-hagu-accent-strong bg-hagu-accent-strong" : "border-hagu-border",
+                    selected ? "border-hagu-heading bg-hagu-heading" : "border-hagu-border",
                   )}
                 >
                   {selected ? <Check className="size-2.5 text-white" strokeWidth={3} /> : null}

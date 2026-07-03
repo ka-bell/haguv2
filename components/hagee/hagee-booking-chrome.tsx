@@ -1,32 +1,28 @@
+import {
+  selectionCardClass,
+  selectionDateChipClass,
+  selectionPillClass,
+} from "@/lib/hagu-selection-styles"
 import { cn } from "@/lib/utils"
 
-/** Selected option — matches hosting pills / primary chips in Figma 2468:20298 */
+/** Selected option pill — delegates to shared selection styles. */
 export function bookingPillClass(selected: boolean) {
-  return cn(
-    "rounded-full border px-4 py-2.5 text-[13px] font-medium transition",
-    selected
-      ? "border-hagu-ink bg-hagu-ink text-white"
-      : "border-black/[0.08] bg-hagu-white text-hagu-label",
-  )
+  return cn(selectionPillClass(selected, "compact"))
 }
 
-/** Selectable card — matches profile basics / rates cards */
+/** Selectable card — black border when selected. */
 export function bookingCardClass(selected: boolean) {
   return cn(
-    "rounded-[20px] border text-left transition",
-    selected
-      ? "border-2 border-hagu-accent-strong bg-hagu-accent-soft"
-      : "border border-hagu-border bg-hagu-white shadow-[0px_2px_8px_rgba(26,26,30,0.04)]",
+    "rounded-[20px] text-left transition shadow-[0px_2px_8px_rgba(26,26,30,0.04)]",
+    selectionCardClass(selected),
   )
 }
 
 /** Date chip in horizontal scroller */
 export function bookingDateClass(selected: boolean) {
   return cn(
-    "flex min-w-[64px] shrink-0 flex-col items-center rounded-[16px] border px-3 py-3 transition",
-    selected
-      ? "border-2 border-hagu-ink bg-hagu-white text-hagu-ink"
-      : "border border-hagu-border bg-hagu-white text-hagu-label",
+    "flex min-w-[64px] shrink-0 flex-col items-center rounded-[16px] px-3 py-3 transition",
+    selectionDateChipClass(selected),
   )
 }
 

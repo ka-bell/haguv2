@@ -110,7 +110,7 @@
 
   /* Stable bottom chrome — prevents CTA / tab bar jumping on mobile Safari */
   --hagu-inset-bottom: max(1.25rem, env(safe-area-inset-bottom, 1.25rem));
-  --hagu-cta-footer-height: calc(5rem + var(--hagu-inset-bottom));
+  --hagu-cta-footer-height: calc(3.75rem + var(--hagu-inset-bottom));
   --hagu-tab-nav-bottom: var(--hagu-inset-bottom);
   --hagu-tab-nav-clearance: calc(5rem + var(--hagu-tab-nav-bottom));
 }
@@ -151,8 +151,9 @@
 }
 
 @theme inline {
-  /* Updated to use Roobert font family */
-  --font-sans: "Roobert", system-ui, -apple-system, sans-serif;
+  /* Inter — UI/body; Roobert — display titles only (see .hagu-page-title) */
+  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+  --font-display: "Roobert", system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -240,7 +241,22 @@
   .hagu-screen-footer {
     padding-top: 1rem;
     padding-bottom: var(--hagu-inset-bottom);
-    min-height: var(--hagu-cta-footer-height);
+    min-height: calc(3.75rem + var(--hagu-inset-bottom));
+  }
+
+  .hagu-screen-footer-compact {
+    padding-top: 0.75rem;
+    min-height: calc(3.25rem + var(--hagu-inset-bottom));
+  }
+
+  .hagu-screen-footer-progress {
+    padding-top: 0.875rem;
+    min-height: calc(4.5rem + var(--hagu-inset-bottom));
+  }
+
+  .hagu-screen-footer-progress-tall {
+    padding-top: 0.875rem;
+    min-height: calc(5.75rem + var(--hagu-inset-bottom));
   }
 
   .hagu-brand-transition {
@@ -253,64 +269,20 @@
     animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
   }
 
-  .gsi-material-button {
-    position: relative;
-    display: block;
-    width: 100%;
-    height: 48px;
-    border: 1px solid rgb(0 0 0 / 0.1);
-    border-radius: 9999px;
-    background: #fff;
-    color: #2d1012;
-    overflow: hidden;
-    user-select: none;
+  .hagu-auth-btn {
+    @apply flex h-12 w-full items-center justify-center gap-2.5 rounded-[20px] border border-hagu-border bg-hagu-white text-sm font-medium text-hagu-heading transition enabled:active:opacity-95;
   }
 
-  .gsi-material-button:focus-visible {
-    outline: 2px solid #2d1012;
-    outline-offset: 2px;
+  .hagu-btn-primary {
+    @apply flex h-12 w-full items-center justify-center gap-2 rounded-[20px] bg-hagu-heading text-sm font-medium text-hagu-white transition enabled:active:opacity-95 disabled:cursor-not-allowed disabled:opacity-40;
   }
 
-  .gsi-material-button-state {
-    position: absolute;
-    inset: 0;
-    background: #000;
-    opacity: 0;
-    transition: opacity 0.2s ease;
+  .hagu-btn-secondary {
+    @apply flex h-12 w-full items-center justify-center gap-2 rounded-[20px] border border-hagu-border bg-hagu-white text-sm font-medium text-hagu-heading transition enabled:hover:bg-black/[0.03] enabled:active:opacity-95 disabled:cursor-not-allowed disabled:opacity-40;
   }
 
-  .gsi-material-button:hover .gsi-material-button-state {
-    opacity: 0.03;
-  }
-
-  .gsi-material-button:active .gsi-material-button-state {
-    opacity: 0.08;
-  }
-
-  .gsi-material-button-content-wrapper {
-    position: relative;
-    z-index: 1;
-    display: inline-flex;
-    height: 100%;
-    width: 100%;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0 0.75rem;
-  }
-
-  .gsi-material-button-icon {
-    width: 18px;
-    height: 18px;
-    flex-shrink: 0;
-  }
-
-  .gsi-material-button-contents {
-    font-size: 0.875rem;
-    line-height: 1;
-    font-weight: 500;
-    color: #2d1012;
-    white-space: nowrap;
+  .hagu-btn-destructive {
+    @apply flex h-12 w-full items-center justify-center gap-2 rounded-[20px] border border-hagu-border bg-hagu-white text-sm font-medium text-hagu-error transition enabled:hover:bg-black/[0.03] enabled:active:opacity-95 disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   .hagu-surface-card {
@@ -318,7 +290,32 @@
   }
 
   .hagu-page-title {
-    @apply text-[26px] font-semibold tracking-tight text-hagu-ink;
+    @apply font-display text-[26px] font-semibold tracking-tight text-hagu-ink;
+  }
+
+  .hagu-brand {
+    @apply font-display;
+  }
+
+  @keyframes hagu-slide-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .hagu-stagger-in {
+    animation: hagu-slide-in-up 0.5s cubic-bezier(0.32, 0.72, 0, 1) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hagu-stagger-in {
+      animation: none;
+    }
   }
 
   .hagu-page-greeting {
@@ -330,14 +327,14 @@
   }
 
   .hagu-action-btn {
-    @apply flex h-9 flex-1 items-center justify-center gap-1.5 rounded-[10px] text-xs font-medium transition;
+    @apply flex h-12 flex-1 items-center justify-center gap-1.5 rounded-[20px] text-sm font-medium transition;
   }
 
   .hagu-action-btn-muted {
-    @apply flex h-9 flex-1 items-center justify-center gap-1.5 rounded-[10px] bg-hagu-surface-muted text-xs font-medium text-hagu-ink transition;
+    @apply flex h-12 flex-1 items-center justify-center gap-1.5 rounded-[20px] bg-hagu-surface-muted text-sm font-medium text-hagu-ink transition;
   }
 
   .hagu-action-btn-dark {
-    @apply flex h-9 flex-1 items-center justify-center gap-1.5 rounded-[10px] bg-hagu-heading text-xs font-medium text-hagu-white transition;
+    @apply flex h-12 flex-1 items-center justify-center gap-1.5 rounded-[20px] bg-hagu-heading text-sm font-medium text-hagu-white transition;
   }
 }

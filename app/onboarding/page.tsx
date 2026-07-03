@@ -11,27 +11,20 @@ import { HageeActivityCard } from "@/components/hagee/hagee-activity-card"
 import { HageeFlowScreen } from "@/components/hagee/hagee-flow-screen"
 import { HageeOnboardingSuccess } from "@/components/hagee/hagee-onboarding-success"
 import { Input } from "@/components/ui/input"
+import { SegmentedPillGroup } from "@/components/ui/segmented-pill-group"
 import { ROUTES } from "@/lib/routes"
 import { completeOnboarding } from "@/lib/session"
 import { isPrototypeMode } from "@/lib/prototype"
-import { cn } from "@/lib/utils"
+import { selectionPillClass } from "@/lib/hagu-selection-styles"
 import {
   ACTIVITY_OPTIONS,
   CHARACTER_OPTIONS,
   CONTINUE_LABELS,
+  GENDER_OPTIONS,
   HageeStep,
   INTRO_HERO_IMAGE,
   VIBE_OPTIONS,
 } from "./hagee/data"
-
-const selectedPillClass =
-  "border-2 border-hagu-accent-strong bg-hagu-accent-soft text-hagu-ink"
-const unselectedPillClass =
-  "border border-hagu-border bg-hagu-white text-hagu-label"
-const selectedCardClass =
-  "border-2 border-hagu-accent-strong bg-hagu-accent-soft"
-const unselectedCardClass =
-  "border border-hagu-border bg-hagu-white"
 
 export default function HageeOnboardingPage() {
   const router = useRouter()
@@ -143,7 +136,13 @@ export default function HageeOnboardingPage() {
 
   const handleSkipIntro = () => setStep(2)
 
-  const progress = !editMode && step > 1 && step < 6 ? ((step - 1) / 5) * 100 : editMode && step >= 2 ? ((step - 1) / 5) * 100 : undefined
+  const progressSegments = (() => {
+    if (step === 1) return { active: 1, total: 3 }
+    if (step === 6) return { active: 5, total: 5 }
+    if (step >= 2 && step <= 5) return { active: step - 1, total: 5 }
+    return undefined
+  })()
+
   const ctaLabel = editMode ? "Save changes" : CONTINUE_LABELS[step]
   const displayName = firstName.trim() || "there"
 
@@ -169,11 +168,6 @@ export default function HageeOnboardingPage() {
           Hagu connects you with thoughtful, vetted companions for shared experiences — a meal, a walk, a
           conversation that actually goes somewhere.
         </p>
-        <div className="flex gap-1.5 pt-1">
-          <span className="h-[3px] w-5 rounded-full bg-hagu-accent-strong" />
-          <span className="h-[3px] w-1.5 rounded-full bg-hagu-border" />
-          <span className="h-[3px] w-1.5 rounded-full bg-hagu-border" />
-        </div>
       </div>
     </>
   )
@@ -246,10 +240,7 @@ export default function HageeOnboardingPage() {
                 key={option}
                 type="button"
                 onClick={() => toggleValue(option, vibes, setVibes)}
-                className={cn(
-                  "rounded-full border px-[17px] py-2 text-[13px] transition",
-                  selected ? selectedPillClass : unselectedPillClass,
-                )}
+                className={selectionPillClass(selected, "compact")}
               >
                 {option}
               </button>
@@ -284,7 +275,16 @@ export default function HageeOnboardingPage() {
 
       <div className="space-y-4">
         <Input label="Age" value={age} onChange={(e) => setAge(e.target.value)} placeholder="28" />
-        <Input label="Gender" value={gender} onChange={(e) => setGender(e.target.value)} placeholder="Male" />
+        <div className="flex w-full flex-col gap-1.5">
+          <span className="text-xs text-hagu-label">Gender</span>
+          <SegmentedPillGroup
+            options={GENDER_OPTIONS.map((option) => ({ value: option.value, label: option.label }))}
+            value={gender ? [gender] : []}
+            onChange={(value) => setGender(value[0] ?? "")}
+            multiSelect={false}
+            size="sm"
+          />
+        </div>
         <Input label="City" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Amsterdam" />
         <label className="flex w-full flex-col gap-1.5">
           <span className="text-xs text-hagu-label">One line about you (optional)</span>
@@ -309,7 +309,7 @@ export default function HageeOnboardingPage() {
         <p className="mt-1 text-sm font-light text-hagu-text-secondary">Choose at least 3 traits so people get your vibe.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 [&>*]:min-w-0">
+      <div className="flex flex-wrap gap-2">
         {CHARACTER_OPTIONS.map((option) => {
           const selected = characterTraits.includes(option.id)
           return (
@@ -317,14 +317,9 @@ export default function HageeOnboardingPage() {
               key={option.id}
               type="button"
               onClick={() => toggleValue(option.id, characterTraits, setCharacterTraits)}
-              className={cn(
-                "rounded-[20px] border px-4 py-4 text-left transition",
-                selected ? selectedCardClass : unselectedCardClass,
-              )}
+              className={selectionPillClass(selected, "compact")}
             >
-              <p className="text-sm font-medium text-hagu-ink">
-                {option.emoji} {option.label}
-              </p>
+              {option.emoji} {option.label}
             </button>
           )
         })}
@@ -348,18 +343,11 @@ export default function HageeOnboardingPage() {
   if (step === 1) {
     return (
       <HageeFlowScreen
+        progressSegments={progressSegments}
+        secondaryAction={{ label: "Skip", onClick: handleSkipIntro }}
         ctaLabel={ctaLabel}
         onCta={handleContinue}
         ctaDisabled={!isPrototypeMode() && !canContinue}
-        headerAction={
-          <button
-            type="button"
-            onClick={handleSkipIntro}
-            className="pointer-events-auto px-1 py-2 text-[13px] font-medium text-hagu-text-secondary"
-          >
-            Skip
-          </button>
-        }
         footer={
           <p className="mt-4 text-center text-[13px] text-hagu-text-secondary">
             Already have an account?{" "}
@@ -377,6 +365,7 @@ export default function HageeOnboardingPage() {
   if (step === 6) {
     return (
       <HageeFlowScreen
+        progressSegments={progressSegments}
         ctaLabel={ctaLabel}
         onCta={handleContinue}
         footer={
@@ -392,8 +381,8 @@ export default function HageeOnboardingPage() {
 
   return (
     <HageeFlowScreen
+      progressSegments={progressSegments}
       onBack={handleBack}
-      progress={progress}
       ctaLabel={ctaLabel}
       onCta={handleContinue}
       ctaDisabled={!editMode && !isPrototypeMode() && !canContinue}

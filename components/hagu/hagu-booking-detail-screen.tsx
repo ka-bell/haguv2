@@ -5,7 +5,13 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 import { HaguPrototypeSheet } from "@/components/hagu/hagu-prototype-sheet"
-import { SCREEN_FOOTER_SCROLL_PAD, ScreenFooter, ScreenPrimaryButton, ScreenSecondaryButton } from "@/components/ui/screen-footer"
+import {
+  SCREEN_FOOTER_SCROLL_PAD_TALL,
+  ScreenDestructiveButton,
+  ScreenFooter,
+  ScreenPrimaryButton,
+  ScreenSecondaryButton,
+} from "@/components/ui/screen-footer"
 import { getBookingOverview, type BookingOverview, type BookingOverviewTone } from "@/lib/hagu-provider-booking-detail"
 import {
   confirmBookingRequest,
@@ -114,7 +120,7 @@ export function HaguBookingDetailScreen({ bookingId }: HaguBookingDetailScreenPr
 
   return (
     <>
-      <div className={cn("space-y-5", SCREEN_FOOTER_SCROLL_PAD)}>
+      <div className={cn("space-y-5", SCREEN_FOOTER_SCROLL_PAD_TALL)}>
         <div>
           <h1 className="text-[26px] font-semibold tracking-[-0.5px] text-[#1A1A1E]">Booking</h1>
           <p className="mt-1 text-sm text-[#8A8A96]">Manage this session with {firstName}</p>
@@ -194,18 +200,14 @@ export function HaguBookingDetailScreen({ bookingId }: HaguBookingDetailScreenPr
         {category === "request" ? (
           <>
             <div className="flex gap-2.5">
-              <button
-                type="button"
-                onClick={handleDecline}
-                className="flex h-14 w-[98px] shrink-0 items-center justify-center rounded-full border border-[#5BBFB5] text-[13px] font-medium text-[#3DA89E] transition active:opacity-80"
-              >
+              <ScreenSecondaryButton onClick={handleDecline} className="w-[98px] shrink-0">
                 Decline
-              </button>
-              <ScreenPrimaryButton onClick={handleAccept} className="h-14 flex-1 rounded-full text-[13px]">
+              </ScreenSecondaryButton>
+              <ScreenPrimaryButton onClick={handleAccept} className="min-w-0 flex-1 !w-auto">
                 Accept · {overview.price}
               </ScreenPrimaryButton>
             </div>
-            <ScreenSecondaryButton onClick={openChat} className="h-12 rounded-full text-[13px]">
+            <ScreenSecondaryButton onClick={openChat}>
               <span className="inline-flex items-center gap-2">
                 <MessageCircle className="size-4" />
                 Message {firstName}
@@ -214,37 +216,27 @@ export function HaguBookingDetailScreen({ bookingId }: HaguBookingDetailScreenPr
           </>
         ) : category === "upcoming" && statusTone !== "cancelled" ? (
           <>
-            <ScreenPrimaryButton onClick={openChat} className="h-14 rounded-full text-[15px]">
+            <ScreenPrimaryButton onClick={openChat}>
               <span className="inline-flex items-center gap-2">
                 <MessageCircle className="size-4" />
                 Message {firstName}
               </span>
             </ScreenPrimaryButton>
-            <ScreenSecondaryButton
-              onClick={() => setShowCancelSheet(true)}
-              className="h-12 rounded-full border-[#F0D4D4] text-[13px] text-[#DC3232]"
-            >
+            <ScreenDestructiveButton onClick={() => setShowCancelSheet(true)}>
               Cancel booking
-            </ScreenSecondaryButton>
+            </ScreenDestructiveButton>
           </>
         ) : category === "completed" ? (
           <>
-            <ScreenPrimaryButton onClick={openChat} className="h-14 rounded-full text-[15px]">
-              Message {firstName}
-            </ScreenPrimaryButton>
+            <ScreenPrimaryButton onClick={openChat}>Message {firstName}</ScreenPrimaryButton>
             {overview.reviewId ? (
-              <ScreenSecondaryButton
-                onClick={() => router.push(ROUTES.review(overview.reviewId!))}
-                className="h-12 rounded-full text-[13px]"
-              >
+              <ScreenSecondaryButton onClick={() => router.push(ROUTES.review(overview.reviewId!))}>
                 Leave a review
               </ScreenSecondaryButton>
             ) : null}
           </>
         ) : (
-          <ScreenPrimaryButton onClick={openChat} className="h-14 rounded-full text-[15px]">
-            Message {firstName}
-          </ScreenPrimaryButton>
+          <ScreenPrimaryButton onClick={openChat}>Message {firstName}</ScreenPrimaryButton>
         )}
       </ScreenFooter>
 
@@ -258,10 +250,10 @@ export function HaguBookingDetailScreen({ bookingId }: HaguBookingDetailScreenPr
           {firstName} will be notified. Escrow is refunded automatically for cancellations more than 24 hours
           before the session.
         </p>
-        <ScreenPrimaryButton onClick={handleCancelBooking} className="mt-4 h-12 rounded-full text-[13px]">
+        <ScreenDestructiveButton onClick={handleCancelBooking} className="mt-4">
           Yes, cancel booking
-        </ScreenPrimaryButton>
-        <ScreenSecondaryButton onClick={() => setShowCancelSheet(false)} className="mt-2 h-12 rounded-full text-[13px]">
+        </ScreenDestructiveButton>
+        <ScreenSecondaryButton onClick={() => setShowCancelSheet(false)} className="mt-2">
           Keep booking
         </ScreenSecondaryButton>
       </HaguPrototypeSheet>

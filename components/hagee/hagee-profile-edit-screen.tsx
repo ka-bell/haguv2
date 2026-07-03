@@ -17,6 +17,7 @@ import {
   type HageeProfileData,
 } from "@/lib/hagee-profile-storage"
 import { ROUTES } from "@/lib/routes"
+import { selectionPillClass } from "@/lib/hagu-selection-styles"
 import { cn } from "@/lib/utils"
 
 const BIO_MAX = 200
@@ -206,12 +207,7 @@ export function HageeProfileEditScreen() {
                     key={option.id}
                     type="button"
                     onClick={() => toggleTrait(option.id)}
-                    className={cn(
-                      "rounded-full border px-3 py-1.5 text-xs transition",
-                      selected
-                        ? "border-2 border-hagu-accent-strong bg-hagu-accent-soft text-hagu-ink"
-                        : "border border-hagu-border bg-hagu-white text-hagu-label",
-                    )}
+                    className={selectionPillClass(selected, "sm")}
                   >
                     {option.emoji} {option.label}
                   </button>

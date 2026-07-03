@@ -4,7 +4,6 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Search } from "lucide-react"
 import { HageeTabShell } from "@/components/hagee/hagee-tab-shell"
 import { HAGEE_CHAT_PREVIEWS, type HageeChatPreview } from "@/lib/hagee-chat"
 import {
@@ -129,24 +128,33 @@ function BookingsTab({ requests }: { requests: HageeBookingRequest[] }) {
             key={booking.id}
             type="button"
             onClick={() => router.push(ROUTES.booking(booking.id))}
-            className="hagu-surface-card w-full p-4 text-left transition active:opacity-95"
+            className="hagu-surface-card flex w-full items-center gap-3.5 p-4 text-left transition active:opacity-95"
           >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-[15px] font-medium text-hagu-ink">{connectionBookingTitle(booking)}</p>
-                <p className="mt-1 text-[13px] text-hagu-text-secondary">{connectionBookingDate(booking)}</p>
-              </div>
-              <span
-                className={cn(
-                  "shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold",
-                  booking.status === "confirmed"
-                    ? "bg-hagu-accent-selected text-hagu-accent-strong"
-                    : "bg-[#FFF8E7] text-[#D4900A]",
-                )}
-              >
-                {statusLabel}
-              </span>
+            <div className="relative size-[52px] shrink-0 overflow-hidden rounded-[20px]">
+              <Image
+                src={booking.profilePhoto}
+                alt={booking.profileName}
+                fill
+                className="object-cover"
+                sizes="52px"
+              />
             </div>
+
+            <div className="min-w-0 flex-1">
+              <p className="text-[15px] font-medium text-hagu-ink">{connectionBookingTitle(booking)}</p>
+              <p className="mt-1 text-[13px] text-hagu-text-secondary">{connectionBookingDate(booking)}</p>
+            </div>
+
+            <span
+              className={cn(
+                "shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold",
+                booking.status === "confirmed"
+                  ? "bg-hagu-accent-selected text-hagu-accent-strong"
+                  : "bg-[#FFF8E7] text-[#D4900A]",
+              )}
+            >
+              {statusLabel}
+            </span>
           </button>
         )
       })}
@@ -245,16 +253,7 @@ export function HageeConnectionsScreen() {
   return (
     <HageeTabShell>
       <div className="space-y-5">
-        <div className="flex items-center justify-between">
-          <h1 className="hagu-page-title">Connections</h1>
-          <button
-            type="button"
-            aria-label="Search"
-            className="flex size-9 items-center justify-center rounded-[10px] bg-hagu-surface-muted text-hagu-ink"
-          >
-            <Search className="size-[18px]" />
-          </button>
-        </div>
+        <h1 className="hagu-page-title">Connections</h1>
 
         <ConnectionsTabs active={tab} onChange={handleTabChange} />
 

@@ -38,10 +38,14 @@ export function HageeOnboardingSuccess({
 
       {hideWhatsNext ? null : (
         <div className="mt-8 w-full space-y-3 text-left">
-          {WHATS_NEXT_ITEMS.map((item) => {
+          {WHATS_NEXT_ITEMS.map((item, index) => {
             const Icon = ICONS[item.id]
             return (
-              <Card key={item.id} className="hagu-surface-card flex flex-row items-center gap-3 p-4">
+              <Card
+                key={item.id}
+                className="hagu-stagger-in hagu-surface-card flex flex-row items-center gap-3 p-4"
+                style={{ animationDelay: `${index * 140}ms` }}
+              >
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-hagu-accent-soft">
                   <Icon className="size-[18px] text-hagu-accent-strong" />
                 </div>

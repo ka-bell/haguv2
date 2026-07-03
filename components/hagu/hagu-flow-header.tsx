@@ -29,7 +29,7 @@ export function HaguFlowHeader({ onBack, closeHref = "/", className }: HaguFlowH
     return (
       <header className={cn("flex w-full justify-center", className)}>
         <GlassChrome className="hagu-brand-transition w-[147px] px-1">
-          <span className="text-lg font-bold tracking-tight text-[#2D1012]">HAGU</span>
+          <span className="hagu-brand text-lg font-bold tracking-tight text-[#2D1012]">HAGU</span>
         </GlassChrome>
       </header>
     )
@@ -46,7 +46,7 @@ export function HaguFlowHeader({ onBack, closeHref = "/", className }: HaguFlowH
       </button>
 
       <GlassChrome className="hagu-brand-transition mx-auto w-[147px] max-w-full justify-self-center px-1">
-        <span className="text-lg font-bold tracking-tight text-[#2D1012]">HAGU</span>
+        <span className="hagu-brand text-lg font-bold tracking-tight text-[#2D1012]">HAGU</span>
       </GlassChrome>
 
       {showClose ? (

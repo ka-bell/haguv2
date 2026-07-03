@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Clock, Star, Timer, Users } from "lucide-react"
+import { Clock, MessageCircle, Star, Timer } from "lucide-react"
 import { HageeActivityCard } from "@/components/hagee/hagee-activity-card"
 import {
   HAGEE_ACTIVE_BOOKING,
@@ -75,11 +75,11 @@ export function HageeHomeScreen() {
             </button>
             <button
               type="button"
-              onClick={() => router.push(ROUTES.chat)}
+              onClick={() => router.push(ROUTES.chatThread(booking.chatId))}
               className="hagu-action-btn-dark"
             >
-              <Users className="size-3.5" />
-              Connections
+              <MessageCircle className="size-3.5" />
+              Chat
             </button>
           </div>
         </div>

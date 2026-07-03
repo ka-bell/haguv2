@@ -157,7 +157,7 @@ export function HageeBookingActivitySheet({ open, onClose, profile }: HageeBooki
                   <span
                     className={cn(
                       "flex size-5 shrink-0 items-center justify-center rounded-full border",
-                      isSelected ? "border-hagu-accent-strong bg-hagu-accent-strong" : "border-hagu-border",
+                      isSelected ? "border-hagu-heading bg-hagu-heading" : "border-hagu-border",
                     )}
                   >
                     {isSelected ? <Check className="size-2.5 text-white" strokeWidth={3} /> : null}

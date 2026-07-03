@@ -2,6 +2,7 @@
 
 import type { LucideIcon } from "lucide-react"
 import { Check, ChevronRight } from "lucide-react"
+import { selectionCardClass, selectionCheckIndicatorClass } from "@/lib/hagu-selection-styles"
 import { cn } from "@/lib/utils"
 
 interface HageeActivityCardProps {
@@ -34,9 +35,7 @@ export function HageeActivityCard({
         "flex min-h-[114px] w-full min-w-0 flex-col rounded-[20px] border p-4 text-left transition",
         isNav
           ? "border border-hagu-border bg-hagu-white"
-          : selected
-            ? "border-2 border-hagu-accent-strong bg-hagu-accent-soft"
-            : "border-2 border-hagu-border bg-hagu-white",
+          : selectionCardClass(selected),
         className,
       )}
     >
@@ -51,14 +50,7 @@ export function HageeActivityCard({
         </div>
         {isNav ? <ChevronRight className="size-4 shrink-0 text-hagu-placeholder" /> : null}
         {!isNav ? (
-          <span
-            className={cn(
-              "flex size-[22px] shrink-0 items-center justify-center rounded-full border",
-              selected
-                ? "border-hagu-accent-strong bg-hagu-accent-strong"
-                : "border-hagu-border bg-transparent",
-            )}
-          >
+          <span className={selectionCheckIndicatorClass(selected)}>
             {selected ? <Check className="size-2.5 text-white" strokeWidth={3} /> : null}
           </span>
         ) : null}

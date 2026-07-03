@@ -26,6 +26,13 @@ export const VIBE_OPTIONS = [
   "Spontaneous",
 ] as const
 
+export const GENDER_OPTIONS = [
+  { value: "woman", label: "Woman" },
+  { value: "man", label: "Man" },
+  { value: "non-binary", label: "Non-binary" },
+  { value: "prefer-not-to-say", label: "Prefer not to say" },
+] as const
+
 export const CHARACTER_OPTIONS = [
   { id: "night-owl", label: "Night owl", emoji: "🌙" },
   { id: "overthinker", label: "Overthinker", emoji: "🧠" },

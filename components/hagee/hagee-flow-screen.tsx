@@ -3,8 +3,17 @@
 import { cn } from "@/lib/utils"
 import { PAGE_HAGEE_FLOW_HEADER_OFFSET } from "@/components/ui/page-shell"
 import { ScreenLayout } from "@/components/ui/screen-layout"
+import {
+  SCREEN_FOOTER_SCROLL_PAD_COMPACT,
+  SCREEN_FOOTER_SCROLL_PAD_PROGRESS,
+  SCREEN_FOOTER_SCROLL_PAD_PROGRESS_TALL,
+} from "@/components/ui/screen-footer"
 import { HaguFlowCta } from "@/components/hagu/hagu-flow-cta"
 import { HaguFlowHeader } from "@/components/hagu/hagu-flow-header"
+import {
+  HageeFlowProgressFooter,
+  type FlowProgressSegments,
+} from "./hagee-flow-progress-footer"
 import { HageeFlowHeader } from "./hagee-flow-header"
 
 /** @deprecated Use PAGE_HAGEE_FLOW_HEADER_OFFSET from screen-layout. */
@@ -13,12 +22,14 @@ export const HAGEE_FLOW_HEADER_OFFSET = PAGE_HAGEE_FLOW_HEADER_OFFSET
 interface HageeFlowScreenProps {
   children: React.ReactNode
   onBack?: () => void
-  progress?: number
-  /** Top-right action on intro steps (e.g. Skip). */
-  headerAction?: React.ReactNode
+  /** Segmented progress + CTA combined in the pinned footer. */
+  progressSegments?: FlowProgressSegments
+  /** Optional text action below the CTA (e.g. Skip on intro). */
+  secondaryAction?: { label: string; onClick: () => void }
   ctaLabel: string
   onCta: () => void
   ctaDisabled?: boolean
+  ctaVariant?: "primary" | "compact"
   footer?: React.ReactNode
   className?: string
 }
@@ -26,15 +37,38 @@ interface HageeFlowScreenProps {
 export function HageeFlowScreen({
   children,
   onBack,
-  progress,
-  headerAction,
+  progressSegments,
+  secondaryAction,
   ctaLabel,
   onCta,
   ctaDisabled,
+  ctaVariant = "primary",
   footer,
   className,
 }: HageeFlowScreenProps) {
   const hasFlowHeader = Boolean(onBack)
+  const usesProgressFooter = Boolean(progressSegments)
+  const isCompactCta = ctaVariant === "compact"
+
+  const footerScrollPad = usesProgressFooter
+    ? secondaryAction
+      ? SCREEN_FOOTER_SCROLL_PAD_PROGRESS_TALL
+      : SCREEN_FOOTER_SCROLL_PAD_PROGRESS
+    : isCompactCta
+      ? SCREEN_FOOTER_SCROLL_PAD_COMPACT
+      : undefined
+
+  const pinnedFooter = usesProgressFooter ? (
+    <HageeFlowProgressFooter
+      label={ctaLabel}
+      onClick={onCta}
+      disabled={ctaDisabled}
+      segments={progressSegments!}
+      secondaryAction={secondaryAction}
+    />
+  ) : (
+    <HaguFlowCta label={ctaLabel} onClick={onCta} disabled={ctaDisabled} variant={ctaVariant} />
+  )
 
   return (
     <ScreenLayout
@@ -43,29 +77,19 @@ export function HageeFlowScreen({
       headerClassName="bg-hagu-canvas px-7"
       reserveHeader
       headerVariant={hasFlowHeader ? "flowHagee" : "none"}
+      footerScrollPad={footerScrollPad}
       header={
         hasFlowHeader ? (
           <HageeFlowHeader onBack={onBack!} />
         ) : (
-          <div className="relative flex w-full items-center justify-center">
+          <div className="flex w-full items-center justify-center">
             <HaguFlowHeader className="hagu-brand-transition" />
-            {headerAction ? (
-              <div className="absolute right-0 top-1/2 -translate-y-1/2">{headerAction}</div>
-            ) : null}
           </div>
         )
       }
-      footer={<HaguFlowCta label={ctaLabel} onClick={onCta} disabled={ctaDisabled} />}
+      footer={pinnedFooter}
     >
-      {typeof progress === "number" ? (
-        <div className="h-[3px] w-full rounded-full bg-hagu-border">
-          <div
-            className="h-[3px] rounded-full bg-hagu-accent-strong transition-all duration-300"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      ) : null}
-      <div className={cn("flex-1 pb-6", typeof progress === "number" ? "mt-5" : null)}>{children}</div>
+      <div className="flex-1 pb-6">{children}</div>
       {footer}
     </ScreenLayout>
   )

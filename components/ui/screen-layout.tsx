@@ -8,7 +8,7 @@ import {
   PAGE_HEADER_TOP_PADDING,
   PageFixedHeader,
 } from "@/components/ui/page-shell"
-import { SCREEN_FOOTER_SCROLL_PAD } from "@/components/ui/screen-footer"
+import { SCREEN_FOOTER_SCROLL_PAD, SCREEN_FOOTER_SCROLL_PAD_COMPACT } from "@/components/ui/screen-footer"
 import { cn } from "@/lib/utils"
 
 /** Safe area + gap above header chrome. */
@@ -17,7 +17,7 @@ export const SCREEN_SAFE_TOP = "calc(env(safe-area-inset-top, 2.75rem) + 0.5rem)
 /** Glass HAGU pill height. */
 export const SCREEN_HEADER_BRAND_HEIGHT = "45px" as const
 
-/** HAGEE back row — progress bar scrolls in body (see HageeFlowScreen). */
+/** HAGEE back row — progress lives in the pinned footer on flow screens. */
 export const SCREEN_HEADER_FLOW_HAGEE_HEIGHT = "3rem" as const
 
 /** Body offset below fixed brand / HAGU flow header. */
@@ -50,6 +50,8 @@ type ScreenLayoutProps = {
   /** Keep header slot height even when `header` is omitted (intro steps). */
   reserveHeader?: boolean
   footer?: ReactNode
+  /** Scroll padding below body when a fixed footer is shown. */
+  footerScrollPad?: string
   className?: string
   contentClassName?: string
   contentPadding?: string
@@ -66,6 +68,7 @@ export function ScreenLayout({
   headerVariant = "brand",
   reserveHeader = true,
   footer,
+  footerScrollPad = SCREEN_FOOTER_SCROLL_PAD,
   className,
   contentClassName,
   contentPadding = "px-6",
@@ -94,7 +97,7 @@ export function ScreenLayout({
           "flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto",
           contentPadding,
           bodyOffset,
-          footer && SCREEN_FOOTER_SCROLL_PAD,
+          footer && footerScrollPad,
           contentClassName,
         )}
       >

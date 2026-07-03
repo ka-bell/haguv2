@@ -21,66 +21,43 @@ export function ScreenFooter({ children, className, innerClassName, pinned = tru
         className,
       )}
     >
-      <div className={cn("mx-auto flex w-full max-w-[340px] flex-col gap-3", innerClassName)}>
+      <div className={cn("mx-auto flex w-full max-w-[340px] flex-col gap-2.5", innerClassName)}>
         {children}
       </div>
     </div>
   )
 }
 
-/** Primary flow CTA button — always h-16 to match across screens. */
-export function ScreenPrimaryButton({
-  children,
-  onClick,
-  disabled,
-  className,
-  type = "button",
-}: {
+type ScreenButtonProps = {
   children: ReactNode
   onClick?: () => void
   disabled?: boolean
   className?: string
   type?: "button" | "submit"
-}) {
+}
+
+/** Primary CTA — black, rounded-[20px], h-12. */
+export function ScreenPrimaryButton({ children, onClick, disabled, className, type = "button" }: ScreenButtonProps) {
   return (
-    <button
-      type={type}
-      onClick={onClick}
-      disabled={disabled}
-      className={cn(
-        "flex h-16 w-full items-center justify-center rounded-[32px] bg-[#2D1012] text-base font-semibold tracking-tight text-white shadow-[0px_20px_40px_-10px_rgba(45,16,18,0.1)] transition enabled:hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-40",
-        className,
-      )}
-    >
+    <button type={type} onClick={onClick} disabled={disabled} className={cn("hagu-btn-primary", className)}>
       {children}
     </button>
   )
 }
 
-/** Secondary outline button for auth footers. */
-export function ScreenSecondaryButton({
-  children,
-  onClick,
-  disabled,
-  className,
-  type = "button",
-}: {
-  children: ReactNode
-  onClick?: () => void
-  disabled?: boolean
-  className?: string
-  type?: "button" | "submit"
-}) {
+/** Secondary outline CTA. */
+export function ScreenSecondaryButton({ children, onClick, disabled, className, type = "button" }: ScreenButtonProps) {
   return (
-    <button
-      type={type}
-      onClick={onClick}
-      disabled={disabled}
-      className={cn(
-        "flex h-16 w-full items-center justify-center rounded-[32px] border border-black/10 bg-[#FCFFFF] text-base font-medium text-[#2D1012] transition enabled:hover:bg-black/[0.03] disabled:cursor-not-allowed disabled:opacity-40",
-        className,
-      )}
-    >
+    <button type={type} onClick={onClick} disabled={disabled} className={cn("hagu-btn-secondary", className)}>
+      {children}
+    </button>
+  )
+}
+
+/** Destructive outline CTA (cancel, delete). */
+export function ScreenDestructiveButton({ children, onClick, disabled, className, type = "button" }: ScreenButtonProps) {
+  return (
+    <button type={type} onClick={onClick} disabled={disabled} className={cn("hagu-btn-destructive", className)}>
       {children}
     </button>
   )
@@ -88,3 +65,19 @@ export function ScreenSecondaryButton({
 
 /** Reserve scroll space when a fixed ScreenFooter is shown. */
 export const SCREEN_FOOTER_SCROLL_PAD = "pb-[var(--hagu-cta-footer-height)]" as const
+
+/** Smaller pad for compact flow CTAs (hagu-action-btn style). */
+export const SCREEN_FOOTER_SCROLL_PAD_COMPACT =
+  "pb-[calc(3.25rem+var(--hagu-inset-bottom))]" as const
+
+/** Pad for combined progress + CTA footer (HAGEE onboarding). */
+export const SCREEN_FOOTER_SCROLL_PAD_PROGRESS =
+  "pb-[calc(4.5rem+var(--hagu-inset-bottom))]" as const
+
+/** Progress footer with secondary action (e.g. Skip). */
+export const SCREEN_FOOTER_SCROLL_PAD_PROGRESS_TALL =
+  "pb-[calc(5.75rem+var(--hagu-inset-bottom))]" as const
+
+/** Stacked footer with up to 3 actions (booking detail). */
+export const SCREEN_FOOTER_SCROLL_PAD_TALL =
+  "pb-[calc(10.5rem+var(--hagu-inset-bottom))]" as const

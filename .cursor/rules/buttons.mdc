@@ -1,0 +1,32 @@
+---
+description: Unified HAGU button styles — primary, secondary, destructive
+globs: components/**/*.tsx,app/**/*.tsx
+alwaysApply: false
+---
+
+# HAGU buttons
+
+Use shared classes from `globals.css`. Do not invent per-screen button styles.
+
+| Role | Class / component |
+|------|-------------------|
+| Primary CTA | `hagu-btn-primary` or `ScreenPrimaryButton` |
+| Secondary | `hagu-btn-secondary` or `ScreenSecondaryButton` |
+| Destructive (cancel) | `hagu-btn-destructive` or `ScreenDestructiveButton` |
+| Split card actions | `hagu-action-btn-muted` + `hagu-action-btn-dark` |
+| OAuth | `hagu-auth-btn` via `AuthProviderButton` |
+
+## Spec (all full-width CTAs)
+
+- Height: **h-12** (48px)
+- Radius: **rounded-[20px]**
+- Text: **text-sm font-medium**
+- Primary: `bg-hagu-heading text-white`
+- Secondary: white + `border-hagu-border`
+- Destructive: white + `border-hagu-border` + `text-hagu-error`
+
+## Avoid
+
+- `rounded-full` / `rounded-[32px]` on action buttons
+- `h-14` / `h-16` one-off overrides on `ScreenPrimaryButton`
+- Teal bordered decline buttons — use secondary style

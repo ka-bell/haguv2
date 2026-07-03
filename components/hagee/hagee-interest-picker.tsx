@@ -1,9 +1,7 @@
 "use client"
 
+import { selectionPillClass } from "@/lib/hagu-selection-styles"
 import { cn } from "@/lib/utils"
-
-const selectedClass = "border-2 border-hagu-accent-strong bg-hagu-accent-soft text-hagu-ink"
-const unselectedClass = "border border-hagu-border bg-hagu-white text-hagu-label"
 
 interface HageeInterestPickerProps {
   categories: { id: string; label: string; options: string[] }[]
@@ -35,10 +33,7 @@ export function HageeInterestPicker({
                   key={option}
                   type="button"
                   onClick={() => onToggle(option)}
-                  className={cn(
-                    "rounded-full border px-[17px] py-2.5 text-[13px] transition",
-                    isSelected ? selectedClass : unselectedClass,
-                  )}
+                  className={cn(selectionPillClass(isSelected, "compact"))}
                 >
                   {option}
                 </button>
@@ -51,7 +46,7 @@ export function HageeInterestPicker({
       <div className="flex items-center justify-between text-[13px]">
         <span className="text-hagu-text-secondary">{selected.length} selected</span>
         {hasEnough ? (
-          <span className="font-medium text-hagu-accent-strong">Good mix ✓</span>
+          <span className="font-medium text-hagu-ink">Good mix ✓</span>
         ) : (
           <span className="text-hagu-placeholder">Pick at least {minCount}</span>
         )}

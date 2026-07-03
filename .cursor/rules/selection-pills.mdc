@@ -1,0 +1,36 @@
+---
+description: Black selection styles for pills, chips, and selectable cards
+globs: components/**/*.tsx,app/**/*.tsx,lib/hagu-selection-styles.ts
+alwaysApply: false
+---
+
+# HAGU selection pills & cards
+
+Use `lib/hagu-selection-styles.ts` for all selectable UI. **Never use teal accent** (`border-hagu-accent-strong`, `bg-hagu-accent-soft`) for selected states.
+
+## Pills / chips (multi-select tags)
+
+```tsx
+import { selectionPillClass } from "@/lib/hagu-selection-styles"
+
+<button className={selectionPillClass(isSelected, "compact")}>{label}</button>
+```
+
+- **Selected:** `bg-hagu-heading text-hagu-white` (solid black)
+- **Unselected:** white background, `border-hagu-border`, `text-hagu-label`
+
+Prefer `SegmentedPillGroup` for standard pill groups.
+
+## Selectable cards / rows
+
+```tsx
+import { selectionCardClass, selectionCheckIndicatorClass } from "@/lib/hagu-selection-styles"
+```
+
+- **Selected card:** `border-2 border-hagu-heading` on white
+- **Check indicator:** filled `bg-hagu-heading` circle with white check
+
+## Do not use for selection
+
+- `bg-hagu-accent-soft` / `border-hagu-accent-strong` — accent is for badges, banners, focus rings only
+- Per-component `selectedPillClass` constants — import shared helpers instead
