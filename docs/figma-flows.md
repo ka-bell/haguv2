@@ -164,12 +164,12 @@ flowchart LR
 | 6 | Transactions | `2467:14361` | `/profile/transactions` | Balance, withdraw, payout history |
 | 7 | Chat (Luca M.) | `2467:14477` | `/chat` | Standard thread, online status, booking date |
 
-### Discover (`/discover`) — HAGEE variant
+### Discover (`/discover`) — HAGU seller home only
 
-| Variant | Description | Figma status |
-|---------|-------------|--------------|
-| HAGEE | Browse companions list | To complete |
-| HAGU | Provider home (see above) | **`2467:19060`** — reference screen |
+| Audience | Description | Route |
+|----------|-------------|-------|
+| HAGU | Provider home (earnings, next booking, requests) | `/discover` |
+| HAGEE | Browse companions (not Discover) | `/explore` |
 
 ---
 
@@ -195,8 +195,8 @@ Document as components/variables in Figma:
 
 Link screens with Figma prototyping for these three paths:
 
-1. **New HAGEE** — Entry → Create account → HAGEE → Onboarding (6 steps) → Discover (HAGEE)
-2. **New HAGU** — Entry → Create account → HAGU → Onboarding (9 steps) → Discover (Provider Home)
+1. **New HAGEE (buyer)** — Entry → Create account → HAGEE → Onboarding (6 steps) → Home (`/home`) / Explore (`/explore`)
+2. **New HAGU (seller)** — Entry → Create account → HAGU → Onboarding (9 steps) → Provider Home (`/discover`)
 3. **Returning user** — Entry → Log in → Discover
 4. **HAGU provider app** — Provider Home → Requests → Accept → Bookings → Chat → Calendar → Settings → Transactions
 

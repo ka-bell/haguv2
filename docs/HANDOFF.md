@@ -14,30 +14,39 @@ This document hands off product flows, routes, screens, and design tokens to the
 
 ## 2. User journeys
 
-### Journey A — New HAGEE (client)
+### Roles (glossary)
+
+| Role | Meaning |
+|------|---------|
+| **HAGEE** | Buyer / client — books and pays for companionship |
+| **HAGU** | Seller / provider — offers time and receives bookings |
+
+The product brand is also named **HAGU**; do not confuse brand with the seller role.
+
+### Journey A — New HAGEE (buyer)
 
 1. Lands on entry screen
 2. Taps **Create account**
-3. Selects **I am a HAGEE**
+3. Selects **HAGEE** (*I buy companionship — book a HAGU for shared time.*)
 4. Completes HAGEE onboarding (intro → account → preferences → profile → character → success)
-5. Lands on **Discover** (browse HAGU providers)
-6. Uses bottom nav: Bookings, Chat, Profile
+5. Lands on **Home** (`/home`); browse companions on **Explore** (`/explore`)
+6. Uses bottom nav: Explore · Home · Connections · Profile
 
-### Journey B — New HAGU (provider)
+### Journey B — New HAGU (seller)
 
 1. Lands on entry screen
 2. Taps **Create account**
-3. Selects **I am a HAGU**
+3. Selects **HAGU** (*I sell my time — offer services and receive bookings.*)
 4. Completes HAGU onboarding (9 steps ending in payment setup)
-5. Lands on **Discover** showing **Provider Home** (earnings, next booking, requests)
-6. Uses bottom nav for bookings, chat, profile
+5. Lands on **Home** (`/discover` — provider dashboard: earnings, next booking, requests)
+6. Uses bottom nav: Home · Bookings · Chat · Calendar · Settings
 
 ### Journey C — Returning user
 
 1. Lands on entry screen
 2. Taps **Log in**
 3. Enters credentials (or Google OAuth — backend)
-4. Lands on **Discover** (role-aware: HAGEE list vs HAGU provider home)
+4. Lands on role home: **HAGEE** → `/home`, **HAGU** → `/discover`
 
 ### Journey D — Forgot password
 
@@ -55,16 +64,19 @@ This document hands off product flows, routes, screens, and design tokens to the
 | `/` | Entry: log in or create account | `app/page.tsx` | To complete |
 | `/login` | Returning user sign-in | `app/login/page.tsx` | To complete |
 | `/forgot-password` | Password reset request + success | `app/forgot-password/page.tsx` | To complete |
-| `/select-role` | HAGEE vs HAGU | `app/select-role/page.tsx` | To complete |
+| `/select-role` | HAGEE (buyer) vs HAGU (seller) | `app/select-role/page.tsx` | To complete |
 | `/onboarding` | HAGEE onboarding (6 steps) | `app/onboarding/page.tsx` | `2393:9244` |
 | `/onboarding/hagu` | HAGU onboarding (9 steps) | `app/onboarding/hagu/page.tsx` | `2424:11787` |
-| `/discover` | Main tab — browse or provider home | `app/(app)/discover/page.tsx` | `2467:19060` (HAGU) |
-| `/requests` | HAGU: incoming booking requests | Not implemented | `2467:13610` |
-| `/bookings` | Bookings tab | `app/(app)/bookings/page.tsx` | `2467:13749` |
-| `/chat` | Chat threads | `app/(app)/chat/page.tsx` | `2467:13855`, `2467:14477` |
-| `/calendar` | HAGU: availability calendar | Not implemented | `2467:14009` |
-| `/profile` | Settings / profile | `app/(app)/profile/page.tsx` | `2467:14188` |
-| `/profile/transactions` | Earnings & payouts | Not implemented | `2467:14361` |
+| `/home` | HAGEE home | `app/(app)/home/page.tsx` | To complete |
+| `/explore` | HAGEE browse companions | `app/(app)/explore/page.tsx` | To complete |
+| `/discover` | HAGU provider home only | `app/(app)/discover/page.tsx` | `2467:19060` |
+| `/requests` | HAGU: incoming booking requests | `app/(app)/requests/page.tsx` | `2467:13610` |
+| `/bookings` | Bookings (role-specific screens) | `app/(app)/bookings/page.tsx` | `2467:13749` |
+| `/chat` | HAGEE Connections / HAGU Chat | `app/(app)/chat/page.tsx` | `2467:13855`, `2467:14477` |
+| `/calendar` | HAGU: availability calendar | `app/(app)/calendar/page.tsx` | `2467:14009` |
+| `/profile` | HAGEE profile | `app/(app)/profile/page.tsx` | To complete |
+| `/settings` | HAGU settings / profile | `app/(app)/settings/page.tsx` | `2467:14188` |
+| `/settings/transactions` | HAGU earnings & payouts | `app/(app)/settings/transactions/page.tsx` | `2467:14361` |
 | `/dev/flow` | Dev-only screen index | `app/dev/flow/page.tsx` | N/A |
 | `/dev/components` | Component library preview | `app/dev/components/page.tsx` | N/A |
 
@@ -98,7 +110,7 @@ Route constants: [`lib/routes.ts`](../lib/routes.ts)
 ### Select role (`/select-role`)
 
 - **Goal:** Branch onboarding by role
-- **Options:** HAGEE (book), HAGU (offer time)
+- **Options:** HAGEE (buyer — books companionship), HAGU (seller — offers time)
 - **API:** Store role on user record or session
 
 ### HAGEE onboarding (`/onboarding`)
@@ -110,7 +122,7 @@ Route constants: [`lib/routes.ts`](../lib/routes.ts)
 | 3 | Looking for | Activity grid, vibe pills |
 | 4 | About you | Photo, age, gender, city, one-liner |
 | 5 | Character | Min 3 traits |
-| 6 | Success | Start exploring → Discover |
+| 6 | Success | Start exploring → Home / Explore |
 
 ### HAGU onboarding (`/onboarding/hagu`)
 
@@ -126,10 +138,15 @@ Route constants: [`lib/routes.ts`](../lib/routes.ts)
 | 8 | Identity (Social) | Platform, handle | — |
 | 9 | Get Paid | Stripe Connect, PayPal | — |
 
-### Discover (`/discover`)
+### HAGEE Home & Explore
 
-- **HAGEE:** Companion cards, search/filter (TBD)
-- **HAGU:** Provider home — earnings card, next booking, new requests banner (`2467:19060`)
+- **Home (`/home`):** Active booking card, mood shortcuts, new arrivals
+- **Explore (`/explore`):** Companion swipe stack / browse
+- **API:** Companions, bookings, preferences
+
+### HAGU Home (`/discover`)
+
+- Provider home — earnings card, next booking, new requests banner (`2467:19060`)
 - **API:** Bookings, earnings, profile summary
 
 ### HAGU Provider App flow
@@ -148,11 +165,11 @@ Full screen list: [`lib/figma-flows.ts`](../lib/figma-flows.ts) → `HAGU_PROVID
 | Transactions | `2467:14361` | Balance, withdraw, history | `GET /earnings`, `POST /payout` |
 | Chat (thread) | `2467:14477` | Standard conversation | Messages API |
 
-**Nav mismatch:** Figma uses **Home · Bookings · Calendar · Settings**. Code uses **Discover · Bookings · Chat · Profile**. Align bottom nav to Figma when implementing.
+**Nav:** Figma HAGU uses **Home · Bookings · Calendar · Settings**. Code HAGU uses **Home · Bookings · Chat · Calendar · Settings**. HAGEE uses **Explore · Home · Connections · Profile**.
 
 ### Bookings / Chat / Profile (HAGEE)
 
-- HAGEE variants still TBD in Figma
+- HAGEE Connections (`/chat`), bookings via Connections tab, profile at `/profile`
 - **API:** Standard CRUD + real-time chat
 
 ---

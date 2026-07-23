@@ -15,7 +15,7 @@ type SaveMessage = { type: "email" | "password"; text: string } | null
 
 function defaultEmailForRole(): string {
   const role = getSession().role
-  return role === "hagu" ? HAGU_PROVIDER_PROFILE.email : HAGEE_DEFAULT_ACCOUNT_EMAIL
+  return role === "HAGU" ? HAGU_PROVIDER_PROFILE.email : HAGEE_DEFAULT_ACCOUNT_EMAIL
 }
 
 export function AccountSettingsScreen() {

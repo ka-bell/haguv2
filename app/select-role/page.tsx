@@ -16,12 +16,12 @@ const ROLES: { id: Role; title: string; description: string }[] = [
   {
     id: "HAGEE",
     title: "HAGEE",
-    description: "Book a HAGU for social activities and companionship.",
+    description: "I buy companionship — book a HAGU for shared time.",
   },
   {
     id: "HAGU",
     title: "HAGU",
-    description: "Offer my time and receive bookings.",
+    description: "I sell my time — offer services and receive bookings.",
   },
 ]
 
@@ -52,7 +52,9 @@ export default function SelectRolePage() {
       <div className="space-y-5">
         <div>
           <h1 className="hagu-page-title">Pick one</h1>
-          <p className="mt-1 text-sm font-light text-hagu-text-secondary">How do you want to use HAGU?</p>
+          <p className="mt-1 text-sm font-light text-hagu-text-secondary">
+            HAGEE buys companionship. HAGU sells time.
+          </p>
         </div>
 
         <div className="space-y-2.5">

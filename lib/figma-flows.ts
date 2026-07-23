@@ -251,10 +251,11 @@ export const NAV_MAPPING = {
     { tab: "Settings", icon: "user", screens: ["Settings / Profile", "Transactions"] },
   ],
   code: [
-    { tab: "Discover", route: "/discover", mapsTo: "Home (Provider Home)" },
+    { tab: "Home", route: "/discover", mapsTo: "Home (Provider Home)" },
     { tab: "Bookings", route: "/bookings", mapsTo: "Bookings" },
+    { tab: "Chat", route: "/chat", mapsTo: "Chat inbox" },
     { tab: "Calendar", route: "/calendar", mapsTo: "Calendar / Availability" },
-    { tab: "Profile", route: "/profile", mapsTo: "Settings / Profile" },
+    { tab: "Settings", route: "/settings", mapsTo: "Settings / Profile" },
   ],
 } as const
 

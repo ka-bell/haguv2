@@ -1,3 +1,8 @@
+/**
+ * Audience roles (do not confuse with the product brand "HAGU"):
+ * - HAGEE — buyer / client: books and pays for companionship
+ * - HAGU  — seller / provider: offers time and receives bookings
+ */
 export type UserRole = "HAGEE" | "HAGU"
 
 export interface MockSession {

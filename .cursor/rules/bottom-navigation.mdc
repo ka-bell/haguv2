@@ -27,7 +27,7 @@ All tab definitions live in `lib/app-navigation.ts`:
 |-----|-------|-------|
 | explore | Explore | `/explore` |
 | home | Home | `/home` |
-| chat | Chat | `/chat` |
+| chat | Connections | `/chat` |
 | profile | Profile | `/profile` |
 
 Active tab: `hageeNavTabFromPathname(pathname)`

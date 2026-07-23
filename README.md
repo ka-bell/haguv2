@@ -2,6 +2,15 @@
 
 UI reference implementation for the HAGU companionship platform.
 
+## Audiences
+
+| Role | Meaning |
+|------|---------|
+| **HAGEE** | Buyer / client — books and pays for companionship |
+| **HAGU** | Seller / provider — offers time and receives bookings |
+
+The product brand is also named **HAGU**. Spelling of the buyer role is **HAGEE** (not HUGEE).
+
 ## Source of truth
 
 **Figma is the source of truth** for design, flows, and screen states.

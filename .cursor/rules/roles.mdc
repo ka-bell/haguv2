@@ -1,0 +1,26 @@
+---
+description: HAGU vs HAGEE audience roles — never swap buyer and seller
+globs:
+  - lib/session.ts
+  - lib/app-navigation.ts
+  - app/select-role/**
+  - app/onboarding/**
+  - docs/**
+---
+
+# Audience roles
+
+The product brand is **HAGU**. The two audiences are:
+
+| Role | Meaning | Code / folders | Primary routes |
+|------|---------|----------------|----------------|
+| **HAGEE** | Buyer / client — books and pays for companionship | `components/hagee`, `HAGEE_*` | `/home`, `/explore`, `/chat`, `/profile` |
+| **HAGU** | Seller / provider — offers time and receives bookings | `components/hagu` (also shared chrome), `HAGU_*` | `/discover`, `/bookings`, `/chat`, `/calendar`, `/settings` |
+
+## Rules
+
+1. Never describe HAGEE as a seller or HAGU as a buyer.
+2. Session type lives in `lib/session.ts` (`UserRole = "HAGEE" | "HAGU"`).
+3. Nav configs are separate: `HAGEE_BOTTOM_NAV` vs `HAGU_BOTTOM_NAV` in `lib/app-navigation.ts`.
+4. `/discover` is **HAGU provider home only**. HAGEE browse is `/explore`.
+5. Spelling is **HAGEE** (not HUGEE / Hugeе).

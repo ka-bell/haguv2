@@ -2,7 +2,9 @@ import type { UserRole } from "@/lib/session"
 import { ROUTES } from "@/lib/routes"
 
 /**
- * HAGEE (client) and HAGU (provider) are separate apps that share only auth shell.
+ * Two audiences that share only the auth shell (product brand is also "HAGU"):
+ * - HAGEE = buyer / client — books companionship
+ * - HAGU  = seller / provider — sells time and receives bookings
  *
  * HAGEE tabs: Explore · Home · Connections · Profile  →  /explore, /home, /chat, /profile
  * HAGU tabs:  Home · Bookings · Chat · Calendar · Settings  →  /discover, /bookings, /chat, /calendar, /settings
