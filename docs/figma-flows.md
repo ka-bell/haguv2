@@ -108,7 +108,7 @@ flowchart TD
 |------|--------|------------------------|------------------|
 | 1 | Intro | — | Default, carousel dots |
 | 2 | Profile Basics | `2468:19975` | Empty, filled, photo upload |
-| 3 | The Real You | — | Neighborhood, languages, character cards |
+| 3 | Background | — | Neighborhood, languages, how-you-show-up cards |
 | 4 | Rates & Logistics | `2468:20300` | Hosting pills, rate inputs |
 | 5 | Activity Menu | — | Toggles on/off, included vs extra |
 | 6 | Availability | — | Days, time preferences |

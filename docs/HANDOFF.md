@@ -130,7 +130,7 @@ Route constants: [`lib/routes.ts`](../lib/routes.ts)
 |------|-------|----------------------|-----------|
 | 1 | Intro | Become a Hagu | — |
 | 2 | Profile Basics | Photo, display name, tagline, age, sex | `2468:19975` |
-| 3 | The Real You | Neighborhood, languages, character (min 2) | — |
+| 3 | Background | Neighborhood, languages, how you show up (min 2) | — |
 | 4 | Rates & Logistics | Hosting, hourly rates (1–4 hr) | `2468:20300` |
 | 5 | Activity Menu | Activities, included/extra pricing | — |
 | 6 | Availability | Weekdays, time preferences | — |

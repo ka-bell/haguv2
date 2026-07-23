@@ -7,6 +7,7 @@ import { Camera, ChevronRight, Plus } from "lucide-react"
 import { HaguFlowScreen } from "@/components/hagu/hagu-flow-screen"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { Select } from "@/components/ui/select"
 import { SegmentedPillGroup } from "@/components/ui/segmented-pill-group"
 import { ROUTES } from "@/lib/routes"
 import { selectionCardClass, selectionRowClass } from "@/lib/hagu-selection-styles"
@@ -20,6 +21,7 @@ import {
   DEFAULT_ACTIVITY_IDS,
   HOSTING_OPTIONS,
   LANGUAGE_OPTIONS,
+  SEX_OPTIONS,
   TIME_PREFERENCES,
   WEEKDAYS,
   type HaguStep,
@@ -52,10 +54,10 @@ export default function HaguOnboardingPage() {
   const [displayName, setDisplayName] = useState("Anouk V.")
   const [tagline, setTagline] = useState("")
   const [age, setAge] = useState("28")
-  const [sex, setSex] = useState("Male")
+  const [sex, setSex] = useState("Female")
   const [neighborhood, setNeighborhood] = useState("De Pijp, Amsterdam")
   const [languages, setLanguages] = useState<string[]>(["English", "Dutch"])
-  const [characters, setCharacters] = useState<string[]>(["night-owl", "deep-diver"])
+  const [characters, setCharacters] = useState<string[]>(["deep-talks", "local-radar"])
   const [hosting, setHosting] = useState<string[]>(["hosting", "visiting"])
   const [rates, setRates] = useState({ one: "60", two: "95", three: "130", four: "160" })
   const [activityItems, setActivityItems] = useState<ActivityMenuItem[]>(() =>
@@ -169,25 +171,15 @@ export default function HaguOnboardingPage() {
       <div className="relative -mx-6 -mt-2 h-[min(52vh,420px)] overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-hagu-canvas via-white to-[#FEFFFF]" />
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#FEFFFF] to-transparent" />
-        <div className="absolute bottom-10 left-8 flex items-center gap-3 rounded-2xl border border-white/40 bg-white/30 px-4 py-2.5 backdrop-blur-xl">
-          <div className="flex size-8 items-center justify-center rounded-xl bg-hagu-canvas">
-            <span className="text-sm">📍</span>
-          </div>
-          <div>
-            <p className="text-sm font-medium text-[#2D1012]">Amsterdam</p>
-            <p className="text-xs text-[#8a8a96]">Provider onboarding</p>
-          </div>
-        </div>
       </div>
 
       <div className="mt-6 space-y-4">
         <h1 className="text-[2rem] font-semibold leading-tight tracking-tight text-[#2D1012]">
-          Share your time.
-          <br />
-          Earn on your terms.
+          Join our Hagu community today.
         </h1>
         <p className="text-sm leading-relaxed text-[#8a8a96]">
-          Become a Hagu in Amsterdam. Get paid to attend events, share meals, or simply provide great conversation.
+          Become a Hagu in Amsterdam. Get paid to attend events, provide companionship, share meals, or
+          simply for a nice conversation.
         </p>
         <span className="inline-flex rounded-full border border-hagu-border bg-hagu-canvas px-3 py-0.5 text-[11px] font-semibold tracking-wide text-hagu-ink">
           1 of 9
@@ -215,9 +207,20 @@ export default function HaguOnboardingPage() {
 
       <div className="space-y-4 py-2">
         <Input label="Display Name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
-        <Input label="Tagline" value={tagline} onChange={(e) => setTagline(e.target.value)} placeholder="e.g. Art lover & great listener" />
+        <Input
+          label="Tagline"
+          value={tagline}
+          onChange={(e) => setTagline(e.target.value)}
+          placeholder="e.g. by a blink of an eye time goes by."
+        />
         <Input label="Age" value={age} onChange={(e) => setAge(e.target.value)} />
-        <Input label="Sex" value={sex} onChange={(e) => setSex(e.target.value)} />
+        <Select
+          label="Sex"
+          placeholder="Select sex"
+          options={SEX_OPTIONS}
+          value={sex}
+          onChange={setSex}
+        />
       </div>
     </div>
   )
@@ -225,8 +228,10 @@ export default function HaguOnboardingPage() {
   const renderTheRealYou = () => (
     <div className="space-y-6">
       <div>
-        <h1 className="text-[26px] font-semibold tracking-tight text-[#1A1A1E]">The Real You</h1>
-        <p className="mt-1 text-sm font-light text-[#8A8A96]">What makes you a little different? Pick the ones that feel true.</p>
+        <h1 className="text-[26px] font-semibold tracking-tight text-[#1A1A1E]">Background</h1>
+        <p className="mt-1 text-sm font-light text-[#8A8A96]">
+          A little context so clients know who they&apos;re booking. Pick at least two that feel true.
+        </p>
       </div>
 
       <div className="space-y-2">
@@ -240,7 +245,7 @@ export default function HaguOnboardingPage() {
       </div>
 
       <div className="space-y-3">
-        <SectionLabel>Your Character</SectionLabel>
+        <SectionLabel>How you show up</SectionLabel>
         <div className="grid grid-cols-2 gap-3">
           {CHARACTER_OPTIONS.map((option) => (
             <CharacterCard

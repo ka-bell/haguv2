@@ -5,6 +5,7 @@ import { PAGE_HAGEE_FLOW_HEADER_OFFSET } from "@/components/ui/page-shell"
 import { ScreenLayout } from "@/components/ui/screen-layout"
 import {
   SCREEN_FOOTER_SCROLL_PAD_COMPACT,
+  SCREEN_FOOTER_SCROLL_PAD_LINK,
   SCREEN_FOOTER_SCROLL_PAD_PROGRESS,
   SCREEN_FOOTER_SCROLL_PAD_PROGRESS_NOTE,
   SCREEN_FOOTER_SCROLL_PAD_PROGRESS_TALL,
@@ -60,9 +61,11 @@ export function HageeFlowScreen({
       : secondaryAction
         ? SCREEN_FOOTER_SCROLL_PAD_PROGRESS_TALL
         : SCREEN_FOOTER_SCROLL_PAD_PROGRESS
-    : isCompactCta
-      ? SCREEN_FOOTER_SCROLL_PAD_COMPACT
-      : undefined
+    : footerNote
+      ? SCREEN_FOOTER_SCROLL_PAD_LINK
+      : isCompactCta
+        ? SCREEN_FOOTER_SCROLL_PAD_COMPACT
+        : undefined
 
   const pinnedFooter = usesProgressFooter ? (
     <HageeFlowProgressFooter
@@ -74,7 +77,14 @@ export function HageeFlowScreen({
       footerNote={footerNote}
     />
   ) : (
-    <HaguFlowCta label={ctaLabel} onClick={onCta} disabled={ctaDisabled} variant={ctaVariant} />
+    <HaguFlowCta
+      label={ctaLabel}
+      onClick={onCta}
+      disabled={ctaDisabled}
+      variant={ctaVariant}
+      extras={footerNote}
+      extrasSize="link"
+    />
   )
 
   return (

@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react"
-import { Briefcase, Phone, Sparkles, UtensilsCrossed } from "lucide-react"
+import { Heart, MessageCircle, Sparkles, UtensilsCrossed } from "lucide-react"
 
 export type HageeActiveBooking = {
   id: string
@@ -55,21 +55,21 @@ export const HAGEE_ACTIVE_BOOKING: HageeActiveBooking = {
 export const HAGEE_MOOD_OPTIONS: HageeMoodOption[] = [
   {
     id: "dinner",
-    title: "Dinner Date",
-    subtitle: "Fine dining & conversation",
+    title: "Meal",
+    subtitle: "Dining & chat",
     icon: UtensilsCrossed,
   },
   {
     id: "event",
-    title: "Social Event",
-    subtitle: "Galas, parties & mixers",
-    icon: Briefcase,
+    title: "Companionship",
+    subtitle: "Book a cuddle, or two",
+    icon: Heart,
   },
   {
     id: "chat",
-    title: "Just Chat",
-    subtitle: "Coffee & good talk",
-    icon: Phone,
+    title: "Just chat",
+    subtitle: "Creative or deep chats",
+    icon: MessageCircle,
   },
   {
     id: "surprise",

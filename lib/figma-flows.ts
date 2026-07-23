@@ -231,7 +231,7 @@ export const AUTH_ONBOARDING_FLOWS: FigmaFlow[] = [
     screens: [
       { id: "intro", name: "Intro", figmaNodeId: "2424:11787", route: "/onboarding/hagu" },
       { id: "profile-basics", name: "Profile Basics", figmaNodeId: "2468:19975", route: "/onboarding/hagu", codePath: "app/onboarding/hagu/page.tsx" },
-      { id: "the-real-you", name: "The Real You", figmaNodeId: "2424:11787", route: "/onboarding/hagu" },
+      { id: "background", name: "Background", figmaNodeId: "2424:11787", route: "/onboarding/hagu" },
       { id: "rates", name: "Rates & Logistics", figmaNodeId: "2468:20300", route: "/onboarding/hagu" },
       { id: "activity-menu", name: "Activity Menu", figmaNodeId: "2424:11787", route: "/onboarding/hagu" },
       { id: "availability", name: "Availability", figmaNodeId: "2424:11787", route: "/onboarding/hagu" },

@@ -135,9 +135,9 @@ export default function HageeOnboardingPage() {
   }
 
   const progressSegments = (() => {
-    if (step === 1) return { active: 1, total: 3 }
-    if (step === 6) return { active: 5, total: 5 }
-    if (step >= 2 && step <= 5) return { active: step - 1, total: 5 }
+    if (editMode) return undefined
+    // Intro counts as step 1 of the full HAGEE flow (same pattern as HAGU onboarding).
+    if (step >= 1 && step <= 6) return { active: step, total: 6 }
     return undefined
   })()
 
@@ -154,9 +154,6 @@ export default function HageeOnboardingPage() {
       </div>
 
       <div className="mt-7 space-y-4">
-        <span className="inline-flex rounded-full border border-hagu-border bg-hagu-canvas px-3 py-0.5 text-[11px] font-semibold tracking-wide text-hagu-ink">
-          1 of 3
-        </span>
         <h1 className="hagu-page-title leading-tight">
           Real people.
           <br />
@@ -166,6 +163,9 @@ export default function HageeOnboardingPage() {
           Hagu connects you with thoughtful, vetted companions for shared experiences — a meal, a walk, a
           conversation that actually goes somewhere.
         </p>
+        <span className="inline-flex rounded-full border border-hagu-border bg-hagu-canvas px-3 py-0.5 text-[11px] font-semibold tracking-wide text-hagu-ink">
+          1 of 6
+        </span>
       </div>
     </>
   )
