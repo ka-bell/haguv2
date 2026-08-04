@@ -476,3 +476,259 @@ export interface DisputeResolution {
   refund_amount_cents?: number
   refund_to?: "hagee" | "hagu" | "split"
 }
+
+// ============================================================================
+// Content Moderation Types
+// ============================================================================
+
+export type ReviewStatus = "pending" | "approved" | "rejected"
+export type ReportStatus = "open" | "under_review" | "resolved" | "dismissed"
+export type ReportReason = "inappropriate_content" | "harassment" | "spam" | "fake_review" | "fraud" | "other"
+export type ModerationAction = "approve" | "reject" | "flag" | "unflag" | "warn" | "ban"
+
+export interface Review {
+  id: number
+  uuid: string
+  booking_id: number
+  booking?: Booking
+  hagee_id: number
+  hagee?: User
+  hagu_id: number
+  hagu?: User
+  rating: number
+  title: string | null
+  content: string
+  status: ReviewStatus
+  is_flagged: boolean
+  flag_reason: string | null
+  flagged_at: string | null
+  flagged_by: number | null
+  moderated_at: string | null
+  moderated_by: number | null
+  moderation_notes: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface ReviewFilters {
+  search?: string
+  status?: ReviewStatus | "all"
+  rating?: number | "all"
+  hagee_id?: number
+  hagu_id?: number
+  is_flagged?: boolean
+  date_from?: string
+  date_to?: string
+  page?: number
+  per_page?: number
+}
+
+export interface Report {
+  id: number
+  uuid: string
+  reporter_id: number
+  reporter?: User
+  target_type: "review" | "profile" | "message" | "booking"
+  target_id: number
+  reason: ReportReason
+  description: string
+  status: ReportStatus
+  assigned_to: number | null
+  assigned_admin?: AdminUser
+  resolution_notes: string | null
+  resolved_at: string | null
+  resolved_by: number | null
+  created_at: string
+  updated_at: string
+}
+
+export interface ReportFilters {
+  search?: string
+  status?: ReportStatus | "all"
+  reason?: ReportReason | "all"
+  target_type?: "review" | "profile" | "message" | "booking" | "all"
+  assigned_to?: number
+  date_from?: string
+  date_to?: string
+  page?: number
+  per_page?: number
+}
+
+export interface ModerationActionRequest {
+  action: ModerationAction
+  reason?: string
+  notes?: string
+  duration_days?: number // for bans
+}
+
+export interface FlaggedContent {
+  id: number
+  content_type: "review" | "profile" | "message"
+  content_id: number
+  content_preview: string
+  flagged_by: number
+  flagged_by_user?: User
+  flag_reason: string
+  created_at: string
+}
+
+// ============================================================================
+// Platform Settings Types
+// ============================================================================
+
+export interface PlatformSettings {
+  general: GeneralSettings
+  service_rates: ServiceRates
+  booking_settings: BookingSettings
+  notifications: NotificationSettings
+}
+
+export interface GeneralSettings {
+  platform_name: string
+  support_email: string
+  support_phone: string | null
+  default_language: string
+  default_currency: string
+  maintenance_mode: boolean
+  maintenance_message: string | null
+  terms_version: string
+  privacy_version: string
+}
+
+export interface ServiceRates {
+  platform_fee_percent: number
+  minimum_booking_amount_cents: number
+  hagu_payout_delay_days: number
+  stripe_connect_enabled: boolean
+  payment_methods: string[]
+}
+
+export interface BookingSettings {
+  min_advance_booking_hours: number
+  max_advance_booking_days: number
+  cancellation_policy_hours: number
+  reschedule_policy_hours: number
+  auto_confirm_bookings: boolean
+  require_verified_hagu: boolean
+}
+
+export interface NotificationSettings {
+  admin_email_alerts: boolean
+  new_user_alert: boolean
+  dispute_alert: boolean
+  high_value_booking_threshold_cents: number
+}
+
+export interface Category {
+  id: number
+  slug: string
+  name: string
+  description: string | null
+  icon: string | null
+  is_active: boolean
+  sort_order: number
+  created_at: string
+  updated_at: string
+}
+
+export interface Tag {
+  id: number
+  slug: string
+  name: string
+  description: string | null
+  color: string | null
+  is_active: boolean
+  usage_count: number
+  created_at: string
+  updated_at: string
+}
+
+// ============================================================================
+// Support & Escalation Types
+// ============================================================================
+
+export type SupportTicketStatus = "open" | "in_progress" | "waiting" | "resolved" | "closed"
+export type SupportTicketPriority = "low" | "medium" | "high" | "urgent"
+export type WarningLevel = "minor" | "moderate" | "severe"
+export type BanType = "temporary" | "permanent"
+
+export interface SupportTicket {
+  id: number
+  uuid: string
+  user_id: number
+  user?: User
+  subject: string
+  description: string
+  status: SupportTicketStatus
+  priority: SupportTicketPriority
+  category: string
+  assigned_to: number | null
+  assigned_admin?: AdminUser
+  resolution_notes: string | null
+  resolved_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface SupportTicketFilters {
+  search?: string
+  status?: SupportTicketStatus | "all"
+  priority?: SupportTicketPriority | "all"
+  category?: string
+  assigned_to?: number | "unassigned" | "me"
+  date_from?: string
+  date_to?: string
+  page?: number
+  per_page?: number
+}
+
+export interface SupportTicketReply {
+  id: number
+  ticket_id: number
+  author_id: number
+  author?: AdminUser | User
+  is_internal: boolean
+  message: string
+  created_at: string
+}
+
+export interface UserWarning {
+  id: number
+  user_id: number
+  user?: User
+  level: WarningLevel
+  reason: string
+  details: string | null
+  issued_by: number
+  issued_by_admin?: AdminUser
+  expires_at: string | null
+  acknowledged_at: string | null
+  created_at: string
+}
+
+export interface UserBan {
+  id: number
+  user_id: number
+  user?: User
+  type: BanType
+  reason: string
+  details: string | null
+  issued_by: number
+  issued_by_admin?: AdminUser
+  expires_at: string | null
+  revoked_at: string | null
+  revoked_by: number | null
+  revoked_reason: string | null
+  created_at: string
+}
+
+export interface EscalationRule {
+  id: number
+  name: string
+  condition: string
+  action: string
+  is_active: boolean
+  priority: number
+  created_at: string
+  updated_at: string
+}
