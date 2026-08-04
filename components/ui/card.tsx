@@ -10,6 +10,10 @@ function Card({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
+  return <div className={cn("flex flex-col gap-1.5", className)} {...props} />
+}
+
 function CardTitle({ className, ...props }: React.ComponentProps<"h3">) {
   return <h3 className={cn("text-lg font-semibold text-[#2D1012]", className)} {...props} />
 }
@@ -18,4 +22,8 @@ function CardDescription({ className, ...props }: React.ComponentProps<"p">) {
   return <p className={cn("text-sm text-[#8a8a96]", className)} {...props} />
 }
 
-export { Card, CardTitle, CardDescription }
+function CardContent({ className, ...props }: React.ComponentProps<"div">) {
+  return <div className={cn("pt-0", className)} {...props} />
+}
+
+export { Card, CardHeader, CardTitle, CardDescription, CardContent }
