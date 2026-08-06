@@ -1,0 +1,1253 @@
+openapi: 3.0.3
+info:
+  title: Hagu API
+  description: |
+    Laravel backend voor het Hagu companionship platform.
+    Vervangt alle localStorage-mocks uit haguv2.
+  version: 1.0.0
+  contact:
+    name: KBPM Dev
+    url: https://github.com/ka-bell/hagu-api
+servers:
+  - url: https://api.hagutheapp.com/api/v1
+    description: Production
+  - url: http://localhost:8000/api/v1
+    description: Local development
+tags:
+  - name: Auth
+  - name: Onboarding
+  - name: Profiles
+  - name: Bookings
+  - name: Chat
+  - name: Availability
+  - name: Reviews
+  - name: Payments
+  - name: Uploads
+
+paths:
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, password_confirmation, role]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string, minLength: 8 }
+                password_confirmation: { type: string }
+                role: { type: string, enum: [HAGEE, HAGU] }
+                first_name: { type: string }
+                last_name: { type: string }
+      responses:
+        201:
+          description: User created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      user: { $ref: '#/components/schemas/User' }
+                      token: { type: string }
+        422: { $ref: '#/components/responses/ValidationError' }
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string }
+                device_name: { type: string, default: web }
+      responses:
+        200:
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      user: { $ref: '#/components/schemas/User' }
+                      token: { type: string }
+        401:
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Logout user
+      security: [{ sanctum: [] }]
+      responses:
+        200:
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+
+  /auth/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Send password reset link
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+      responses:
+        200:
+          description: Reset link sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+
+  /auth/reset-password:
+    post:
+      tags: [Auth]
+      summary: Reset password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, email, password, password_confirmation]
+              properties:
+                token: { type: string }
+                email: { type: string, format: email }
+                password: { type: string, minLength: 8 }
+                password_confirmation: { type: string }
+      responses:
+        200:
+          description: Password reset
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+
+  /auth/google/redirect:
+    get:
+      tags: [Auth]
+      summary: Redirect to Google OAuth
+      parameters:
+        - name: role
+          in: query
+          schema: { type: string, enum: [HAGEE, HAGU] }
+      responses:
+        302:
+          description: Redirect to Google
+          headers:
+            Location: { schema: { type: string } }
+
+  /auth/google/callback:
+    get:
+      tags: [Auth]
+      summary: Google OAuth callback
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema: { type: string }
+        - name: state
+          in: query
+          schema: { type: string }
+      responses:
+        200:
+          description: OAuth success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      user: { $ref: '#/components/schemas/User' }
+                      token: { type: string }
+                      is_new_user: { type: boolean }
+
+  /onboarding/hagee:
+    post:
+      tags: [Onboarding]
+      summary: Save HAGEE onboarding progress
+      security: [{ sanctum: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                step: { type: integer, minimum: 1, maximum: 6 }
+                preferences:
+                  type: object
+                  properties:
+                    activities: { type: array, items: { type: string } }
+                    vibe: { type: string }
+                    budget_min: { type: integer }
+                    budget_max: { type: integer }
+                profile:
+                  type: object
+                  properties:
+                    first_name: { type: string }
+                    last_name: { type: string }
+                    date_of_birth: { type: string, format: date }
+                    bio: { type: string }
+                character:
+                  type: object
+                  properties:
+                    interests: { type: array, items: { type: string } }
+                    conversation_topics: { type: array, items: { type: string } }
+      responses:
+        200:
+          description: Progress saved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      step: { type: integer }
+                      completed: { type: boolean }
+                      profile: { $ref: '#/components/schemas/Profile' }
+
+  /onboarding/hagu:
+    post:
+      tags: [Onboarding]
+      summary: Save HAGU onboarding progress
+      security: [{ sanctum: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                step: { type: integer, minimum: 1, maximum: 9 }
+                profile:
+                  type: object
+                  properties:
+                    first_name: { type: string }
+                    last_name: { type: string }
+                    date_of_birth: { type: string, format: date }
+                    bio: { type: string }
+                    tagline: { type: string }
+                background:
+                  type: object
+                  properties:
+                    occupation: { type: string }
+                    education: { type: string }
+                    languages: { type: array, items: { type: string } }
+                rates:
+                  type: object
+                  properties:
+                    services:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          service_id: { type: integer }
+                          price_cents: { type: integer }
+                          duration_minutes: { type: integer }
+                activities:
+                  type: object
+                  properties:
+                    service_ids: { type: array, items: { type: integer } }
+                availability:
+                  type: object
+                  properties:
+                    slots:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          day_of_week: { type: integer, minimum: 0, maximum: 6 }
+                          start_time: { type: string, format: time }
+                          end_time: { type: string, format: time }
+                verification:
+                  type: object
+                  properties:
+                    kyc_session_url: { type: string }
+                social:
+                  type: object
+                  properties:
+                    instagram: { type: string }
+                    twitter: { type: string }
+                payout:
+                  type: object
+                  properties:
+                    stripe_account_id: { type: string }
+      responses:
+        200:
+          description: Progress saved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      step: { type: integer }
+                      completed: { type: boolean }
+                      profile: { $ref: '#/components/schemas/Profile' }
+
+  /profiles/me:
+    get:
+      tags: [Profiles]
+      summary: Get own profile
+      security: [{ sanctum: [] }]
+      responses:
+        200:
+          description: Own profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/Profile' }
+    patch:
+      tags: [Profiles]
+      summary: Update own profile
+      security: [{ sanctum: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileUpdate'
+      responses:
+        200:
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/Profile' }
+
+  /companions:
+    get:
+      tags: [Profiles]
+      summary: Browse companions (HAGU profiles)
+      parameters:
+        - name: vibe
+          in: query
+          schema: { type: string }
+        - name: interests
+          in: query
+          schema: { type: string }
+        - name: available_on
+          in: query
+          schema: { type: string, format: date }
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: per_page
+          in: query
+          schema: { type: integer, default: 20, maximum: 50 }
+      responses:
+        200:
+          description: List of companions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/CompanionSummary' }
+                  meta: { $ref: '#/components/schemas/PaginationMeta' }
+
+  /companions/{id}:
+    get:
+      tags: [Profiles]
+      summary: Get companion detail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: Companion detail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/CompanionDetail' }
+        404: { $ref: '#/components/responses/NotFound' }
+
+  /bookings:
+    post:
+      tags: [Bookings]
+      summary: Create booking
+      security: [{ sanctum: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [hagu_profile_id, service_id, scheduled_date, scheduled_start_time, duration_hours]
+              properties:
+                hagu_profile_id: { type: integer }
+                service_id: { type: integer }
+                scheduled_date: { type: string, format: date }
+                scheduled_start_time: { type: string, format: time }
+                duration_hours: { type: number }
+                vibe: { type: string }
+                message: { type: string }
+      responses:
+        201:
+          description: Booking created (draft)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/Booking' }
+    get:
+      tags: [Bookings]
+      summary: List own bookings
+      security: [{ sanctum: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [pending, confirmed, completed, cancelled, declined, expired] }
+        - name: role
+          in: query
+          schema: { type: string, enum: [hagee, hagu] }
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+      responses:
+        200:
+          description: List of bookings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Booking' }
+                  meta: { $ref: '#/components/schemas/PaginationMeta' }
+
+  /bookings/{id}:
+    get:
+      tags: [Bookings]
+      summary: Get booking detail
+      security: [{ sanctum: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: Booking detail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/BookingDetail' }
+        404: { $ref: '#/components/responses/NotFound' }
+
+  /bookings/{id}/pay:
+    post:
+      tags: [Bookings]
+      summary: Start payment for booking
+      security: [{ sanctum: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [payment_method_id]
+              properties:
+                payment_method_id: { type: string }
+      responses:
+        200:
+          description: Payment intent created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      client_secret: { type: string }
+                      payment_intent_id: { type: string }
+                      status: { type: string }
+
+  /bookings/{id}/accept:
+    post:
+      tags: [Bookings]
+      summary: Accept booking (HAGU only)
+      security: [{ sanctum: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: Booking accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/Booking' }
+        403: { $ref: '#/components/responses/Forbidden' }
+        409:
+          description: Booking already accepted/expired
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /bookings/{id}/decline:
+    post:
+      tags: [Bookings]
+      summary: Decline booking (HAGU only)
+      security: [{ sanctum: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason: { type: string }
+      responses:
+        200:
+          description: Booking declined
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/Booking' }
+
+  /bookings/{id}/cancel:
+    post:
+      tags: [Bookings]
+      summary: Cancel booking
+      security: [{ sanctum: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason: { type: string }
+      responses:
+        200:
+          description: Booking cancelled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/Booking' }
+
+  /bookings/{id}/reschedule:
+    post:
+      tags: [Bookings]
+      summary: Propose reschedule
+      security: [{ sanctum: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [scheduled_date, scheduled_start_time]
+              properties:
+                scheduled_date: { type: string, format: date }
+                scheduled_start_time: { type: string, format: time }
+                reason: { type: string }
+      responses:
+        200:
+          description: Reschedule proposed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/Booking' }
+
+  /bookings/{id}/complete:
+    post:
+      tags: [Bookings]
+      summary: Mark booking as completed
+      security: [{ sanctum: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: Booking completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/Booking' }
+
+  /bookings/{id}/review:
+    post:
+      tags: [Reviews]
+      summary: Review completed booking
+      security: [{ sanctum: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [rating_respectful, rating_conversation, rating_on_time]
+              properties:
+                rating_respectful: { type: integer, minimum: 1, maximum: 5 }
+                rating_conversation: { type: integer, minimum: 1, maximum: 5 }
+                rating_on_time: { type: integer, minimum: 1, maximum: 5 }
+                comment: { type: string }
+      responses:
+        201:
+          description: Review created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/Review' }
+
+  /threads:
+    get:
+      tags: [Chat]
+      summary: List chat threads
+      security: [{ sanctum: [] }]
+      responses:
+        200:
+          description: List of threads
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/ChatThread' }
+
+  /threads/{id}:
+    get:
+      tags: [Chat]
+      summary: Get thread with messages
+      security: [{ sanctum: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: Thread detail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/ChatThreadDetail' }
+
+  /threads/{id}/messages:
+    post:
+      tags: [Chat]
+      summary: Send message in thread
+      security: [{ sanctum: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [body]
+              properties:
+                body: { type: string }
+                type: { type: string, enum: [text, image], default: text }
+      responses:
+        201:
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/ChatMessage' }
+
+  /availability:
+    get:
+      tags: [Availability]
+      summary: Get own availability slots
+      security: [{ sanctum: [] }]
+      responses:
+        200:
+          description: Availability slots
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/AvailabilitySlot' }
+    put:
+      tags: [Availability]
+      summary: Bulk update availability slots
+      security: [{ sanctum: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [slots]
+              properties:
+                slots:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      day_of_week: { type: integer, minimum: 0, maximum: 6 }
+                      start_time: { type: string, format: time }
+                      end_time: { type: string, format: time }
+                      is_recurring: { type: boolean, default: true }
+                      specific_date: { type: string, format: date }
+      responses:
+        200:
+          description: Slots updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/AvailabilitySlot' }
+
+  /reviews/pending:
+    get:
+      tags: [Reviews]
+      summary: Get pending reviews
+      security: [{ sanctum: [] }]
+      responses:
+        200:
+          description: Pending reviews
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/PendingReview' }
+
+  /earnings:
+    get:
+      tags: [Payments]
+      summary: Get earnings overview (HAGU)
+      security: [{ sanctum: [] }]
+      responses:
+        200:
+          description: Earnings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/Earnings' }
+
+  /transactions:
+    get:
+      tags: [Payments]
+      summary: Get transaction history
+      security: [{ sanctum: [] }]
+      parameters:
+        - name: type
+          in: query
+          schema: { type: string, enum: [booking, payout, refund] }
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+      responses:
+        200:
+          description: Transactions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Transaction' }
+                  meta: { $ref: '#/components/schemas/PaginationMeta' }
+
+  /payouts:
+    post:
+      tags: [Payments]
+      summary: Request payout
+      security: [{ sanctum: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount_cents]
+              properties:
+                amount_cents: { type: integer, minimum: 100 }
+      responses:
+        201:
+          description: Payout initiated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/Payout' }
+
+  /payment-methods:
+    get:
+      tags: [Payments]
+      summary: List payment methods
+      security: [{ sanctum: [] }]
+      responses:
+        200:
+          description: Payment methods
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/PaymentMethod' }
+    post:
+      tags: [Payments]
+      summary: Add payment method
+      security: [{ sanctum: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [stripe_payment_method_id]
+              properties:
+                stripe_payment_method_id: { type: string }
+                is_default: { type: boolean, default: false }
+      responses:
+        201:
+          description: Payment method added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/PaymentMethod' }
+
+  /uploads:
+    post:
+      tags: [Uploads]
+      summary: Get signed upload URL
+      security: [{ sanctum: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [filename, content_type, type]
+              properties:
+                filename: { type: string }
+                content_type: { type: string }
+                type: { type: string, enum: [avatar, cover, gallery, document, chat] }
+      responses:
+        200:
+          description: Signed URL generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      upload_url: { type: string }
+                      file_url: { type: string }
+                      upload_id: { type: integer }
+
+components:
+  securitySchemes:
+    sanctum:
+      type: http
+      scheme: bearer
+      bearerFormat: token
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id: { type: integer }
+        uuid: { type: string }
+        email: { type: string }
+        role: { type: string, enum: [HAGEE, HAGU] }
+        email_verified_at: { type: string, format: date-time, nullable: true }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    Profile:
+      type: object
+      properties:
+        id: { type: integer }
+        user_id: { type: integer }
+        type: { type: string, enum: [hagee, hagu] }
+        first_name: { type: string }
+        last_name: { type: string }
+        date_of_birth: { type: string, format: date }
+        bio: { type: string, nullable: true }
+        tagline: { type: string, nullable: true }
+        photo_url: { type: string, nullable: true }
+        photos: { type: array, items: { type: string } }
+        cover_image_url: { type: string, nullable: true }
+        response_time_label: { type: string, nullable: true }
+        is_verified: { type: boolean }
+        kyc_status: { type: string, enum: [pending, verified, rejected], nullable: true }
+        interests: { type: array, items: { type: string } }
+        vibe_tags: { type: array, items: { type: string } }
+        stripe_account_id: { type: string, nullable: true }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    ProfileUpdate:
+      type: object
+      properties:
+        first_name: { type: string }
+        last_name: { type: string }
+        bio: { type: string }
+        tagline: { type: string }
+        interests: { type: array, items: { type: string } }
+        vibe_tags: { type: array, items: { type: string } }
+
+    CompanionSummary:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        age: { type: integer }
+        photo: { type: string }
+        cover_image: { type: string }
+        rating: { type: number }
+        verified: { type: boolean }
+        availability_label: { type: string }
+        role: { type: string }
+        tagline: { type: string }
+        response_time: { type: string }
+        interests: { type: array, items: { type: string } }
+        vibe_tags: { type: array, items: { type: string } }
+
+    CompanionDetail:
+      allOf:
+        - $ref: '#/components/schemas/CompanionSummary'
+        - type: object
+          properties:
+            bio: { type: string }
+            photos: { type: array, items: { type: string } }
+            services:
+              type: array
+              items:
+                type: object
+                properties:
+                  id: { type: integer }
+                  label: { type: string }
+                  duration: { type: string }
+                  price: { type: string }
+
+    Booking:
+      type: object
+      properties:
+        id: { type: integer }
+        uuid: { type: string }
+        booking_number: { type: string }
+        hagee_profile: { $ref: '#/components/schemas/ProfileSummary' }
+        hagu_profile: { $ref: '#/components/schemas/ProfileSummary' }
+        service:
+          type: object
+          properties:
+            id: { type: integer }
+            label: { type: string }
+            duration: { type: string }
+            price: { type: string }
+        scheduled_date: { type: string, format: date }
+        scheduled_start_time: { type: string, format: time }
+        scheduled_end_time: { type: string, format: time }
+        duration_hours: { type: number }
+        vibe: { type: string, nullable: true }
+        message: { type: string, nullable: true }
+        amount: { type: string }
+        amount_cents: { type: integer }
+        platform_fee_cents: { type: integer }
+        payout_cents: { type: integer }
+        status: { type: string, enum: [draft, pending_payment, escrow_held, accepted, declined, expired, confirmed, completed, reviewed, paid_out, cancelled, refunded] }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    BookingDetail:
+      allOf:
+        - $ref: '#/components/schemas/Booking'
+        - type: object
+          properties:
+            status_history:
+              type: array
+              items:
+                type: object
+                properties:
+                  from_status: { type: string }
+                  to_status: { type: string }
+                  changed_by: { type: string }
+                  notes: { type: string, nullable: true }
+                  created_at: { type: string, format: date-time }
+            thread_id: { type: integer, nullable: true }
+
+    ProfileSummary:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        photo: { type: string }
+        role: { type: string }
+
+    ChatThread:
+      type: object
+      properties:
+        id: { type: integer }
+        uuid: { type: string }
+        booking_id: { type: integer }
+        other_participant: { $ref: '#/components/schemas/ProfileSummary' }
+        last_message:
+          type: object
+          properties:
+            body: { type: string }
+            time: { type: string }
+            sender: { type: string }
+        unread_count: { type: integer }
+        booking_bar:
+          type: object
+          properties:
+            activity: { type: string }
+            date: { type: string }
+            price: { type: string }
+        status: { type: string }
+        created_at: { type: string, format: date-time }
+
+    ChatThreadDetail:
+      allOf:
+        - $ref: '#/components/schemas/ChatThread'
+        - type: object
+          properties:
+            messages:
+              type: array
+              items: { $ref: '#/components/schemas/ChatMessage' }
+
+    ChatMessage:
+      type: object
+      properties:
+        id: { type: integer }
+        thread_id: { type: integer }
+        sender: { $ref: '#/components/schemas/ProfileSummary' }
+        type: { type: string, enum: [incoming, outgoing, system] }
+        body: { type: string }
+        time: { type: string }
+        read_at: { type: string, format: date-time, nullable: true }
+        created_at: { type: string, format: date-time }
+
+    AvailabilitySlot:
+      type: object
+      properties:
+        id: { type: integer }
+        day_of_week: { type: integer, minimum: 0, maximum: 6 }
+        start_time: { type: string, format: time }
+        end_time: { type: string, format: time }
+        is_recurring: { type: boolean }
+        specific_date: { type: string, format: date, nullable: true }
+
+    Review:
+      type: object
+      properties:
+        id: { type: integer }
+        booking_id: { type: integer }
+        reviewer: { $ref: '#/components/schemas/ProfileSummary' }
+        reviewee: { $ref: '#/components/schemas/ProfileSummary' }
+        rating_respectful: { type: integer }
+        rating_conversation: { type: integer }
+        rating_on_time: { type: integer }
+        comment: { type: string, nullable: true }
+        created_at: { type: string, format: date-time }
+
+    PendingReview:
+      type: object
+      properties:
+        id: { type: string }
+        booking_id: { type: integer }
+        name: { type: string }
+        title: { type: string }
+        date: { type: string }
+        avatar: { type: string }
+
+    Earnings:
+      type: object
+      properties:
+        total_earned_cents: { type: integer }
+        pending_payout_cents: { type: integer }
+        available_balance_cents: { type: integer }
+        this_month_cents: { type: integer }
+        last_month_cents: { type: integer }
+        total_bookings: { type: integer }
+        completed_bookings: { type: integer }
+
+    Transaction:
+      type: object
+      properties:
+        id: { type: integer }
+        type: { type: string, enum: [booking, payout, refund] }
+        amount_cents: { type: integer }
+        status: { type: string }
+        description: { type: string }
+        created_at: { type: string, format: date-time }
+
+    Payout:
+      type: object
+      properties:
+        id: { type: integer }
+        amount_cents: { type: integer }
+        status: { type: string, enum: [pending, paid, failed] }
+        period_start: { type: string, format: date }
+        period_end: { type: string, format: date }
+        processed_at: { type: string, format: date-time, nullable: true }
+
+    PaymentMethod:
+      type: object
+      properties:
+        id: { type: integer }
+        type: { type: string, enum: [card, ideal, apple_pay] }
+        last_four: { type: string }
+        brand: { type: string, nullable: true }
+        is_default: { type: boolean }
+        expires_at: { type: string, format: date, nullable: true }
+
+    PaginationMeta:
+      type: object
+      properties:
+        current_page: { type: integer }
+        last_page: { type: integer }
+        per_page: { type: integer }
+        total: { type: integer }
+
+    Error:
+      type: object
+      properties:
+        message: { type: string }
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items: { type: string }
+
+  responses:
+    ValidationError:
+      description: Validation failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Action not allowed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
