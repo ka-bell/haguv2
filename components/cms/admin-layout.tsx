@@ -9,7 +9,9 @@ import {
   Settings,
   LogOut,
   Shield,
-  UserCog,
+  Calendar,
+  ShieldCheck,
+  CreditCard,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -28,6 +30,21 @@ const navItems = [
     href: "/admin/users",
     label: "Users",
     icon: Users,
+  },
+  {
+    href: "/admin/bookings",
+    label: "Bookings",
+    icon: Calendar,
+  },
+  {
+    href: "/admin/kyc",
+    label: "KYC",
+    icon: ShieldCheck,
+  },
+  {
+    href: "/admin/payments",
+    label: "Payments",
+    icon: CreditCard,
   },
   {
     href: "/admin/auditlog",
