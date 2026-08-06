@@ -12,6 +12,9 @@ import {
   Calendar,
   ShieldCheck,
   CreditCard,
+  Star,
+  Flag,
+  Headphones,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -45,6 +48,21 @@ const navItems = [
     href: "/admin/payments",
     label: "Payments",
     icon: CreditCard,
+  },
+  {
+    href: "/admin/reviews",
+    label: "Reviews",
+    icon: Star,
+  },
+  {
+    href: "/admin/reports",
+    label: "Reports",
+    icon: Flag,
+  },
+  {
+    href: "/admin/support",
+    label: "Support",
+    icon: Headphones,
   },
   {
     href: "/admin/auditlog",

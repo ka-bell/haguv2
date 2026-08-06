@@ -1469,3 +1469,885 @@ export async function addBookingNoteMock(
   MOCK_BOOKING_NOTES.push(newNote)
   return newNote
 }
+
+// ============================================================================
+// Reviews API
+// ============================================================================
+
+export async function fetchReviews(
+  filters: import("./types").ReviewFilters = {}
+): Promise<PaginatedResponse<import("./types").Review>> {
+  const params = new URLSearchParams()
+  
+  if (filters.search) params.set("search", filters.search)
+  if (filters.status && filters.status !== "all") params.set("status", filters.status)
+  if (filters.rating && filters.rating !== "all") params.set("rating", String(filters.rating))
+  if (filters.hagee_id) params.set("hagee_id", String(filters.hagee_id))
+  if (filters.hagu_id) params.set("hagu_id", String(filters.hagu_id))
+  if (filters.is_flagged !== undefined) params.set("is_flagged", String(filters.is_flagged))
+  if (filters.date_from) params.set("date_from", filters.date_from)
+  if (filters.date_to) params.set("date_to", filters.date_to)
+  params.set("page", String(filters.page ?? 1))
+  params.set("per_page", String(filters.per_page ?? 20))
+  
+  const response = await apiRequest<{ data: PaginatedResponse<import("./types").Review> }>(
+    "/admin/reviews?" + params.toString()
+  )
+  
+  return response.data
+}
+
+export async function getReview(reviewId: number): Promise<import("./types").Review> {
+  const response = await apiRequest<{ data: import("./types").Review }>("/admin/reviews/" + reviewId)
+  return response.data
+}
+
+export async function moderateReview(
+  reviewId: number,
+  action: import("./types").ModerationActionRequest
+): Promise<import("./types").Review> {
+  const response = await apiRequest<{ data: import("./types").Review }>(
+    "/admin/reviews/" + reviewId + "/moderate",
+    {
+      method: "POST",
+      body: JSON.stringify(action),
+    }
+  )
+  return response.data
+}
+
+// ============================================================================
+// Reports API
+// ============================================================================
+
+export async function fetchReports(
+  filters: import("./types").ReportFilters = {}
+): Promise<PaginatedResponse<import("./types").Report>> {
+  const params = new URLSearchParams()
+  
+  if (filters.search) params.set("search", filters.search)
+  if (filters.status && filters.status !== "all") params.set("status", filters.status)
+  if (filters.reason && filters.reason !== "all") params.set("reason", filters.reason)
+  if (filters.target_type && filters.target_type !== "all") params.set("target_type", filters.target_type)
+  if (filters.assigned_to) params.set("assigned_to", String(filters.assigned_to))
+  if (filters.date_from) params.set("date_from", filters.date_from)
+  if (filters.date_to) params.set("date_to", filters.date_to)
+  params.set("page", String(filters.page ?? 1))
+  params.set("per_page", String(filters.per_page ?? 20))
+  
+  const response = await apiRequest<{ data: PaginatedResponse<import("./types").Report> }>(
+    "/admin/reports?" + params.toString()
+  )
+  
+  return response.data
+}
+
+export async function getReport(reportId: number): Promise<import("./types").Report> {
+  const response = await apiRequest<{ data: import("./types").Report }>("/admin/reports/" + reportId)
+  return response.data
+}
+
+export async function updateReport(
+  reportId: number,
+  data: { status: import("./types").ReportStatus; resolution_notes?: string }
+): Promise<import("./types").Report> {
+  const response = await apiRequest<{ data: import("./types").Report }>(
+    "/admin/reports/" + reportId,
+    {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }
+  )
+  return response.data
+}
+
+export async function assignReport(reportId: number, adminId: number): Promise<import("./types").Report> {
+  const response = await apiRequest<{ data: import("./types").Report }>(
+    "/admin/reports/" + reportId + "/assign",
+    {
+      method: "POST",
+      body: JSON.stringify({ admin_id: adminId }),
+    }
+  )
+  return response.data
+}
+
+// ============================================================================
+// Platform Settings API
+// ============================================================================
+
+export async function getPlatformSettings(): Promise<import("./types").PlatformSettings> {
+  const response = await apiRequest<{ data: import("./types").PlatformSettings }>("/admin/settings")
+  return response.data
+}
+
+export async function updateGeneralSettings(
+  settings: Partial<import("./types").GeneralSettings>
+): Promise<import("./types").GeneralSettings> {
+  const response = await apiRequest<{ data: import("./types").GeneralSettings }>(
+    "/admin/settings/general",
+    {
+      method: "PATCH",
+      body: JSON.stringify(settings),
+    }
+  )
+  return response.data
+}
+
+export async function updateServiceRates(
+  rates: Partial<import("./types").ServiceRates>
+): Promise<import("./types").ServiceRates> {
+  const response = await apiRequest<{ data: import("./types").ServiceRates }>(
+    "/admin/settings/service-rates",
+    {
+      method: "PATCH",
+      body: JSON.stringify(rates),
+    }
+  )
+  return response.data
+}
+
+export async function updateBookingSettings(
+  settings: Partial<import("./types").BookingSettings>
+): Promise<import("./types").BookingSettings> {
+  const response = await apiRequest<{ data: import("./types").BookingSettings }>(
+    "/admin/settings/booking",
+    {
+      method: "PATCH",
+      body: JSON.stringify(settings),
+    }
+  )
+  return response.data
+}
+
+// ============================================================================
+// Categories & Tags API
+// ============================================================================
+
+export async function fetchCategories(): Promise<import("./types").Category[]> {
+  const response = await apiRequest<{ data: import("./types").Category[] }>("/admin/categories")
+  return response.data
+}
+
+export async function createCategory(
+  data: Omit<import("./types").Category, "id" | "created_at" | "updated_at">
+): Promise<import("./types").Category> {
+  const response = await apiRequest<{ data: import("./types").Category }>("/admin/categories", {
+    method: "POST",
+    body: JSON.stringify(data),
+  })
+  return response.data
+}
+
+export async function updateCategory(
+  categoryId: number,
+  data: Partial<import("./types").Category>
+): Promise<import("./types").Category> {
+  const response = await apiRequest<{ data: import("./types").Category }>(
+    "/admin/categories/" + categoryId,
+    {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }
+  )
+  return response.data
+}
+
+export async function deleteCategory(categoryId: number): Promise<void> {
+  await apiRequest("/admin/categories/" + categoryId, { method: "DELETE" })
+}
+
+export async function fetchTags(
+  filters: { search?: string; is_active?: boolean; page?: number; per_page?: number } = {}
+): Promise<PaginatedResponse<import("./types").Tag>> {
+  const params = new URLSearchParams()
+  if (filters.search) params.set("search", filters.search)
+  if (filters.is_active !== undefined) params.set("is_active", String(filters.is_active))
+  params.set("page", String(filters.page ?? 1))
+  params.set("per_page", String(filters.per_page ?? 50))
+  
+  const response = await apiRequest<{ data: PaginatedResponse<import("./types").Tag> }>(
+    "/admin/tags?" + params.toString()
+  )
+  return response.data
+}
+
+export async function createTag(
+  data: Omit<import("./types").Tag, "id" | "usage_count" | "created_at" | "updated_at">
+): Promise<import("./types").Tag> {
+  const response = await apiRequest<{ data: import("./types").Tag }>("/admin/tags", {
+    method: "POST",
+    body: JSON.stringify(data),
+  })
+  return response.data
+}
+
+export async function updateTag(
+  tagId: number,
+  data: Partial<import("./types").Tag>
+): Promise<import("./types").Tag> {
+  const response = await apiRequest<{ data: import("./types").Tag }>("/admin/tags/" + tagId, {
+    method: "PATCH",
+    body: JSON.stringify(data),
+  })
+  return response.data
+}
+
+export async function deleteTag(tagId: number): Promise<void> {
+  await apiRequest("/admin/tags/" + tagId, { method: "DELETE" })
+}
+
+// ============================================================================
+// Support Tickets API
+// ============================================================================
+
+export async function fetchSupportTickets(
+  filters: import("./types").SupportTicketFilters = {}
+): Promise<PaginatedResponse<import("./types").SupportTicket>> {
+  const params = new URLSearchParams()
+  
+  if (filters.search) params.set("search", filters.search)
+  if (filters.status && filters.status !== "all") params.set("status", filters.status)
+  if (filters.priority && filters.priority !== "all") params.set("priority", filters.priority)
+  if (filters.category) params.set("category", filters.category)
+  if (filters.assigned_to && filters.assigned_to !== "unassigned" && filters.assigned_to !== "me") {
+    params.set("assigned_to", String(filters.assigned_to))
+  }
+  if (filters.assigned_to === "unassigned") params.set("assigned_to", "null")
+  if (filters.assigned_to === "me") params.set("assigned_to_me", "true")
+  if (filters.date_from) params.set("date_from", filters.date_from)
+  if (filters.date_to) params.set("date_to", filters.date_to)
+  params.set("page", String(filters.page ?? 1))
+  params.set("per_page", String(filters.per_page ?? 20))
+  
+  const response = await apiRequest<{ data: PaginatedResponse<import("./types").SupportTicket> }>(
+    "/admin/support/tickets?" + params.toString()
+  )
+  
+  return response.data
+}
+
+export async function getSupportTicket(ticketId: number): Promise<import("./types").SupportTicket> {
+  const response = await apiRequest<{ data: import("./types").SupportTicket }>(
+    "/admin/support/tickets/" + ticketId
+  )
+  return response.data
+}
+
+export async function updateSupportTicket(
+  ticketId: number,
+  data: Partial<import("./types").SupportTicket>
+): Promise<import("./types").SupportTicket> {
+  const response = await apiRequest<{ data: import("./types").SupportTicket }>(
+    "/admin/support/tickets/" + ticketId,
+    {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }
+  )
+  return response.data
+}
+
+export async function addTicketReply(
+  ticketId: number,
+  message: string,
+  isInternal = false
+): Promise<import("./types").SupportTicketReply> {
+  const response = await apiRequest<{ data: import("./types").SupportTicketReply }>(
+    "/admin/support/tickets/" + ticketId + "/replies",
+    {
+      method: "POST",
+      body: JSON.stringify({ message, is_internal: isInternal }),
+    }
+  )
+  return response.data
+}
+
+// ============================================================================
+// User Warnings & Bans API
+// ============================================================================
+
+export async function issueWarning(
+  userId: number,
+  data: Omit<import("./types").UserWarning, "id" | "user_id" | "issued_by" | "issued_by_admin" | "acknowledged_at" | "created_at">
+): Promise<import("./types").UserWarning> {
+  const response = await apiRequest<{ data: import("./types").UserWarning }>(
+    "/admin/users/" + userId + "/warnings",
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  )
+  return response.data
+}
+
+export async function fetchUserWarnings(userId: number): Promise<import("./types").UserWarning[]> {
+  const response = await apiRequest<{ data: import("./types").UserWarning[] }>(
+    "/admin/users/" + userId + "/warnings"
+  )
+  return response.data
+}
+
+export async function issueBan(
+  userId: number,
+  data: Omit<import("./types").UserBan, "id" | "user_id" | "issued_by" | "issued_by_admin" | "revoked_at" | "revoked_by" | "revoked_reason" | "created_at">
+): Promise<import("./types").UserBan> {
+  const response = await apiRequest<{ data: import("./types").UserBan }>(
+    "/admin/users/" + userId + "/bans",
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  )
+  return response.data
+}
+
+export async function revokeBan(
+  banId: number,
+  reason: string
+): Promise<import("./types").UserBan> {
+  const response = await apiRequest<{ data: import("./types").UserBan }>(
+    "/admin/bans/" + banId + "/revoke",
+    {
+      method: "POST",
+      body: JSON.stringify({ reason }),
+    }
+  )
+  return response.data
+}
+
+export async function fetchUserBans(userId: number): Promise<import("./types").UserBan[]> {
+  const response = await apiRequest<{ data: import("./types").UserBan[] }>(
+    "/admin/users/" + userId + "/bans"
+  )
+  return response.data
+}
+
+// ============================================================================
+// Reviews Mock API
+// ============================================================================
+
+const MOCK_REVIEWS: import("./types").Review[] = [
+  {
+    id: 1,
+    uuid: "rev-001",
+    booking_id: 2,
+    hagee_id: 1,
+    hagu_id: 2,
+    rating: 5,
+    title: "Great experience!",
+    content: "Bob was amazing company. Highly recommend!",
+    status: "approved",
+    is_flagged: false,
+    flag_reason: null,
+    flagged_at: null,
+    flagged_by: null,
+    moderated_at: null,
+    moderated_by: null,
+    moderation_notes: null,
+    created_at: new Date(Date.now() - 86400000).toISOString(),
+    updated_at: new Date(Date.now() - 86400000).toISOString(),
+  },
+  {
+    id: 2,
+    uuid: "rev-002",
+    booking_id: 2,
+    hagee_id: 2,
+    hagu_id: 1,
+    rating: 4,
+    title: "Nice evening",
+    content: "Alice was pleasant to talk with.",
+    status: "approved",
+    is_flagged: false,
+    flag_reason: null,
+    flagged_at: null,
+    flagged_by: null,
+    moderated_at: null,
+    moderated_by: null,
+    moderation_notes: null,
+    created_at: new Date(Date.now() - 172800000).toISOString(),
+    updated_at: new Date(Date.now() - 172800000).toISOString(),
+  },
+  {
+    id: 3,
+    uuid: "rev-003",
+    booking_id: 5,
+    hagee_id: 3,
+    hagu_id: 4,
+    rating: 1,
+    title: "Terrible service",
+    content: "Complete waste of money. Very disappointing.",
+    status: "pending",
+    is_flagged: true,
+    flag_reason: "potentially_fake",
+    flagged_at: new Date(Date.now() - 43200000).toISOString(),
+    flagged_by: 2,
+    moderated_at: null,
+    moderated_by: null,
+    moderation_notes: null,
+    created_at: new Date(Date.now() - 43200000).toISOString(),
+    updated_at: new Date(Date.now() - 43200000).toISOString(),
+  },
+]
+
+export async function fetchReviewsMock(
+  filters: import("./types").ReviewFilters = {}
+): Promise<PaginatedResponse<import("./types").Review>> {
+  await mockDelay()
+  
+  let filtered = [...MOCK_REVIEWS]
+  
+  if (filters.search) {
+    const search = filters.search.toLowerCase()
+    filtered = filtered.filter(
+      (r) =>
+        r.content.toLowerCase().includes(search) ||
+        r.title?.toLowerCase().includes(search)
+    )
+  }
+  
+  if (filters.status && filters.status !== "all") {
+    filtered = filtered.filter((r) => r.status === filters.status)
+  }
+  
+  if (filters.rating && filters.rating !== "all") {
+    filtered = filtered.filter((r) => r.rating === filters.rating)
+  }
+  
+  if (filters.is_flagged !== undefined) {
+    filtered = filtered.filter((r) => r.is_flagged === filters.is_flagged)
+  }
+  
+  const page = filters.page ?? 1
+  const per_page = filters.per_page ?? 20
+  const start = (page - 1) * per_page
+  const end = start + per_page
+  
+  return {
+    data: filtered.slice(start, end),
+    meta: {
+      current_page: page,
+      per_page,
+      total: filtered.length,
+      total_pages: Math.ceil(filtered.length / per_page),
+    },
+  }
+}
+
+export async function moderateReviewMock(
+  reviewId: number,
+  action: import("./types").ModerationActionRequest
+): Promise<import("./types").Review> {
+  await mockDelay()
+  const review = MOCK_REVIEWS.find((r) => r.id === reviewId)
+  if (!review) throw new Error("Review not found")
+  
+  switch (action.action) {
+    case "approve":
+      review.status = "approved"
+      review.is_flagged = false
+      break
+    case "reject":
+      review.status = "rejected"
+      break
+    case "flag":
+      review.is_flagged = true
+      review.flag_reason = action.reason || "manual"
+      review.flagged_at = new Date().toISOString()
+      break
+    case "unflag":
+      review.is_flagged = false
+      review.flag_reason = null
+      break
+  }
+  
+  review.moderated_at = new Date().toISOString()
+  review.moderated_by = 1
+  review.moderation_notes = action.notes || null
+  review.updated_at = new Date().toISOString()
+  
+  return review
+}
+
+// ============================================================================
+// Reports Mock API
+// ============================================================================
+
+const MOCK_REPORTS: import("./types").Report[] = [
+  {
+    id: 1,
+    uuid: "rep-001",
+    reporter_id: 2,
+    target_type: "review",
+    target_id: 3,
+    reason: "fake_review",
+    description: "This review seems fake and malicious",
+    status: "open",
+    assigned_to: null,
+    resolution_notes: null,
+    resolved_at: null,
+    resolved_by: null,
+    created_at: new Date(Date.now() - 86400000).toISOString(),
+    updated_at: new Date(Date.now() - 86400000).toISOString(),
+  },
+  {
+    id: 2,
+    uuid: "rep-002",
+    reporter_id: 1,
+    target_type: "profile",
+    target_id: 3,
+    reason: "inappropriate_content",
+    description: "Profile contains inappropriate images",
+    status: "under_review",
+    assigned_to: 1,
+    resolution_notes: null,
+    resolved_at: null,
+    resolved_by: null,
+    created_at: new Date(Date.now() - 172800000).toISOString(),
+    updated_at: new Date(Date.now() - 86400000).toISOString(),
+  },
+]
+
+export async function fetchReportsMock(
+  filters: import("./types").ReportFilters = {}
+): Promise<PaginatedResponse<import("./types").Report>> {
+  await mockDelay()
+  
+  let filtered = [...MOCK_REPORTS]
+  
+  if (filters.status && filters.status !== "all") {
+    filtered = filtered.filter((r) => r.status === filters.status)
+  }
+  
+  if (filters.reason && filters.reason !== "all") {
+    filtered = filtered.filter((r) => r.reason === filters.reason)
+  }
+  
+  if (filters.target_type && filters.target_type !== "all") {
+    filtered = filtered.filter((r) => r.target_type === filters.target_type)
+  }
+  
+  const page = filters.page ?? 1
+  const per_page = filters.per_page ?? 20
+  const start = (page - 1) * per_page
+  const end = start + per_page
+  
+  return {
+    data: filtered.slice(start, end),
+    meta: {
+      current_page: page,
+      per_page,
+      total: filtered.length,
+      total_pages: Math.ceil(filtered.length / per_page),
+    },
+  }
+}
+
+export async function updateReportMock(
+  reportId: number,
+  data: { status: import("./types").ReportStatus; resolution_notes?: string }
+): Promise<import("./types").Report> {
+  await mockDelay()
+  const report = MOCK_REPORTS.find((r) => r.id === reportId)
+  if (!report) throw new Error("Report not found")
+  
+  report.status = data.status
+  report.resolution_notes = data.resolution_notes || null
+  
+  if (data.status === "resolved" || data.status === "dismissed") {
+    report.resolved_at = new Date().toISOString()
+    report.resolved_by = 1
+  }
+  
+  report.updated_at = new Date().toISOString()
+  return report
+}
+
+// ============================================================================
+// Platform Settings Mock API
+// ============================================================================
+
+const MOCK_SETTINGS: import("./types").PlatformSettings = {
+  general: {
+    platform_name: "Hagu",
+    support_email: "support@hagu.app",
+    support_phone: "+31 20 123 4567",
+    default_language: "nl",
+    default_currency: "EUR",
+    maintenance_mode: false,
+    maintenance_message: null,
+    terms_version: "1.0",
+    privacy_version: "1.0",
+  },
+  service_rates: {
+    platform_fee_percent: 10,
+    minimum_booking_amount_cents: 1000,
+    hagu_payout_delay_days: 7,
+    stripe_connect_enabled: true,
+    payment_methods: ["ideal", "card", "sepa_direct_debit"],
+  },
+  booking_settings: {
+    min_advance_booking_hours: 24,
+    max_advance_booking_days: 90,
+    cancellation_policy_hours: 24,
+    reschedule_policy_hours: 12,
+    auto_confirm_bookings: false,
+    require_verified_hagu: true,
+  },
+  notifications: {
+    admin_email_alerts: true,
+    new_user_alert: false,
+    dispute_alert: true,
+    high_value_booking_threshold_cents: 10000,
+  },
+}
+
+export async function getPlatformSettingsMock(): Promise<import("./types").PlatformSettings> {
+  await mockDelay()
+  return { ...MOCK_SETTINGS }
+}
+
+export async function updateGeneralSettingsMock(
+  settings: Partial<import("./types").GeneralSettings>
+): Promise<import("./types").GeneralSettings> {
+  await mockDelay()
+  MOCK_SETTINGS.general = { ...MOCK_SETTINGS.general, ...settings }
+  return MOCK_SETTINGS.general
+}
+
+export async function updateServiceRatesMock(
+  rates: Partial<import("./types").ServiceRates>
+): Promise<import("./types").ServiceRates> {
+  await mockDelay()
+  MOCK_SETTINGS.service_rates = { ...MOCK_SETTINGS.service_rates, ...rates }
+  return MOCK_SETTINGS.service_rates
+}
+
+export async function updateBookingSettingsMock(
+  settings: Partial<import("./types").BookingSettings>
+): Promise<import("./types").BookingSettings> {
+  await mockDelay()
+  MOCK_SETTINGS.booking_settings = { ...MOCK_SETTINGS.booking_settings, ...settings }
+  return MOCK_SETTINGS.booking_settings
+}
+
+// ============================================================================
+// Categories & Tags Mock API
+// ============================================================================
+
+const MOCK_CATEGORIES: import("./types").Category[] = [
+  {
+    id: 1,
+    slug: "dining",
+    name: "Dining",
+    description: "Dinner dates and restaurant experiences",
+    icon: "utensils",
+    is_active: true,
+    sort_order: 1,
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z",
+  },
+  {
+    id: 2,
+    slug: "events",
+    name: "Events",
+    description: "Concerts, parties, and social events",
+    icon: "party-popper",
+    is_active: true,
+    sort_order: 2,
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z",
+  },
+  {
+    id: 3,
+    slug: "travel",
+    name: "Travel",
+    description: "Travel companions and trips",
+    icon: "plane",
+    is_active: true,
+    sort_order: 3,
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z",
+  },
+]
+
+const MOCK_TAGS: import("./types").Tag[] = [
+  {
+    id: 1,
+    slug: "fine-dining",
+    name: "Fine Dining",
+    description: "Upscale restaurants",
+    color: "#FF6B6B",
+    is_active: true,
+    usage_count: 45,
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-06-01T00:00:00Z",
+  },
+  {
+    id: 2,
+    slug: "casual",
+    name: "Casual",
+    description: "Relaxed atmosphere",
+    color: "#4ECDC4",
+    is_active: true,
+    usage_count: 120,
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-06-01T00:00:00Z",
+  },
+]
+
+export async function fetchCategoriesMock(): Promise<import("./types").Category[]> {
+  await mockDelay()
+  return [...MOCK_CATEGORIES].sort((a, b) => a.sort_order - b.sort_order)
+}
+
+export async function createCategoryMock(
+  data: Omit<import("./types").Category, "id" | "created_at" | "updated_at">
+): Promise<import("./types").Category> {
+  await mockDelay()
+  const newCategory: import("./types").Category = {
+    id: MOCK_CATEGORIES.length + 1,
+    ...data,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  }
+  MOCK_CATEGORIES.push(newCategory)
+  return newCategory
+}
+
+export async function updateCategoryMock(
+  categoryId: number,
+  data: Partial<import("./types").Category>
+): Promise<import("./types").Category> {
+  await mockDelay()
+  const category = MOCK_CATEGORIES.find((c) => c.id === categoryId)
+  if (!category) throw new Error("Category not found")
+  Object.assign(category, data, { updated_at: new Date().toISOString() })
+  return category
+}
+
+export async function deleteCategoryMock(categoryId: number): Promise<void> {
+  await mockDelay()
+  const index = MOCK_CATEGORIES.findIndex((c) => c.id === categoryId)
+  if (index > -1) MOCK_CATEGORIES.splice(index, 1)
+}
+
+export async function fetchTagsMock(): Promise<import("./types").Tag[]> {
+  await mockDelay()
+  return [...MOCK_TAGS]
+}
+
+export async function createTagMock(
+  data: Omit<import("./types").Tag, "id" | "usage_count" | "created_at" | "updated_at">
+): Promise<import("./types").Tag> {
+  await mockDelay()
+  const newTag: import("./types").Tag = {
+    id: MOCK_TAGS.length + 1,
+    ...data,
+    usage_count: 0,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  }
+  MOCK_TAGS.push(newTag)
+  return newTag
+}
+
+export async function updateTagMock(
+  tagId: number,
+  data: Partial<import("./types").Tag>
+): Promise<import("./types").Tag> {
+  await mockDelay()
+  const tag = MOCK_TAGS.find((t) => t.id === tagId)
+  if (!tag) throw new Error("Tag not found")
+  Object.assign(tag, data, { updated_at: new Date().toISOString() })
+  return tag
+}
+
+export async function deleteTagMock(tagId: number): Promise<void> {
+  await mockDelay()
+  const index = MOCK_TAGS.findIndex((t) => t.id === tagId)
+  if (index > -1) MOCK_TAGS.splice(index, 1)
+}
+
+// ============================================================================
+// Support Tickets Mock API
+// ============================================================================
+
+const MOCK_SUPPORT_TICKETS: import("./types").SupportTicket[] = [
+  {
+    id: 1,
+    uuid: "ticket-001",
+    user_id: 1,
+    subject: "Can't complete booking",
+    description: "The booking form keeps showing an error when I try to submit.",
+    status: "open",
+    priority: "high",
+    category: "technical",
+    assigned_to: null,
+    resolution_notes: null,
+    resolved_at: null,
+    created_at: new Date(Date.now() - 86400000).toISOString(),
+    updated_at: new Date(Date.now() - 86400000).toISOString(),
+  },
+  {
+    id: 2,
+    uuid: "ticket-002",
+    user_id: 2,
+    subject: "Payment not received",
+    description: "I completed a booking 3 days ago but haven't received my payout yet.",
+    status: "in_progress",
+    priority: "medium",
+    category: "payment",
+    assigned_to: 1,
+    resolution_notes: null,
+    resolved_at: null,
+    created_at: new Date(Date.now() - 172800000).toISOString(),
+    updated_at: new Date(Date.now() - 86400000).toISOString(),
+  },
+]
+
+export async function fetchSupportTicketsMock(
+  filters: import("./types").SupportTicketFilters = {}
+): Promise<PaginatedResponse<import("./types").SupportTicket>> {
+  await mockDelay()
+  
+  let filtered = [...MOCK_SUPPORT_TICKETS]
+  
+  if (filters.status && filters.status !== "all") {
+    filtered = filtered.filter((t) => t.status === filters.status)
+  }
+  
+  if (filters.priority && filters.priority !== "all") {
+    filtered = filtered.filter((t) => t.priority === filters.priority)
+  }
+  
+  if (filters.assigned_to === "unassigned") {
+    filtered = filtered.filter((t) => t.assigned_to === null)
+  }
+  
+  const page = filters.page ?? 1
+  const per_page = filters.per_page ?? 20
+  const start = (page - 1) * per_page
+  const end = start + per_page
+  
+  return {
+    data: filtered.slice(start, end),
+    meta: {
+      current_page: page,
+      per_page,
+      total: filtered.length,
+      total_pages: Math.ceil(filtered.length / per_page),
+    },
+  }
+}
+
+export async function updateSupportTicketMock(
+  ticketId: number,
+  data: Partial<import("./types").SupportTicket>
+): Promise<import("./types").SupportTicket> {
+  await mockDelay()
+  const ticket = MOCK_SUPPORT_TICKETS.find((t) => t.id === ticketId)
+  if (!ticket) throw new Error("Ticket not found")
+  Object.assign(ticket, data, { updated_at: new Date().toISOString() })
+  return ticket
+}
